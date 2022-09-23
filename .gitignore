@@ -1,0 +1,11 @@
+# Rust files
+/.cargo
+/target
+**/*.rs.bk
+Cargo.lock
+
+# Backup files
+*~
+\#*
+.\#*
+*.swp

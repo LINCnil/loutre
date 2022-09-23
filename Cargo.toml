@@ -1,0 +1,45 @@
+[package]
+name = "loutre"
+version = "0.1.0"
+authors = ["Rodolphe Breard <rodolphe@what.tf>"]
+edition = "2021"
+description = "Outil de calcul des empreintes des pièces."
+license = "CECILL-2.1"
+publish = false
+build = "build.rs"
+
+[package.metadata.winres]
+LegalCopyright = "Commission nationale de l’informatique et des libertés (CNIL)"
+
+[dependencies]
+eframe = "0.19"
+egui_extras = { version = "0.19", features = ["image"] }
+humansize = "1.1"
+image = { version = "0.24", features = ["png"] }
+msg_parser = "0.1"
+nom = "7.1"
+unicode-normalization = "0.1"
+rfd = "0.10"
+
+[target.'cfg(windows)'.dependencies]
+clipboard-win = "4.4"
+
+[target.'cfg(not(windows))'.dependencies]
+arboard = "2.1"
+
+# sha2-asm does not support MSVC
+# https://github.com/RustCrypto/asm-hashes/issues/17
+[target.'cfg(target_env = "msvc")'.dependencies]
+sha2 = { version = "0.10", features = [] }
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+sha2 = { version = "0.10", features = ["asm"] }
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
+[profile.release]
+opt-level = 2
+strip = "symbols"
+lto = 'fat'
+codegen-units = 1
+panic = 'abort'
