@@ -12,6 +12,7 @@ build = "build.rs"
 LegalCopyright = "Commission nationale de l’informatique et des libertés (CNIL)"
 
 [dependencies]
+arboard = "3.1"
 eframe = "0.19"
 egui_extras = { version = "0.19", features = ["image"] }
 humansize = "1.1"
@@ -20,12 +21,6 @@ msg_parser = "0.1"
 nom = "7.1"
 unicode-normalization = "0.1"
 rfd = "0.10"
-
-[target.'cfg(windows)'.dependencies]
-clipboard-win = "4.4"
-
-[target.'cfg(not(windows))'.dependencies]
-arboard = "2.1"
 
 # sha2-asm does not support MSVC
 # https://github.com/RustCrypto/asm-hashes/issues/17

@@ -1,4 +1,5 @@
 use crate::checker::check_files;
+use crate::clipboard::Clipboard;
 use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::{FileHasher, HashStatus};
@@ -47,6 +48,7 @@ macro_rules! reset_messages {
 }
 
 pub struct ChecksumApp {
+	clipboard: Clipboard,
 	logo: RetainedImage,
 	content_file_name: String,
 	nb_start: u32,
@@ -86,6 +88,7 @@ impl ChecksumApp {
 	pub fn new(theme: &Theme) -> Self {
 		let logo = RetainedImage::from_image_bytes("logo", &theme.get_logo_bytes()).unwrap();
 		Self {
+			clipboard: Clipboard::new(),
 			logo,
 			content_file_name: crate::CONTENT_FILE_NAME.into(),
 			nb_start: crate::NB_FILES_START,
@@ -155,7 +158,7 @@ impl ChecksumApp {
 								}
 							}
 							self.file_hasher = None;
-							fl.set_clipboard(self.nb_start);
+							fl.set_clipboard(&mut self.clipboard, self.nb_start);
 						}
 						None => {
 							self.error_msg = Some(MSG_ERR_FL_NOT_FOUND.to_string());
@@ -219,12 +222,12 @@ impl ChecksumApp {
 						self.file_hasher = Some(FileHasher::new(p));
 					}
 					if p.has_hashes() && ui.button(BTN_CLIPBOARD).clicked() {
-						p.set_clipboard(self.nb_start);
+						p.set_clipboard(&mut self.clipboard, self.nb_start);
 					}
 					if p.has_hashes()
 						&& p.has_content_file() && ui.button(BTN_CLIPBOARD_CTN_FILE).clicked()
 					{
-						p.set_clipboard_ctn_file(self.nb_start);
+						p.set_clipboard_ctn_file(&mut self.clipboard, self.nb_start);
 					}
 					ret = true;
 				}

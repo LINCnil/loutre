@@ -1,3 +1,4 @@
+use crate::clipboard::Clipboard;
 use crate::file::File;
 use crate::hasher::hash_single_file;
 use std::io::{self, Write};
@@ -306,16 +307,16 @@ impl FileList {
 		Ok(())
 	}
 
-	pub fn set_clipboard(&mut self, nb_start: u32) {
+	pub fn set_clipboard(&mut self, clipboard: &mut Clipboard, nb_start: u32) {
 		self.files.sort_by(File::cmp_name);
-		crate::clipboard::set_clipboard(self, nb_start)
+		clipboard.set_clipboard(self, nb_start);
 	}
 
-	pub fn set_clipboard_ctn_file(&self, nb_start: u32) {
+	pub fn set_clipboard_ctn_file(&self, clipboard: &mut Clipboard, nb_start: u32) {
 		if let Ok(meta) = self.content_file_path.metadata() {
 			let file = File::create_dummy(&self.content_file_path, &self.path, meta.len(), "");
 			if let Ok(f) = hash_single_file(&file) {
-				crate::clipboard::set_clipboard_ctn_file(&f, self.get_nb_files(), nb_start);
+				clipboard.set_clipboard_ctn_file(&f, self.get_nb_files(), nb_start);
 			}
 		}
 	}

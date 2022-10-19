@@ -1,7 +1,5 @@
 use crate::file::File;
 use crate::file_list::FileList;
-#[cfg(windows)]
-use clipboard_win::{formats::RawData, Clipboard, Setter};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
@@ -43,6 +41,38 @@ macro_rules! if_html {
 			""
 		}
 	};
+}
+
+pub struct Clipboard {
+	internal: arboard::Clipboard,
+}
+
+impl Clipboard {
+	pub fn new() -> Self {
+		Self {
+			internal: arboard::Clipboard::new().unwrap(),
+		}
+	}
+}
+
+impl Clipboard {
+	pub fn set_clipboard(&mut self, file_list: &FileList, nb_start: u32) {
+		let _ = self.internal.clear();
+		let html = get_clipboard_content(file_list, true, nb_start);
+		#[cfg(windows)]
+		let html = wrap_html(&html);
+		let alt_text = get_clipboard_content(file_list, false, nb_start);
+		let _ = self.internal.set_html(&html, Some(&alt_text));
+	}
+
+	pub fn set_clipboard_ctn_file(&mut self, file: &File, nb_files: usize, nb_start: u32) {
+		let _ = self.internal.clear();
+		let html = get_clipboard_content_ctn_file(file, true, nb_files, nb_start);
+		#[cfg(windows)]
+		let html = wrap_html(&html);
+		let alt_text = get_clipboard_content_ctn_file(file, false, nb_files, nb_start);
+		let _ = self.internal.set_html(html, Some(alt_text));
+	}
 }
 
 enum Exhibit {
@@ -283,54 +313,4 @@ fn wrap_html(ctn: &str) -> String {
 		ctn,
 		c_end_frag,
 	)
-}
-
-#[cfg(windows)]
-pub fn set_clipboard(file_list: &FileList, nb_start: u32) {
-	match clipboard_win::raw::register_format(HTML_FORMAT_NAME) {
-		Some(fmt) => {
-			if let Ok(_) = Clipboard::new_attempts(NB_CLIPBOARD_ATTEMPTS) {
-				let ctn = get_clipboard_content(file_list, true, nb_start);
-				let ctn = wrap_html(&ctn);
-				let html_clipboard = RawData(fmt.get());
-				let _ = html_clipboard.write_clipboard(&ctn);
-			}
-		}
-		None => {
-			let ctn = get_clipboard_content(file_list, false, nb_start);
-			let _ = clipboard_win::set_clipboard_string(&ctn);
-		}
-	};
-}
-
-#[cfg(windows)]
-pub fn set_clipboard_ctn_file(file: &File, nb_files: usize, nb_start: u32) {
-	match clipboard_win::raw::register_format(HTML_FORMAT_NAME) {
-		Some(fmt) => {
-			if let Ok(_) = Clipboard::new_attempts(NB_CLIPBOARD_ATTEMPTS) {
-				let ctn = get_clipboard_content_ctn_file(file, true, nb_files, nb_start);
-				let ctn = wrap_html(&ctn);
-				let html_clipboard = RawData(fmt.get());
-				let _ = html_clipboard.write_clipboard(&ctn);
-			}
-		}
-		None => {
-			let ctn = get_clipboard_content_ctn_file(file, false, nb_files, nb_start);
-			let _ = clipboard_win::set_clipboard_string(&ctn);
-		}
-	};
-}
-
-#[cfg(not(windows))]
-pub fn set_clipboard(file_list: &FileList, nb_start: u32) {
-	let mut clipboard = arboard::Clipboard::new().unwrap();
-	let ctn = get_clipboard_content(file_list, false, nb_start);
-	let _ = clipboard.set_text(ctn);
-}
-
-#[cfg(not(windows))]
-pub fn set_clipboard_ctn_file(file: &File, nb_files: usize, nb_start: u32) {
-	let mut clipboard = arboard::Clipboard::new().unwrap();
-	let ctn = get_clipboard_content_ctn_file(file, false, nb_files, nb_start);
-	let _ = clipboard.set_text(ctn);
 }
