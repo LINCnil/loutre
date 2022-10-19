@@ -26,35 +26,35 @@ const WIN_WIDTH: f32 = 720.0;
 const WIN_HEIGHT: f32 = 310.0;
 
 fn main() {
-    let theme = theme::Theme::default();
-    let win_opts = eframe::NativeOptions {
-        decorated: true,
-        drag_and_drop_support: true,
-        icon_data: get_app_icon(&theme),
-        initial_window_size: Some(eframe::egui::Vec2 {
-            x: WIN_WIDTH,
-            y: WIN_HEIGHT,
-        }),
-        default_theme: theme.clone().into(),
-        ..Default::default()
-    };
-    let app = app::ChecksumApp::new(&theme);
-    eframe::run_native(APP_NAME, win_opts, Box::new(|_cc| Box::new(app)));
+	let theme = theme::Theme::default();
+	let win_opts = eframe::NativeOptions {
+		decorated: true,
+		drag_and_drop_support: true,
+		icon_data: get_app_icon(&theme),
+		initial_window_size: Some(eframe::egui::Vec2 {
+			x: WIN_WIDTH,
+			y: WIN_HEIGHT,
+		}),
+		default_theme: theme.clone().into(),
+		..Default::default()
+	};
+	let app = app::ChecksumApp::new(&theme);
+	eframe::run_native(APP_NAME, win_opts, Box::new(|_cc| Box::new(app)));
 }
 
 fn get_app_icon(theme: &theme::Theme) -> Option<eframe::IconData> {
-    let icon_res =
-        image::load_from_memory_with_format(&theme.get_icon_bytes(), image::ImageFormat::Png);
-    let icon = match icon_res {
-        Ok(img) => img.into_rgba8(),
-        Err(_) => {
-            return None;
-        }
-    };
-    let (width, height) = icon.dimensions();
-    Some(eframe::IconData {
-        rgba: icon.into_raw(),
-        width,
-        height,
-    })
+	let icon_res =
+		image::load_from_memory_with_format(&theme.get_icon_bytes(), image::ImageFormat::Png);
+	let icon = match icon_res {
+		Ok(img) => img.into_rgba8(),
+		Err(_) => {
+			return None;
+		}
+	};
+	let (width, height) = icon.dimensions();
+	Some(eframe::IconData {
+		rgba: icon.into_raw(),
+		width,
+		height,
+	})
 }
