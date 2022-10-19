@@ -352,7 +352,7 @@ fn is_system(path: &Path) -> io::Result<bool> {
 }
 
 #[cfg(windows)]
-fn file_has_attr(path: &Path, attr: u32) -> bool {
+fn file_has_attr(path: &Path, attr: u32) -> io::Result<bool> {
 	let metadata = fs::metadata(path)?;
 	let attributes = metadata.file_attributes();
 	Ok((attributes & attr) > 0)
