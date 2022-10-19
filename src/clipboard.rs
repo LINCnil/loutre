@@ -28,10 +28,6 @@ const TPL_START_TXT: &str = "PIÈCE No";
 const TPL_FILE: &str = "copie sur support informatique d'un document intitulé";
 const TPL_FILE_UNIT: &str = "octets";
 const TPL_HASH_METHOD: &str = "SHA-256";
-#[cfg(windows)]
-const HTML_FORMAT_NAME: &str = "HTML Format";
-#[cfg(windows)]
-const NB_CLIPBOARD_ATTEMPTS: usize = 10;
 
 macro_rules! if_html {
 	($tag: ident, $html: ident) => {
