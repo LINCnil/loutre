@@ -13,7 +13,7 @@ mod theme;
 const APP_NAME: &str = "LOUTRE — LOgiciel Unique de TRaitement des Empreintes";
 const BUFF_SIZE: usize = 32768;
 const BUFF_NOTIF_THRESHOLD: u64 = 700;
-const CONTENT_FILE_HEADER: &str = "Nom du document\tTaille (octets)\t SHA256\r\n";
+const CONTENT_FILE_HEADER: &str = "Nom du document\tTaille (octets)\tSHA256\r\n";
 const CONTENT_FILE_NAME: &str = "contenu.txt";
 #[cfg(windows)]
 const CONTENT_FILE_PATH_PREFIX: &str = "\\";
