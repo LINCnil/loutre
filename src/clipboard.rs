@@ -40,34 +40,42 @@ macro_rules! if_html {
 }
 
 pub struct Clipboard {
-	internal: arboard::Clipboard,
+	internal: Option<arboard::Clipboard>,
 }
 
 impl Clipboard {
 	pub fn new() -> Self {
-		Self {
-			internal: arboard::Clipboard::new().unwrap(),
-		}
+		Self { internal: None }
 	}
 }
 
 impl Clipboard {
 	pub fn set_clipboard(&mut self, file_list: &FileList, nb_start: u32) {
-		let _ = self.internal.clear();
 		let html = get_clipboard_content(file_list, true, nb_start);
-		#[cfg(windows)]
-		let html = wrap_html(&html);
 		let alt_text = get_clipboard_content(file_list, false, nb_start);
-		let _ = self.internal.set_html(&html, Some(&alt_text));
+		self.set_html(&html, &alt_text);
 	}
 
 	pub fn set_clipboard_ctn_file(&mut self, file: &File, nb_files: usize, nb_start: u32) {
-		let _ = self.internal.clear();
 		let html = get_clipboard_content_ctn_file(file, true, nb_files, nb_start);
-		#[cfg(windows)]
-		let html = wrap_html(&html);
 		let alt_text = get_clipboard_content_ctn_file(file, false, nb_files, nb_start);
-		let _ = self.internal.set_html(html, Some(alt_text));
+		self.set_html(&html, &alt_text);
+	}
+
+	pub fn set_html(&mut self, html: &str, alt_text: &str) {
+		match &mut self.internal {
+			Some(clipboard) => {
+				let _ = clipboard.clear();
+				let _ = clipboard.set_html(html, Some(alt_text));
+			}
+			None => {
+				let mut clipboard = arboard::Clipboard::new().unwrap();
+				let _ = clipboard.set_html(html, Some(alt_text));
+				if cfg!(unix) {
+					self.internal = Some(clipboard);
+				}
+			}
+		}
 	}
 }
 
@@ -273,40 +281,4 @@ fn get_clipboard_content_ctn_file(
 	} else {
 		String::new()
 	}
-}
-
-#[cfg(windows)]
-fn wrap_html(ctn: &str) -> String {
-	let h_version = "Version:0.9";
-	let h_start_html = "\r\nStartHTML:";
-	let h_end_html = "\r\nEndHTML:";
-	let h_start_frag = "\r\nStartFragment:";
-	let h_end_frag = "\r\nEndFragment:";
-	let c_start_frag = "\r\n<html>\r\n<body>\r\n<!--StartFragment-->\r\n";
-	let c_end_frag = "\r\n<!--EndFragment-->\r\n</body>\r\n</html>";
-	let h_len = h_version.len()
-		+ h_start_html.len()
-		+ 10 + h_end_html.len()
-		+ 10 + h_start_frag.len()
-		+ 10 + h_end_frag.len()
-		+ 10;
-	let n_start_html = h_len + 2;
-	let n_start_frag = h_len + c_start_frag.len();
-	let n_end_frag = n_start_frag + ctn.len();
-	let n_end_html = n_end_frag + c_end_frag.len();
-	format!(
-		"{}{}{:010}{}{:010}{}{:010}{}{:010}{}{}{}",
-		h_version,
-		h_start_html,
-		n_start_html,
-		h_end_html,
-		n_end_html,
-		h_start_frag,
-		n_start_frag,
-		h_end_frag,
-		n_end_frag,
-		c_start_frag,
-		ctn,
-		c_end_frag,
-	)
 }
