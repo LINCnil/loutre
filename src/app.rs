@@ -10,7 +10,9 @@ use humansize::{file_size_opts as options, FileSize};
 use std::path::Path;
 
 const BTN_CLIPBOARD: &str = "🗐";
+const BTN_CLIPBOARD_TIP: &str = "Copier l'empreinte de l'ensemble des pièces";
 const BTN_CLIPBOARD_CTN_FILE: &str = "📋";
+const BTN_CLIPBOARD_CTN_FILE_TIP: &str = "Copier l'empreinte du fichier contenant les empreintes";
 const BTN_FILE_CHOICE_YES: &str = "Oui";
 const BTN_FILE_CHOICE_YESALL: &str = "Oui pour tous";
 const BTN_FILE_CHOICE_NO: &str = "Non";
@@ -18,6 +20,7 @@ const BTN_FILE_CHOICE_NOALL: &str = "Non pour tous";
 const BTN_SELECT_DIR: &str = "🗁 Ouvrir un dossier…";
 const BTN_SELECT_MAIL: &str = "📧 Ouvrir un AR…";
 const BTN_TRASH: &str = "🗑";
+const BTN_TRASH_TIP: &str = "Réinitialiser";
 const BTN_CACL_FINGERPRINTS: &str = "Calculer les empreintes";
 const BTN_CHECK_FINGERPRINTS: &str = "Vérifier les empreintes";
 const LABEL_NB_FILES_START: &str = "Numéro de la première pièce";
@@ -221,11 +224,19 @@ impl ChecksumApp {
 						}
 						self.file_hasher = Some(FileHasher::new(p));
 					}
-					if p.has_hashes() && ui.button(BTN_CLIPBOARD).clicked() {
+					if p.has_hashes()
+						&& ui
+							.button(BTN_CLIPBOARD)
+							.on_hover_text(BTN_CLIPBOARD_TIP)
+							.clicked()
+					{
 						p.set_clipboard(&mut self.clipboard, self.nb_start);
 					}
 					if p.has_hashes()
-						&& p.has_content_file() && ui.button(BTN_CLIPBOARD_CTN_FILE).clicked()
+						&& p.has_content_file() && ui
+						.button(BTN_CLIPBOARD_CTN_FILE)
+						.on_hover_text(BTN_CLIPBOARD_CTN_FILE_TIP)
+						.clicked()
 					{
 						p.set_clipboard_ctn_file(&mut self.clipboard, self.nb_start);
 					}
@@ -245,7 +256,7 @@ impl ChecksumApp {
 				}
 			}
 			if let Some(p) = &self.file_list {
-				if ui.button(BTN_TRASH).clicked() {
+				if ui.button(BTN_TRASH).on_hover_text(BTN_TRASH_TIP).clicked() {
 					reset_messages!(self);
 					self.file_hasher = None;
 					self.file_list = None;
@@ -267,7 +278,7 @@ impl ChecksumApp {
 				}
 			}
 			if let Some(e) = &self.email {
-				if ui.button(BTN_TRASH).clicked() {
+				if ui.button(BTN_TRASH).on_hover_text(BTN_TRASH_TIP).clicked() {
 					self.email = None;
 				} else {
 					ui.add(egui::Label::new(e.to_string()).wrap(true));
