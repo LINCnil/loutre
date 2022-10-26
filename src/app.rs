@@ -6,7 +6,7 @@ use crate::hasher::{FileHasher, HashStatus};
 use crate::theme::Theme;
 use eframe::egui::{self, Color32, Context, RichText};
 use egui_extras::RetainedImage;
-use humansize::{file_size_opts as options, FileSize};
+use humansize::{make_format, DECIMAL};
 use std::path::Path;
 
 const BTN_CLIPBOARD: &str = "🗐";
@@ -368,10 +368,11 @@ impl ChecksumApp {
 				.show_percentage()
 				.animate(true);
 			ui.add(progress_bar);
+			let formatter = make_format(DECIMAL);
 			let remaining = format!(
 				"Réalisé: {} / {}",
-				hr.get_processed_bytes().file_size(options::BINARY).unwrap(),
-				hr.get_total_bytes().file_size(options::BINARY).unwrap()
+				formatter(hr.get_processed_bytes()),
+				formatter(hr.get_total_bytes())
 			);
 			ui.label(remaining);
 			return true;

@@ -15,7 +15,7 @@ LegalCopyright = "Commission nationale de l’informatique et des libertés (CNI
 arboard = "3.1"
 eframe = "0.19"
 egui_extras = { version = "0.19", features = ["image"] }
-humansize = "1.1"
+humansize = "2.1"
 image = { version = "0.24", features = ["png"] }
 msg_parser = "0.1"
 nom = "7.1"
