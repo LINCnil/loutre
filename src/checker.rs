@@ -62,7 +62,7 @@ impl From<std::io::Error> for ContentFileError {
 	}
 }
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 struct File {
 	path: PathBuf,
 	hash: String,
@@ -70,9 +70,16 @@ struct File {
 
 impl File {
 	fn new(path: &Path, hash: &str) -> Self {
-		File {
-			path: normalize_path(path),
+		Self {
+			path: normalize_path(path, false),
 			hash: hash.to_string(),
+		}
+	}
+
+	fn fix_name(file: &Self) -> Self {
+		Self {
+			path: normalize_path(&file.path, true),
+			hash: file.hash.to_owned(),
 		}
 	}
 }
@@ -80,7 +87,7 @@ impl File {
 impl From<&crate::file::File> for File {
 	fn from(f: &crate::file::File) -> Self {
 		File {
-			path: normalize_path(&f.get_file_name()),
+			path: normalize_path(&f.get_file_name(), false),
 			hash: f
 				.get_hash()
 				.map(|e| e.to_owned())
@@ -126,8 +133,15 @@ pub fn check_files(
 		);
 	}
 	if let Some(em_lst) = email {
+		// Dans les courriers électroniques, il est possible que les séries de
+		// plusieurs espaces soient réduites à une seule espace. Si une telle
+		// modification a lieu dans un AR, il sera impossible de trouver le fichier
+		// correspondant sur le système et une erreur sera affichée. Du fait que ce
+		// comportement ne soit pas garanti, il faut absolument tester les deux
+		// variantes et ne relever une erreur que si les deux échouent.
 		let email_set: HashSet<File> = em_lst.iter_files().map(File::from).collect();
-		if !email_set.is_subset(&calculated_set) {
+		let fixed_names_set: HashSet<File> = calculated_set.iter().map(File::fix_name).collect();
+		if !email_set.is_subset(&calculated_set) && !email_set.is_subset(&fixed_names_set) {
 			if !error_msg.is_empty() {
 				error_msg += "\n\n";
 			}
@@ -175,12 +189,15 @@ fn load_content_file(file_list: &FileList) -> Result<HashSet<File>, ContentFileE
 	Ok(lst)
 }
 
-fn normalize_path(path: &Path) -> PathBuf {
+fn normalize_path(path: &Path, hard_fixes: bool) -> PathBuf {
 	let mut ret = PathBuf::new();
 	for cmp in path.components() {
 		match cmp.as_os_str().to_str() {
 			Some(s) => {
-				let ns: String = s.nfkc().collect();
+				let mut ns: String = s.nfkc().collect();
+				if hard_fixes {
+					collapse_spaces(&mut ns);
+				}
 				ret.push(&ns);
 			}
 			None => {
@@ -189,4 +206,13 @@ fn normalize_path(path: &Path) -> PathBuf {
 		}
 	}
 	ret
+}
+
+fn collapse_spaces(s: &mut String) {
+	loop {
+		*s = s.replace("  ", " ");
+		if !s.contains("  ") {
+			return;
+		}
+	}
 }
