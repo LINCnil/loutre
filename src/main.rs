@@ -39,7 +39,8 @@ fn main() {
 		..Default::default()
 	};
 	let app = app::ChecksumApp::new(&theme);
-	eframe::run_native(APP_NAME, win_opts, Box::new(|_cc| Box::new(app)));
+	let app_name = format!("{} v{}", APP_NAME, env!("CARGO_PKG_VERSION"));
+	eframe::run_native(&app_name, win_opts, Box::new(|_cc| Box::new(app)));
 }
 
 fn get_app_icon(theme: &theme::Theme) -> Option<eframe::IconData> {
