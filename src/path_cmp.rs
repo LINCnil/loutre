@@ -180,8 +180,8 @@ pub fn path_cmp_name(a: &Path, b: &Path) -> Ordering {
 	}
 }
 
+#[cfg(test)]
 mod tests {
-	#![allow(unused_imports)]
 	use super::*;
 
 	#[test]
