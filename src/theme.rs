@@ -1,7 +1,7 @@
-use serde_with::DeserializeFromStr;
-use std::str::FromStr;
+use serde::Deserialize;
 
-#[derive(Clone, Debug, PartialEq, Eq, DeserializeFromStr)]
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Theme {
 	Dark,
 	Light,
@@ -23,18 +23,6 @@ impl Theme {
 impl Default for Theme {
 	fn default() -> Self {
 		Theme::Light
-	}
-}
-
-impl FromStr for Theme {
-	type Err = u8;
-
-	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		Ok(match s {
-			"dark" => Theme::Dark,
-			"light" => Theme::Light,
-			_ => Theme::default(),
-		})
 	}
 }
 
