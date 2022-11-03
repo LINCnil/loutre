@@ -1,6 +1,6 @@
 [package]
 name = "loutre"
-version = "0.2.0"
+version = "0.3.0-dev"
 authors = ["Rodolphe Breard <rodolphe@what.tf>"]
 edition = "2021"
 description = "Outil de calcul des empreintes des pièces."
