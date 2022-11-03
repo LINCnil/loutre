@@ -35,6 +35,7 @@ const MSG_FILE_CHOICE_FILE_SYSTEM: &str = "est un fichier système.";
 const MSG_FILE_CHOICE_INCLUDE: &str = "Souhaitez-vous l'inclure ?";
 const MSG_INFO_CHECK_OK: &str = "Les empreintes correspondent.";
 const MSG_INFO_HAS_CTN_FILE: &str = "Le dossier comporte un fichier";
+const MSG_INFO_DEL_CTN_FILE: &str = "supprimer";
 const MSG_INFO_NB_FILES_1: &str = "Le dossier comporte";
 const MSG_INFO_NB_FILES_2: &str = "fichiers.";
 const SIGN_INFO: &str = "ℹ";
@@ -384,9 +385,14 @@ impl ChecksumApp {
 		egui::ScrollArea::vertical().show(ui, |ui| {
 			if let Some(p) = &self.file_list {
 				if p.has_content_file() {
-					ChecksumApp::add_info_label(
+					ChecksumApp::add_info_label_extra(
 						ui,
 						&format!("{} {}.", MSG_INFO_HAS_CTN_FILE, self.content_file_name),
+						|ui| {
+							if ui.link(MSG_INFO_DEL_CTN_FILE).clicked() {
+								let _ = std::fs::remove_file(p.get_content_file_path());
+							}
+						},
 					);
 				} else {
 					let nb_files = p.get_nb_files();
@@ -410,7 +416,10 @@ impl ChecksumApp {
 		});
 	}
 
-	fn add_label(ui: &mut egui::Ui, text: &str, icon: &str, color: &Color32) {
+	fn add_label<F>(ui: &mut egui::Ui, text: &str, icon: &str, color: &Color32, extra: F)
+	where
+		F: Fn(&mut egui::Ui),
+	{
 		let margin = egui::style::Margin::from(6.0);
 		egui::Frame::none()
 			.inner_margin(margin)
@@ -419,16 +428,36 @@ impl ChecksumApp {
 				ui.horizontal(|ui| {
 					ui.label(RichText::new(icon).size(20.0));
 					ui.add(egui::Label::new(text).wrap(true));
+					extra(ui);
 					ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
 				});
 			});
 	}
 
 	fn add_info_label(ui: &mut egui::Ui, text: &str) {
-		ChecksumApp::add_label(ui, text, SIGN_INFO, &Color32::from_rgb(0x7a, 0xcb, 0xff));
+		ChecksumApp::add_info_label_extra(ui, text, |_| {});
+	}
+
+	fn add_info_label_extra<F>(ui: &mut egui::Ui, text: &str, extra: F)
+	where
+		F: Fn(&mut egui::Ui),
+	{
+		ChecksumApp::add_label(
+			ui,
+			text,
+			SIGN_INFO,
+			&Color32::from_rgb(0x7a, 0xcb, 0xff),
+			extra,
+		);
 	}
 
 	fn add_warning_label(ui: &mut egui::Ui, text: &str) {
-		ChecksumApp::add_label(ui, text, SIGN_WARNING, &Color32::from_rgb(0xff, 0xeb, 0x3e));
+		ChecksumApp::add_label(
+			ui,
+			text,
+			SIGN_WARNING,
+			&Color32::from_rgb(0xff, 0xeb, 0x3e),
+			|_| {},
+		);
 	}
 }
