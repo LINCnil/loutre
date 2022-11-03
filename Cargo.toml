@@ -13,6 +13,7 @@ LegalCopyright = "Commission nationale de l’informatique et des libertés (CNI
 
 [dependencies]
 arboard = "3.1"
+dirs = "4.0"
 eframe = "0.19"
 egui_extras = { version = "0.19", features = ["image"] }
 humansize = "2.1"
@@ -21,6 +22,10 @@ msg_parser = "0.1"
 nom = "7.1"
 unicode-normalization = "0.1"
 rfd = "0.10"
+serde = "1.0"
+serde_derive = "1.0"
+serde_with = "2.0"
+toml = "0.5"
 
 # sha2-asm does not support MSVC
 # https://github.com/RustCrypto/asm-hashes/issues/17

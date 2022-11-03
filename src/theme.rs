@@ -1,6 +1,7 @@
-use std::env;
+use serde_with::DeserializeFromStr;
+use std::str::FromStr;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, DeserializeFromStr)]
 pub enum Theme {
 	Dark,
 	Light,
@@ -21,15 +22,19 @@ impl Theme {
 
 impl Default for Theme {
 	fn default() -> Self {
-		let mut theme = Theme::Light;
-		let args: Vec<String> = env::args().collect();
-		if args.len() == 3 && args[1] == "--theme" {
-			theme = match args[2].as_str() {
-				"dark" => Theme::Dark,
-				_ => Theme::Light,
-			}
-		}
-		theme
+		Theme::Light
+	}
+}
+
+impl FromStr for Theme {
+	type Err = u8;
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		Ok(match s {
+			"dark" => Theme::Dark,
+			"light" => Theme::Light,
+			_ => Theme::default(),
+		})
 	}
 }
 
