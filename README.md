@@ -26,6 +26,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `app.rs` : gestion de l'interface graphique
 - `checker.rs` : comparaison des empreintes préalablement calculées
 - `clipboard.rs` : gestion du presse-papier
+- `config.rs` : gestion de la configuration
 - `email.rs` : analyse syntaxique des accusés de réception envoyés par la plateforme d'échanges via courrier électronique
 - `file_list.rs` : gestion de la liste des fichiers
 - `file.rs` : représentation interne d'un fichier
