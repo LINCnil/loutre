@@ -1,1 +1,5 @@
+# Defines the theme to use. Possible values are:
+# - dark
+# - light
+# The default is light.
 theme = "light"
