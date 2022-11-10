@@ -1,5 +1,6 @@
 use crate::email::Email;
 use crate::file_list::FileList;
+use crate::i18n::{Attr, I18n};
 use std::cmp::Ordering;
 use std::collections::hash_set::HashSet;
 use std::fmt::{self, Write};
@@ -8,19 +9,19 @@ use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use unicode_normalization::UnicodeNormalization;
 
-const MSG_INVALID_FILE_FORMAT: &str = "format du fichier invalide";
-const ERR_DIFF_CALC_AR: &str = "Différences avec l’accusé de réception";
-const ERR_DIFF_CALC_CTN: &str = "Différences avec le fichier";
-
 macro_rules! load_differences {
-	($set1: ident, $set2: ident, $err_base: ident, $name: expr, $err: ident) => {
+	($set1: ident, $set2: ident, $i18n: ident, $name: expr, $err: ident) => {
 		let mut diff: Vec<&File> = $set1.symmetric_difference(&$set2).collect();
 		diff.sort();
-		if !$name.is_empty() {
-			let _ = writeln!($err, "{} {} :", $err_base, $name);
+		let msg = if !$name.is_empty() {
+			$i18n.fmt(
+				"msg_err_diff_calc_ctn",
+				&[("file_name", Attr::String($name.to_string()))],
+			)
 		} else {
-			let _ = writeln!($err, "{}:", $err_base);
+			$i18n.msg("msg_err_diff_calc_ar")
 		};
+		let _ = writeln!($err, "{}", msg);
 		$err += &diff
 			.iter()
 			.filter(|f| $set2.iter().any(|e| e.path == f.path))
@@ -30,35 +31,35 @@ macro_rules! load_differences {
 	};
 }
 
-struct ContentFileError {
-	msg: String,
+enum ContentFileError {
+	InvalidFormat,
+	Other(String),
 }
 
 impl ContentFileError {
-	fn invalid_fmt() -> Self {
-		MSG_INVALID_FILE_FORMAT.into()
+	fn disp(&self, i18n: &I18n) -> String {
+		match self {
+			ContentFileError::InvalidFormat => i18n.msg("msg_check_invalid_format"),
+			ContentFileError::Other(msg) => msg.to_owned(),
+		}
 	}
 }
 
 impl From<&str> for ContentFileError {
 	fn from(error: &str) -> Self {
-		ContentFileError {
-			msg: error.to_string(),
-		}
+		ContentFileError::Other(error.to_string())
 	}
 }
 
 impl From<std::num::ParseIntError> for ContentFileError {
 	fn from(_error: std::num::ParseIntError) -> Self {
-		ContentFileError::invalid_fmt()
+		ContentFileError::InvalidFormat
 	}
 }
 
 impl From<std::io::Error> for ContentFileError {
 	fn from(error: std::io::Error) -> Self {
-		ContentFileError {
-			msg: error.to_string(),
-		}
+		ContentFileError::Other(error.to_string())
 	}
 }
 
@@ -115,19 +116,27 @@ impl fmt::Display for File {
 }
 
 pub fn check_files(
+	i18n: &I18n,
 	file_list: &FileList,
 	content_file_name: &str,
 	email: &Option<Email>,
 ) -> Result<(), String> {
-	let content_file_set =
-		load_content_file(file_list).map_err(|e| format!("{}: {}", content_file_name, e.msg))?;
+	let content_file_set = load_content_file(file_list).map_err(|e| {
+		i18n.fmt(
+			"error_desc",
+			&[
+				("error", Attr::String(content_file_name.to_string())),
+				("description", Attr::String(e.disp(i18n))),
+			],
+		)
+	})?;
 	let calculated_set: HashSet<File> = file_list.iter_files().map(File::from).collect();
 	let mut error_msg = String::new();
 	if !content_file_set.is_subset(&calculated_set) {
 		load_differences!(
 			calculated_set,
 			content_file_set,
-			ERR_DIFF_CALC_CTN,
+			i18n,
 			content_file_name,
 			error_msg
 		);
@@ -145,7 +154,7 @@ pub fn check_files(
 			if !error_msg.is_empty() {
 				error_msg += "\n\n";
 			}
-			load_differences!(calculated_set, email_set, ERR_DIFF_CALC_AR, "", error_msg);
+			load_differences!(calculated_set, email_set, i18n, "", error_msg);
 		}
 	}
 	if error_msg.is_empty() {
@@ -169,7 +178,7 @@ fn load_content_file(file_list: &FileList) -> Result<HashSet<File>, ContentFileE
 		let v: Vec<&str> = line.split('\t').collect();
 		let nb_elems = v.len();
 		if nb_elems == 3 || nb_elems == 4 {
-			let mut path = *v.first().ok_or_else(ContentFileError::invalid_fmt)?;
+			let mut path = *v.first().ok_or(ContentFileError::InvalidFormat)?;
 			if !crate::CONTENT_FILE_PATH_PREFIX.is_empty() {
 				path = match path.strip_prefix(crate::CONTENT_FILE_PATH_PREFIX) {
 					Some(rp) => rp,
@@ -177,13 +186,10 @@ fn load_content_file(file_list: &FileList) -> Result<HashSet<File>, ContentFileE
 				};
 			}
 			let file_path = PathBuf::from(path);
-			let file_hash = v
-				.get(2)
-				.ok_or_else(ContentFileError::invalid_fmt)?
-				.to_string();
+			let file_hash = v.get(2).ok_or(ContentFileError::InvalidFormat)?.to_string();
 			lst.insert(File::new(&file_path, &file_hash));
 		} else {
-			return Err(ContentFileError::invalid_fmt());
+			return Err(ContentFileError::InvalidFormat);
 		}
 	}
 	Ok(lst)

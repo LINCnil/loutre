@@ -3,3 +3,15 @@
 # - light
 # The default is light.
 theme = "light"
+
+# Defines the application language
+#
+# May be any valid IETF BCP 47 language tag. If the indicated language
+# is not supported, fallback to a supported one is guaranteed.
+#
+# Supported languages are:
+#  - fr-FR
+# The default is fr-FR.
+#
+# See also: https://www.rfc-editor.org/info/bcp47
+lang = "fr-FR"

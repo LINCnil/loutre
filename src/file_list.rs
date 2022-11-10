@@ -1,6 +1,7 @@
 use crate::clipboard::Clipboard;
 use crate::file::File;
 use crate::hasher::hash_single_file;
+use crate::i18n::{Attr, I18n};
 use std::io::{self, Write};
 #[cfg(windows)]
 use std::os::windows::prelude::*;
@@ -10,14 +11,8 @@ use std::sync::mpsc::{self, channel};
 use std::sync::Arc;
 use std::{fmt, fs, thread};
 
-const MSG_ERR_FL: &str = "erreur lors de la création de la liste des fichiers";
-const MSG_ERR_FL_INTERRUPTED: &str =
-	"la création de la liste des fichiers a été interrompue prématurément.";
-const MSG_ERR_FL_NOT_READY: &str = "la liste des fichiers n'a pas encore pu être construite.";
-/*
- * Microsoft Windows File Attribute Constants
- * https://docs.microsoft.com/en-us/windows/win32/fileio/file-attribute-constants
- */
+// Microsoft Windows File Attribute Constants
+// https://docs.microsoft.com/en-us/windows/win32/fileio/file-attribute-constants
 #[cfg(windows)]
 const FILE_ATTRIBUTE_HIDDEN: u32 = 0x2;
 #[cfg(windows)]
@@ -134,7 +129,7 @@ impl FileListBuilder {
 		Ok(())
 	}
 
-	pub fn update_state(&mut self) {
+	pub fn update_state(&mut self, i18n: &I18n) {
 		if let FileListBuilderState::Ask(_) = &self.state {
 			return;
 		}
@@ -168,7 +163,13 @@ impl FileListBuilder {
 					self.state = FileListBuilderState::Ok;
 				}
 				FileListBuilderResponse::Error(e) => {
-					let msg = format!("{} : {}", MSG_ERR_FL, e);
+					let msg = i18n.fmt(
+						"error_desc",
+						&[
+							("error", Attr::String(i18n.msg("msg_err_fl"))),
+							("description", Attr::String(e.to_string())),
+						],
+					);
 					self.state = FileListBuilderState::Err(msg);
 				}
 			},
@@ -176,7 +177,7 @@ impl FileListBuilder {
 				if e == mpsc::TryRecvError::Disconnected
 					&& self.state == FileListBuilderState::Scanning
 				{
-					self.state = FileListBuilderState::Err(MSG_ERR_FL_INTERRUPTED.to_string());
+					self.state = FileListBuilderState::Err(i18n.msg("msg_err_fl_interrupted"));
 				}
 			}
 		}
@@ -225,10 +226,10 @@ impl FileListBuilder {
 		}
 	}
 
-	pub fn get_file_list(&self) -> Result<FileList, String> {
+	pub fn get_file_list(&self, i18n: &I18n) -> Result<FileList, String> {
 		match &self.state {
-			FileListBuilderState::Ask(_) => Err(MSG_ERR_FL_NOT_READY.to_string()),
-			FileListBuilderState::Scanning => Err(MSG_ERR_FL_NOT_READY.to_string()),
+			FileListBuilderState::Ask(_) => Err(i18n.msg("msg_err_fl_not_ready")),
+			FileListBuilderState::Scanning => Err(i18n.msg("msg_err_fl_not_ready")),
 			FileListBuilderState::Err(e) => Err(e.to_owned()),
 			FileListBuilderState::Ok => Ok(FileList {
 				path: self.path.to_owned(),
@@ -297,26 +298,32 @@ impl FileList {
 		self.files.push(new_file);
 	}
 
-	pub fn write_content_file(&mut self) -> io::Result<()> {
+	pub fn write_content_file(&mut self, i18n: &I18n) -> io::Result<()> {
 		self.files.sort_by(File::cmp_name);
 		let mut content_file = fs::File::create(&self.content_file_path)?;
-		content_file.write_all(crate::CONTENT_FILE_HEADER.as_bytes())?;
+		let header = format!(
+			"{}\t{}\t{}\r\n",
+			i18n.msg("content_file_header.name"),
+			i18n.msg("content_file_header.size"),
+			"SHA256"
+		);
+		content_file.write_all(header.as_bytes())?;
 		for f in &self.files {
 			content_file.write_all(&f.get_content_file_line())?;
 		}
 		Ok(())
 	}
 
-	pub fn set_clipboard(&mut self, clipboard: &mut Clipboard, nb_start: u32) {
+	pub fn set_clipboard(&mut self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
 		self.files.sort_by(File::cmp_name);
-		clipboard.set_clipboard(self, nb_start);
+		clipboard.set_clipboard(i18n, self, nb_start);
 	}
 
-	pub fn set_clipboard_ctn_file(&self, clipboard: &mut Clipboard, nb_start: u32) {
+	pub fn set_clipboard_ctn_file(&self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
 		if let Ok(meta) = self.content_file_path.metadata() {
 			let file = File::create_dummy(&self.content_file_path, &self.path, meta.len(), "");
 			if let Ok(f) = hash_single_file(&file) {
-				clipboard.set_clipboard_ctn_file(&f, self.get_nb_files(), nb_start);
+				clipboard.set_clipboard_ctn_file(i18n, &f, self.get_nb_files(), nb_start);
 			}
 		}
 	}

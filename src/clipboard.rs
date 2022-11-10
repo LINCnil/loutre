@@ -1,12 +1,9 @@
 use crate::file::File;
 use crate::file_list::FileList;
+use crate::i18n::{Attr, I18n};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
-const CTN_FILE_MSG_1: &str =
-	"copie sur support informatique d'un document remis au responsable des lieux, intitulé";
-const CTN_FILE_MSG_2: &str = "contenant l'inventaire des";
-const CTN_FILE_MSG_3: &str = "pièces numériques copiées durant la mission de contrôle. Pour chaque pièce est précisé son intitulé, sa taille et son empreinte numérique au format SHA256.";
 const HTML_BOLD_OPEN: &str = "<b>";
 const HTML_BOLD_CLOSE: &str = "</b>";
 const HTML_FONT_SMALL_OPEN: &str = "<small>";
@@ -20,13 +17,8 @@ const HTML_LIST_ELEM_CLOSE: &str = "</li>";
 const HTML_NEW_LINE: &str = "<br>";
 const HTML_P_OPEN: &str = "<p>";
 const HTML_P_CLOSE: &str = "</p>";
-const TPL_DIR_1: &str = "copie sur support informatique d'un dossier intitulé";
-const TPL_DIR_2: &str = "contenant";
-const TPL_DIR_3: &str = "document";
-const TPL_START_HTML: &str = "PIÈCE N<sup>o</sup>";
-const TPL_START_TXT: &str = "PIÈCE No";
-const TPL_FILE: &str = "copie sur support informatique d'un document intitulé";
-const TPL_FILE_UNIT: &str = "octets";
+const HTML_SUP_OPEN: &str = "<sup>";
+const HTML_SUP_CLOSE: &str = "</sup>";
 const TPL_HASH_METHOD: &str = "SHA-256";
 
 macro_rules! if_html {
@@ -50,15 +42,21 @@ impl Clipboard {
 }
 
 impl Clipboard {
-	pub fn set_clipboard(&mut self, file_list: &FileList, nb_start: u32) {
-		let html = get_clipboard_content(file_list, true, nb_start);
-		let alt_text = get_clipboard_content(file_list, false, nb_start);
+	pub fn set_clipboard(&mut self, i18n: &I18n, file_list: &FileList, nb_start: u32) {
+		let html = get_clipboard_content(i18n, file_list, true, nb_start);
+		let alt_text = get_clipboard_content(i18n, file_list, false, nb_start);
 		self.set_html(&html, &alt_text);
 	}
 
-	pub fn set_clipboard_ctn_file(&mut self, file: &File, nb_files: usize, nb_start: u32) {
-		let html = get_clipboard_content_ctn_file(file, true, nb_files, nb_start);
-		let alt_text = get_clipboard_content_ctn_file(file, false, nb_files, nb_start);
+	pub fn set_clipboard_ctn_file(
+		&mut self,
+		i18n: &I18n,
+		file: &File,
+		nb_files: usize,
+		nb_start: u32,
+	) {
+		let html = get_clipboard_content_ctn_file(i18n, file, true, nb_files, nb_start);
+		let alt_text = get_clipboard_content_ctn_file(i18n, file, false, nb_files, nb_start);
 		self.set_html(&html, &alt_text);
 	}
 
@@ -129,32 +127,50 @@ fn get_exhibits(file_list: &FileList) -> Vec<Exhibit> {
 	lst
 }
 
-fn format_file(n: u32, file: &File, html: bool) -> String {
+fn format_file(i18n: &I18n, n: u32, file: &File, html: bool) -> String {
 	let mut ctn = String::new();
+	let sup_open = if html {
+		HTML_SUP_OPEN.to_string()
+	} else {
+		String::new()
+	};
+	let sup_close = if html {
+		HTML_SUP_CLOSE.to_string()
+	} else {
+		String::new()
+	};
 	if let Some(hash) = file.get_hash() {
 		if n != 1 {
 			let _ = writeln!(ctn, "\n");
 		}
+		let file_size = file.get_size();
 		let _ = write!(
 			ctn,
-			"{}{}{} {} :{} {} « {} »{}\n{}{}{}{} {}, {} {}{}{}{}{}",
+			"{}{}{}{} {}{}\n{}{}{}{} {}, {} {}{}{}{}{}",
 			if_html!(HTML_P_OPEN, html),
 			// Numéro de la pièce
 			if_html!(HTML_BOLD_OPEN, html),
-			if html { TPL_START_HTML } else { TPL_START_TXT },
-			n,
+			i18n.fmt(
+				"msg_exhibit",
+				&[
+					("sup_open", Attr::String(sup_open)),
+					("sup_close", Attr::String(sup_close)),
+					("nb", Attr::U32(n)),
+				]
+			),
 			if_html!(HTML_BOLD_CLOSE, html),
 			// Nature de la pièce
-			TPL_FILE,
-			// Nom de la pièce
-			file.display_file_name(),
+			i18n.fmt(
+				"msg_file",
+				&[("file_name", Attr::String(file.display_file_name()))]
+			),
 			if_html!(HTML_NEW_LINE, html),
 			if_html!(HTML_FONT_SMALL_OPEN, html),
 			// Taille de la pièce
 			if_html!(HTML_ITALIC_OPEN, html),
-			file.get_size(),
+			file_size,
 			if_html!(HTML_ITALIC_CLOSE, html),
-			TPL_FILE_UNIT,
+			i18n.fmt("msg_file_unit", &[("nb", Attr::U64(file_size))]),
 			// Empreinte de la pièce
 			TPL_HASH_METHOD,
 			if_html!(HTML_ITALIC_OPEN, html),
@@ -167,32 +183,48 @@ fn format_file(n: u32, file: &File, html: bool) -> String {
 	ctn
 }
 
-fn format_dir(n: u32, files: &[File], html: bool) -> String {
+fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool) -> String {
 	let dir_name = get_dir_name(files.first().unwrap()).unwrap();
+	let sup_open = if html {
+		HTML_SUP_OPEN.to_string()
+	} else {
+		String::new()
+	};
+	let sup_close = if html {
+		HTML_SUP_CLOSE.to_string()
+	} else {
+		String::new()
+	};
 	let mut ctn = format!(
-		"{}{}{}{} {} :{} {} « {} » {} {} {}{} :{}\n{}\n",
+		"{}{}{}{}{} {}{}\n{}\n",
 		if n != 1 { "\n\n" } else { "" },
 		if_html!(HTML_P_OPEN, html),
 		// Numéro de la pièce
 		if_html!(HTML_BOLD_OPEN, html),
-		if html { TPL_START_HTML } else { TPL_START_TXT },
-		n,
+		i18n.fmt(
+			"msg_exhibit",
+			&[
+				("sup_open", Attr::String(sup_open)),
+				("sup_close", Attr::String(sup_close)),
+				("nb", Attr::U32(n)),
+			]
+		),
 		if_html!(HTML_BOLD_CLOSE, html),
 		// Nature de la pièce
-		TPL_DIR_1,
-		// Nom du dossier
-		dir_name.display(),
-		TPL_DIR_2,
-		// Nombre de documents
-		files.len(),
-		TPL_DIR_3,
-		if files.len() != 1 { "s" } else { "" },
+		i18n.fmt(
+			"msg_directory",
+			&[
+				("dir_name", Attr::String(dir_name.display().to_string())),
+				("nb", Attr::Usize(files.len())),
+			]
+		),
 		if_html!(HTML_P_CLOSE, html),
 		// Début de la liste
 		if_html!(HTML_LIST_OPEN, html),
 	);
 	for file in files {
 		if let Some(hash) = file.get_hash() {
+			let file_size = file.get_size();
 			let _ = writeln!(
 				ctn,
 				"{}{}« {} »{}\n{}{}{}{}{} {}, {} : {}{}{}{}{}",
@@ -206,9 +238,9 @@ fn format_dir(n: u32, files: &[File], html: bool) -> String {
 				if_html!(HTML_FONT_SMALL_OPEN, html),
 				// Taille de la pièce
 				if_html!(HTML_ITALIC_OPEN, html),
-				file.get_size(),
+				file_size,
 				if_html!(HTML_ITALIC_CLOSE, html),
-				TPL_FILE_UNIT,
+				i18n.fmt("msg_file_unit", &[("nb", Attr::U64(file_size))]),
 				// Empreinte de la pièce
 				TPL_HASH_METHOD,
 				if_html!(HTML_ITALIC_OPEN, html),
@@ -224,16 +256,16 @@ fn format_dir(n: u32, files: &[File], html: bool) -> String {
 	ctn
 }
 
-fn get_clipboard_content(file_list: &FileList, html: bool, nb_start: u32) -> String {
+fn get_clipboard_content(i18n: &I18n, file_list: &FileList, html: bool, nb_start: u32) -> String {
 	let mut ctn = String::new();
 	let mut n = nb_start;
 	for e in get_exhibits(file_list) {
 		match e {
 			Exhibit::Dir(d) => {
-				ctn += &format_dir(n, &d, html);
+				ctn += &format_dir(i18n, n, &d, html);
 			}
 			Exhibit::File(f) => {
-				ctn += &format_file(n, &f, html);
+				ctn += &format_file(i18n, n, &f, html);
 			}
 		};
 		n += 1;
@@ -242,34 +274,54 @@ fn get_clipboard_content(file_list: &FileList, html: bool, nb_start: u32) -> Str
 }
 
 fn get_clipboard_content_ctn_file(
+	i18n: &I18n,
 	file: &File,
 	html: bool,
 	nb_files: usize,
 	nb_start: u32,
 ) -> String {
 	if let Some(hash) = file.get_hash() {
+		let sup_open = if html {
+			HTML_SUP_OPEN.to_string()
+		} else {
+			String::new()
+		};
+		let sup_close = if html {
+			HTML_SUP_CLOSE.to_string()
+		} else {
+			String::new()
+		};
+		let file_size = file.get_size();
 		format!(
-			"{}{}{} {} :{} {} « {} » {} {} {}{}\n{}{}{}{} {}, {} {}{}{}{}{}",
+			"{}{}{}{} {}{}\n{}{}{}{} {}, {} {}{}{}{}{}",
 			if_html!(HTML_P_OPEN, html),
 			// Numéro de la pièce
 			if_html!(HTML_BOLD_OPEN, html),
-			if html { TPL_START_HTML } else { TPL_START_TXT },
-			nb_start,
+			i18n.fmt(
+				"msg_exhibit",
+				&[
+					("sup_open", Attr::String(sup_open)),
+					("sup_close", Attr::String(sup_close)),
+					("nb", Attr::U32(nb_start)),
+				]
+			),
 			if_html!(HTML_BOLD_CLOSE, html),
 			// Nature de la pièce
-			CTN_FILE_MSG_1,
-			// Nom de la pièce
-			file.display_file_name(),
-			CTN_FILE_MSG_2,
-			nb_files,
-			CTN_FILE_MSG_3,
+			i18n.fmt(
+				"msg_ctn_file",
+				&[
+					("file_name", Attr::String(file.display_file_name())),
+					("nb", Attr::Usize(nb_files)),
+					("hash_func", Attr::String(TPL_HASH_METHOD.to_string())),
+				]
+			),
 			if_html!(HTML_NEW_LINE, html),
 			if_html!(HTML_FONT_SMALL_OPEN, html),
 			// Taille de la pièce
 			if_html!(HTML_ITALIC_OPEN, html),
-			file.get_size(),
+			file_size,
 			if_html!(HTML_ITALIC_CLOSE, html),
-			TPL_FILE_UNIT,
+			i18n.fmt("msg_file_unit", &[("nb", Attr::U64(file_size))]),
 			// Empreinte de la pièce
 			TPL_HASH_METHOD,
 			if_html!(HTML_ITALIC_OPEN, html),

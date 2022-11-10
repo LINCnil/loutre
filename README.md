@@ -31,6 +31,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `file_list.rs` : gestion de la liste des fichiers
 - `file.rs` : représentation interne d'un fichier
 - `hasher.rs` : calcul des empreintes numériques
+- `i18n.rs` : gestion de l'[internationalisation](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))
 - `main.rs` : point d'entrée du logiciel
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
 - `theme.rs` : gestion des thèmes

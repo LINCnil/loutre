@@ -3,6 +3,7 @@ use crate::clipboard::Clipboard;
 use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::{FileHasher, HashStatus};
+use crate::i18n::{Attr, I18n};
 use crate::theme::Theme;
 use eframe::egui::{self, Color32, Context, RichText};
 use egui_extras::RetainedImage;
@@ -10,34 +11,10 @@ use humansize::{make_format, DECIMAL};
 use std::path::Path;
 
 const BTN_CLIPBOARD: &str = "🗐";
-const BTN_CLIPBOARD_TIP: &str = "Copier l'empreinte de l'ensemble des pièces";
 const BTN_CLIPBOARD_CTN_FILE: &str = "📋";
-const BTN_CLIPBOARD_CTN_FILE_TIP: &str = "Copier l'empreinte du fichier contenant les empreintes";
-const BTN_FILE_CHOICE_YES: &str = "Oui";
-const BTN_FILE_CHOICE_YESALL: &str = "Oui pour tous";
-const BTN_FILE_CHOICE_NO: &str = "Non";
-const BTN_FILE_CHOICE_NOALL: &str = "Non pour tous";
-const BTN_SELECT_DIR: &str = "🗁 Ouvrir un dossier…";
-const BTN_SELECT_MAIL: &str = "📧 Ouvrir un AR…";
+const BTN_SELECT_DIR: &str = "🗁";
+const BTN_SELECT_MAIL: &str = "📧";
 const BTN_TRASH: &str = "🗑";
-const BTN_TRASH_TIP: &str = "Réinitialiser";
-const BTN_CACL_FINGERPRINTS: &str = "Calculer les empreintes";
-const BTN_CHECK_FINGERPRINTS: &str = "Vérifier les empreintes";
-const LABEL_NB_FILES_START: &str = "Numéro de la première pièce";
-const LABEL_CONTENT_FILE: &str = "Nom du fichier d'empreintes";
-const LABEL_EMAIL: &str = "Courrier électronique";
-const MSG_ERR_FL_NOT_FOUND: &str = "Erreur interne: liste de fichiers non trouvée.";
-const MSG_ERR_LOAD_DIR: &str = "Erreur lors du chargement du dossier";
-const MSG_FILE_CHOICE_DIR_HIDDEN: &str = "est un dossier caché.";
-const MSG_FILE_CHOICE_DIR_SYSTEM: &str = "est un dossier système.";
-const MSG_FILE_CHOICE_FILE_HIDDEN: &str = "est un fichier caché.";
-const MSG_FILE_CHOICE_FILE_SYSTEM: &str = "est un fichier système.";
-const MSG_FILE_CHOICE_INCLUDE: &str = "Souhaitez-vous l'inclure ?";
-const MSG_INFO_CHECK_OK: &str = "Les empreintes correspondent.";
-const MSG_INFO_HAS_CTN_FILE: &str = "Le dossier comporte un fichier";
-const MSG_INFO_DEL_CTN_FILE: &str = "supprimer";
-const MSG_INFO_NB_FILES_1: &str = "Le dossier comporte";
-const MSG_INFO_NB_FILES_2: &str = "fichiers.";
 const SIGN_INFO: &str = "ℹ";
 const SIGN_WARNING: &str = "⚠";
 const UI_EXTRA_SPACE: f32 = 6.0;
@@ -52,6 +29,7 @@ macro_rules! reset_messages {
 }
 
 pub struct ChecksumApp {
+	i18n: I18n,
 	clipboard: Clipboard,
 	logo: RetainedImage,
 	content_file_name: String,
@@ -89,12 +67,15 @@ impl eframe::App for ChecksumApp {
 }
 
 impl ChecksumApp {
-	pub fn new(theme: &Theme) -> Self {
+	pub fn new(theme: &Theme, lang: &str) -> Self {
 		let logo = RetainedImage::from_image_bytes("logo", &theme.get_logo_bytes()).unwrap();
+		let i18n = I18n::from_language_tag(lang);
+		let content_file_name = i18n.msg("content_file_name");
 		Self {
+			i18n,
 			clipboard: Clipboard::new(),
 			logo,
-			content_file_name: crate::CONTENT_FILE_NAME.into(),
+			content_file_name,
 			nb_start: crate::NB_FILES_START,
 			file_hasher: None,
 			file_list: None,
@@ -107,9 +88,9 @@ impl ChecksumApp {
 
 	fn update_status(&mut self, ctx: &Context) {
 		if let Some(flb) = &mut self.file_list_builder {
-			flb.update_state();
+			flb.update_state(&self.i18n);
 			if flb.is_ready() {
-				match flb.get_file_list() {
+				match flb.get_file_list(&self.i18n) {
 					Ok(fl) => {
 						self.file_list = Some(fl);
 						self.file_list_builder = None;
@@ -128,7 +109,7 @@ impl ChecksumApp {
 					match &mut self.file_list {
 						Some(fl) => fl.replace_file(f),
 						None => {
-							self.error_msg = Some(MSG_ERR_FL_NOT_FOUND.to_string());
+							self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
 						}
 					};
 					ctx.request_repaint();
@@ -141,20 +122,30 @@ impl ChecksumApp {
 					match &mut self.file_list {
 						Some(fl) => {
 							if fl.has_content_file() {
-								match check_files(fl, &self.content_file_name, &self.email) {
+								match check_files(
+									&self.i18n,
+									fl,
+									&self.content_file_name,
+									&self.email,
+								) {
 									Ok(_) => {
-										self.success_msg = Some(MSG_INFO_CHECK_OK.to_string());
+										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
 									Err(e) => {
 										self.error_msg = Some(e);
 									}
 								}
-							} else if let Err(e) = fl.write_content_file() {
+							} else if let Err(e) = fl.write_content_file(&self.i18n) {
 								self.error_msg = Some(e.to_string());
 							} else if self.email.is_some() {
-								match check_files(fl, &self.content_file_name, &self.email) {
+								match check_files(
+									&self.i18n,
+									fl,
+									&self.content_file_name,
+									&self.email,
+								) {
 									Ok(_) => {
-										self.success_msg = Some(MSG_INFO_CHECK_OK.to_string());
+										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
 									Err(e) => {
 										self.error_msg = Some(e);
@@ -162,10 +153,10 @@ impl ChecksumApp {
 								}
 							}
 							self.file_hasher = None;
-							fl.set_clipboard(&mut self.clipboard, self.nb_start);
+							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
 						}
 						None => {
-							self.error_msg = Some(MSG_ERR_FL_NOT_FOUND.to_string());
+							self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
 						}
 					};
 					ctx.request_repaint();
@@ -188,8 +179,14 @@ impl ChecksumApp {
 					self.file_list_builder = Some(flb);
 				}
 				Err(e) => {
-					let msg = format!("{}: {}", MSG_ERR_LOAD_DIR, e);
-					self.error_msg = Some(msg);
+					let msg = self.i18n.msg("msg_err_load_dir");
+					self.error_msg = Some(self.i18n.fmt(
+						"error_desc",
+						&[
+							("error", Attr::String(e.to_string())),
+							("description", Attr::String(msg)),
+						],
+					));
 				}
 			};
 		}
@@ -214,11 +211,11 @@ impl ChecksumApp {
 			if self.file_hasher.is_none() {
 				if let Some(p) = &mut self.file_list {
 					if p.has_content_file() {
-						if ui.button(BTN_CHECK_FINGERPRINTS).clicked() {
+						if ui.button(self.i18n.msg("btn_check_fingerprints")).clicked() {
 							reset_messages!(self);
 							self.file_hasher = Some(FileHasher::new(p));
 						}
-					} else if ui.button(BTN_CACL_FINGERPRINTS).clicked() {
+					} else if ui.button(self.i18n.msg("btn_calc_fingerprints")).clicked() {
 						reset_messages!(self);
 						if let Err(e) = p.set_readonly() {
 							self.error_msg = Some(e.to_string());
@@ -228,18 +225,18 @@ impl ChecksumApp {
 					if p.has_hashes()
 						&& ui
 							.button(BTN_CLIPBOARD)
-							.on_hover_text(BTN_CLIPBOARD_TIP)
+							.on_hover_text(self.i18n.msg("btn_clipboard_tip"))
 							.clicked()
 					{
-						p.set_clipboard(&mut self.clipboard, self.nb_start);
+						p.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
 					}
 					if p.has_hashes()
 						&& p.has_content_file() && ui
 						.button(BTN_CLIPBOARD_CTN_FILE)
-						.on_hover_text(BTN_CLIPBOARD_CTN_FILE_TIP)
+						.on_hover_text(self.i18n.msg("btn_clipboard_ctn_file_tip"))
 						.clicked()
 					{
-						p.set_clipboard_ctn_file(&mut self.clipboard, self.nb_start);
+						p.set_clipboard_ctn_file(&self.i18n, &mut self.clipboard, self.nb_start);
 					}
 					ret = true;
 				}
@@ -250,14 +247,24 @@ impl ChecksumApp {
 
 	fn add_file_selection(&mut self, ui: &mut egui::Ui) {
 		ui.horizontal(|ui| {
-			if ui.button(BTN_SELECT_DIR).clicked() {
+			if ui
+				.button(self.i18n.fmt(
+					"btn_select_dir",
+					&[("icon", Attr::String(BTN_SELECT_DIR.to_string()))],
+				))
+				.clicked()
+			{
 				reset_messages!(self);
 				if let Some(path) = rfd::FileDialog::new().pick_folder() {
 					self.build_file_list(&path);
 				}
 			}
 			if let Some(p) = &self.file_list {
-				if ui.button(BTN_TRASH).on_hover_text(BTN_TRASH_TIP).clicked() {
+				if ui
+					.button(BTN_TRASH)
+					.on_hover_text(self.i18n.msg("btn_trash_tip"))
+					.clicked()
+				{
 					reset_messages!(self);
 					self.file_hasher = None;
 					self.file_list = None;
@@ -267,10 +274,16 @@ impl ChecksumApp {
 			}
 		});
 		ui.horizontal(|ui| {
-			if ui.button(BTN_SELECT_MAIL).clicked() {
+			if ui
+				.button(self.i18n.fmt(
+					"btn_select_mail",
+					&[("icon", Attr::String(BTN_SELECT_MAIL.to_string()))],
+				))
+				.clicked()
+			{
 				reset_messages!(self);
 				if let Some(path) = rfd::FileDialog::new()
-					.add_filter(LABEL_EMAIL, &["msg"])
+					.add_filter(&self.i18n.msg("label_email"), &["msg"])
 					.pick_file()
 				{
 					if let Ok(email) = Email::new(&path) {
@@ -279,7 +292,11 @@ impl ChecksumApp {
 				}
 			}
 			if let Some(e) = &self.email {
-				if ui.button(BTN_TRASH).on_hover_text(BTN_TRASH_TIP).clicked() {
+				if ui
+					.button(BTN_TRASH)
+					.on_hover_text(self.i18n.msg("btn_trash_tip"))
+					.clicked()
+				{
 					self.email = None;
 				} else {
 					ui.add(egui::Label::new(e.to_string()).wrap(true));
@@ -295,7 +312,7 @@ impl ChecksumApp {
 			egui::Grid::new("header_grid")
 				.num_columns(2)
 				.show(ui, |ui| {
-					ui.label(LABEL_CONTENT_FILE);
+					ui.label(self.i18n.msg("label_content_file"));
 					ui.add(
 						egui::TextEdit::singleline(&mut self.content_file_name)
 							.interactive(self.file_list.is_none())
@@ -303,7 +320,7 @@ impl ChecksumApp {
 					);
 					ui.end_row();
 
-					ui.label(LABEL_NB_FILES_START);
+					ui.label(self.i18n.msg("label_nb_files_start"));
 					let mut nb_str = self.nb_start.to_string();
 					let response =
 						ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
@@ -323,35 +340,53 @@ impl ChecksumApp {
 			if let Some(af) = flb.ask_for() {
 				ui.horizontal(|ui| {
 					ui.add(egui::Spinner::new());
-					let msg = if af.is_hidden {
-						if af.path.is_dir() {
-							MSG_FILE_CHOICE_DIR_HIDDEN
-						} else {
-							MSG_FILE_CHOICE_FILE_HIDDEN
-						}
-					} else if af.path.is_dir() {
-						MSG_FILE_CHOICE_DIR_SYSTEM
-					} else {
-						MSG_FILE_CHOICE_FILE_SYSTEM
-					};
 					let file_name = match af.path.file_name() {
 						Some(name) => Path::new(name).display(),
 						None => af.path.display(),
 					};
-					let msg = format!("{} {} {}", file_name, msg, MSG_FILE_CHOICE_INCLUDE);
-					ui.label(msg);
+					let file_name = format!("{}", file_name);
+					let msg = if af.is_hidden {
+						if af.path.is_dir() {
+							self.i18n.fmt(
+								"msg_file_choice_dir_hidden",
+								&[("file_name", Attr::String(file_name))],
+							)
+						} else {
+							self.i18n.fmt(
+								"msg_file_choice_file_hidden",
+								&[("file_name", Attr::String(file_name))],
+							)
+						}
+					} else if af.path.is_dir() {
+						self.i18n.fmt(
+							"msg_file_choice_dir_system",
+							&[("file_name", Attr::String(file_name))],
+						)
+					} else {
+						self.i18n.fmt(
+							"msg_file_choice_file_system",
+							&[("file_name", Attr::String(file_name))],
+						)
+					};
+					ui.label(self.i18n.fmt(
+						"msg_file_choice_include",
+						&[("file_desc", Attr::String(msg))],
+					));
 				});
 				ui.horizontal(|ui| {
-					if ui.button(BTN_FILE_CHOICE_YES).clicked() {
+					if ui.button(self.i18n.msg("btn_file_choice.yes")).clicked() {
 						flb.answer(FileAskAnswer::Allow);
 					}
-					if ui.button(BTN_FILE_CHOICE_YESALL).clicked() {
+					if ui
+						.button(self.i18n.msg("btn_file_choice.yes_all"))
+						.clicked()
+					{
 						flb.answer(FileAskAnswer::AllowAll);
 					}
-					if ui.button(BTN_FILE_CHOICE_NO).clicked() {
+					if ui.button(self.i18n.msg("btn_file_choice.no")).clicked() {
 						flb.answer(FileAskAnswer::Deny);
 					}
-					if ui.button(BTN_FILE_CHOICE_NOALL).clicked() {
+					if ui.button(self.i18n.msg("btn_file_choice.no_all")).clicked() {
 						flb.answer(FileAskAnswer::DenyAll);
 					}
 				});
@@ -387,9 +422,12 @@ impl ChecksumApp {
 				if p.has_content_file() {
 					ChecksumApp::add_info_label_extra(
 						ui,
-						&format!("{} {}.", MSG_INFO_HAS_CTN_FILE, self.content_file_name),
+						&self.i18n.fmt(
+							"msg_info_has_ctn_file",
+							&[("file_name", Attr::String(self.content_file_name.clone()))],
+						),
 						|ui| {
-							if ui.link(MSG_INFO_DEL_CTN_FILE).clicked() {
+							if ui.link(self.i18n.msg("msg_info_del_ctn_file")).clicked() {
 								let _ = std::fs::remove_file(p.get_content_file_path());
 							}
 						},
@@ -399,10 +437,9 @@ impl ChecksumApp {
 					if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
 						ChecksumApp::add_warning_label(
 							ui,
-							&format!(
-								"{} {} {}",
-								MSG_INFO_NB_FILES_1, nb_files, MSG_INFO_NB_FILES_2
-							),
+							&self
+								.i18n
+								.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
 						);
 					}
 				}

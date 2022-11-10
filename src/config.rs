@@ -5,8 +5,10 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 
 #[derive(Default, Deserialize)]
+#[serde(default)]
 pub struct Config {
 	pub theme: Theme,
+	pub lang: String,
 }
 
 impl Config {
@@ -50,21 +52,30 @@ mod tests {
 
 	#[test]
 	fn test_config() {
-		let s = r#"theme = "dark""#;
+		let s = r#"
+theme = "dark"
+lang = "fr"
+"#;
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Theme::Dark);
+		assert_eq!(&cfg.lang, "fr");
 	}
 
 	#[test]
 	fn test_empty_config() {
 		let cfg = Config::load_config("");
 		assert_eq!(cfg.theme, Theme::default());
+		assert_eq!(cfg.lang, String::new());
 	}
 
 	#[test]
 	fn test_invalid_config() {
-		let s = r#"theme = "dark invalid theme""#;
+		let s = r#"
+theme = "dark invalid theme"
+lang = "not a valid language tag"
+"#;
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Theme::default());
+		assert_eq!(cfg.lang, String::new());
 	}
 }

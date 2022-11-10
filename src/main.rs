@@ -8,12 +8,14 @@ mod email;
 mod file;
 mod file_list;
 mod hasher;
+mod i18n;
 mod path_cmp;
 mod theme;
 
 const APP_NAME: &str = "LOUTRE — LOgiciel Unique de TRaitement des Empreintes";
 const BUFF_SIZE: usize = 32768;
 const BUFF_NOTIF_THRESHOLD: u64 = 700;
+const DEFAULT_LANG: &str = "fr-FR";
 
 #[cfg(unix)]
 const CONFIG_FILE_DIR: &str = "cnil";
@@ -23,8 +25,6 @@ const CONFIG_FILE_SUBDIR: &str = "loutre";
 const CONFIG_FILE_NAME: &str = "config.toml";
 const DEFAULT_CONFIG: &str = include_str!("../default_config.toml");
 
-const CONTENT_FILE_HEADER: &str = "Nom du document\tTaille (octets)\tSHA256\r\n";
-const CONTENT_FILE_NAME: &str = "contenu.txt";
 #[cfg(windows)]
 const CONTENT_FILE_PATH_PREFIX: &str = "\\";
 #[cfg(not(windows))]
@@ -48,7 +48,7 @@ fn main() {
 		default_theme: config.theme.clone().into(),
 		..Default::default()
 	};
-	let app = app::ChecksumApp::new(&config.theme);
+	let app = app::ChecksumApp::new(&config.theme, &config.lang);
 	let app_name = format!("{} v{}", APP_NAME, env!("CARGO_PKG_VERSION"));
 	eframe::run_native(&app_name, win_opts, Box::new(|_cc| Box::new(app)));
 }
