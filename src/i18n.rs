@@ -80,3 +80,17 @@ impl I18n {
 		}
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use fluent::FluentResource;
+
+	#[test]
+	fn test_language_files() {
+		let res_lst = [("fr-FR", include_str!("../locale/fr-FR.ftl"))];
+		for (tag, res) in res_lst {
+			let res = FluentResource::try_new(res.to_string());
+			assert!(res.is_ok(), "{}: unable to parse language file", tag)
+		}
+	}
+}
