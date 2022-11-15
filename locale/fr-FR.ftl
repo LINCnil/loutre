@@ -26,6 +26,11 @@ btn_calc_fingerprints = Calculer les empreintes
 btn_check_fingerprints = Vérifier les empreintes
 
 
+## Progress
+
+progress = Réalisé : { $done } / { $total }
+
+
 ## Clipboard buttons
 
 btn_clipboard_tip = Copier l’empreinte de l’ensemble des pièces

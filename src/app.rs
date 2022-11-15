@@ -405,10 +405,12 @@ impl ChecksumApp {
 				.animate(true);
 			ui.add(progress_bar);
 			let formatter = make_format(DECIMAL);
-			let remaining = format!(
-				"Réalisé: {} / {}",
-				formatter(hr.get_processed_bytes()),
-				formatter(hr.get_total_bytes())
+			let remaining = self.i18n.fmt(
+				"progress",
+				&[
+					("done", Attr::String(formatter(hr.get_processed_bytes()))),
+					("total", Attr::String(formatter(hr.get_total_bytes()))),
+				],
 			);
 			ui.label(remaining);
 			return true;
