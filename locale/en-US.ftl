@@ -15,7 +15,7 @@ label_content_file = Name of the checksum file
 ## Selection buttons
 
 btn_select_dir = { $icon } Open a directory…
-btn_select_mail = { $icon } Open an notice of receipt…
+btn_select_mail = { $icon } Open a notice of receipt…
 btn_trash_tip = Reset
 label_email = Email
 
@@ -33,7 +33,7 @@ progress = Progress: { $done } / { $total }
 
 ## Clipboard buttons
 
-btn_clipboard_tip = Copy the checksum of each evidences
+btn_clipboard_tip = Copy the checksum of each evidence
 btn_clipboard_ctn_file_tip = Copy the checksum of the checksum file
 
 
