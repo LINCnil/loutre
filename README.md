@@ -14,9 +14,20 @@ cargo build --release
 L'exécutable se trouve alors dans le dossier `target/release/`.
 
 
-## Options de lancement
+## Configuration
 
-Il est possible, lors du lancement, de modifier l'apparence visuelle en utilisant le paramètre `--theme` suivi du nom du thème à utiliser. Les thèmes disponibles sont `light` et `dark`.
+La configuration du logiciel se fait dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
+
+- Microsoft Windows : `C:\Users\{UTILISATEUR}\AppData\Roaming\CNIL\loutre`
+- GNU/Linux : `$XDG_CONFIG_HOME/CNIL/loutre`
+- GNU/Linux : `$HOME/.config/CNIL/loutre`
+- macOS : `$HOME/Library/Application Support/CNIL/loutre`
+
+Ce fichier est automatiquement généré lors du lancement du logiciel. Les options de configuration possible sont :
+
+- `theme` : chaîne de caractères
+  * `light` (défaut)
+  * `dark`
 
 
 ## Architecture technique
