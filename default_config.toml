@@ -10,6 +10,7 @@ theme = "light"
 # is not supported, fallback to a supported one is guaranteed.
 #
 # Supported languages are:
+#  - en-US
 #  - fr-FR
 # The default is fr-FR.
 #

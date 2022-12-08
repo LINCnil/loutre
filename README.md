@@ -28,6 +28,9 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
 - `theme` : chaîne de caractères
   * `light` (défaut)
   * `dark`
+- `lang` : chaîne de caractères représentant une étiquettes d’identification de langues IETF telle que définiee par la recommandation standard BCP 47
+  * `en-US`
+  * `fr-FR` (défaut)
 
 
 ## Architecture technique
