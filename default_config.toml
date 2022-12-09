@@ -20,3 +20,10 @@ lang = "fr-FR"
 # Define the name of the content file.
 # The default is contenu.txt
 content_file_name = "contenu.txt"
+
+# Defines how the number of evidence in a directory is displayed.
+# Possible values are:
+# - letters
+# - western arabic numerals
+# The default is "western arabic numerals"
+number_representation = "western arabic numerals"

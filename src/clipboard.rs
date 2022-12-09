@@ -1,6 +1,7 @@
 use crate::file::File;
 use crate::file_list::FileList;
 use crate::i18n::{Attr, I18n};
+use crate::nb_repr::NbRepr;
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
@@ -33,18 +34,22 @@ macro_rules! if_html {
 
 pub struct Clipboard {
 	internal: Option<arboard::Clipboard>,
+	nb_repr: NbRepr,
 }
 
 impl Clipboard {
-	pub fn new() -> Self {
-		Self { internal: None }
+	pub fn new(nb_repr: NbRepr) -> Self {
+		Self {
+			internal: None,
+			nb_repr,
+		}
 	}
 }
 
 impl Clipboard {
 	pub fn set_clipboard(&mut self, i18n: &I18n, file_list: &FileList, nb_start: u32) {
-		let html = get_clipboard_content(i18n, file_list, true, nb_start);
-		let alt_text = get_clipboard_content(i18n, file_list, false, nb_start);
+		let html = get_clipboard_content(i18n, file_list, true, nb_start, self.nb_repr);
+		let alt_text = get_clipboard_content(i18n, file_list, false, nb_start, self.nb_repr);
 		self.set_html(&html, &alt_text);
 	}
 
@@ -55,8 +60,10 @@ impl Clipboard {
 		nb_files: usize,
 		nb_start: u32,
 	) {
-		let html = get_clipboard_content_ctn_file(i18n, file, true, nb_files, nb_start);
-		let alt_text = get_clipboard_content_ctn_file(i18n, file, false, nb_files, nb_start);
+		let html =
+			get_clipboard_content_ctn_file(i18n, file, true, nb_files, nb_start, self.nb_repr);
+		let alt_text =
+			get_clipboard_content_ctn_file(i18n, file, false, nb_files, nb_start, self.nb_repr);
 		self.set_html(&html, &alt_text);
 	}
 
@@ -183,7 +190,7 @@ fn format_file(i18n: &I18n, n: u32, file: &File, html: bool) -> String {
 	ctn
 }
 
-fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool) -> String {
+fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool, nb_repr: NbRepr) -> String {
 	let dir_name = get_dir_name(files.first().unwrap()).unwrap();
 	let sup_open = if html {
 		HTML_SUP_OPEN.to_string()
@@ -216,6 +223,10 @@ fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool) -> String {
 			&[
 				("dir_name", Attr::String(dir_name.display().to_string())),
 				("nb", Attr::Usize(files.len())),
+				(
+					"nb_str",
+					Attr::String(nb_repr.usize_to_string(files.len(), i18n))
+				),
 			]
 		),
 		if_html!(HTML_P_CLOSE, html),
@@ -256,13 +267,19 @@ fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool) -> String {
 	ctn
 }
 
-fn get_clipboard_content(i18n: &I18n, file_list: &FileList, html: bool, nb_start: u32) -> String {
+fn get_clipboard_content(
+	i18n: &I18n,
+	file_list: &FileList,
+	html: bool,
+	nb_start: u32,
+	nb_repr: NbRepr,
+) -> String {
 	let mut ctn = String::new();
 	let mut n = nb_start;
 	for e in get_exhibits(file_list) {
 		match e {
 			Exhibit::Dir(d) => {
-				ctn += &format_dir(i18n, n, &d, html);
+				ctn += &format_dir(i18n, n, &d, html, nb_repr);
 			}
 			Exhibit::File(f) => {
 				ctn += &format_file(i18n, n, &f, html);
@@ -279,6 +296,7 @@ fn get_clipboard_content_ctn_file(
 	html: bool,
 	nb_files: usize,
 	nb_start: u32,
+	nb_repr: NbRepr,
 ) -> String {
 	if let Some(hash) = file.get_hash() {
 		let sup_open = if html {
@@ -312,6 +330,10 @@ fn get_clipboard_content_ctn_file(
 				&[
 					("file_name", Attr::String(file.display_file_name())),
 					("nb", Attr::Usize(nb_files)),
+					(
+						"nb_str",
+						Attr::String(nb_repr.usize_to_string(nb_files, i18n))
+					),
 					("hash_func", Attr::String(TPL_HASH_METHOD.to_string())),
 				]
 			),

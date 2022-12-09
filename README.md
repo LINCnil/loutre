@@ -32,6 +32,9 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `en-US`
   * `fr-FR` (défaut)
 - `content_file_name` : chaîne de caractères définissant le nom du fichier dans lequel sont contenues les empreintes des pièces (par défaut, `contenu.txt`)
+- `number_representation` : chaîne de caractères définissant la manière dont est représenté le nombre de pièces dans un dossier
+  * `letters` : en toutes lettres
+  * `western arabic numerals` (défaut) : en chiffres arabes
 
 
 ## Architecture technique
@@ -48,6 +51,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `hasher.rs` : calcul des empreintes numériques
 - `i18n.rs` : gestion de l'[internationalisation](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))
 - `main.rs` : point d'entrée du logiciel
+- `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
 - `theme.rs` : gestion des thèmes
 

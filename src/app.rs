@@ -74,9 +74,10 @@ impl ChecksumApp {
 		let logo = RetainedImage::from_image_bytes("logo", &config.theme.get_logo_bytes()).unwrap();
 		let i18n = I18n::from_language_tag(&config.lang);
 		let content_file_name = config.content_file_name(&i18n);
+		let clipboard = Clipboard::new(config.number_representation);
 		Self {
 			i18n,
-			clipboard: Clipboard::new(),
+			clipboard,
 			logo,
 			content_file_name,
 			nb_start: crate::NB_FILES_START,

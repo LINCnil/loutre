@@ -1,4 +1,5 @@
 use crate::i18n::I18n;
+use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
 use serde_derive::Deserialize;
 use std::fs::{create_dir_all, read_to_string, File};
@@ -10,6 +11,7 @@ use std::path::PathBuf;
 pub struct Config {
 	pub theme: Theme,
 	pub lang: String,
+	pub number_representation: NbRepr,
 	content_file_name: Option<String>,
 }
 
@@ -63,6 +65,7 @@ impl Config {
 #[cfg(test)]
 mod tests {
 	use super::Config;
+	use crate::nb_repr::NbRepr;
 	use crate::theme::Theme;
 
 	#[test]
@@ -70,10 +73,14 @@ mod tests {
 		let s = r#"
 theme = "dark"
 lang = "fr"
+number_representation = "letters"
+content_file_name = "test"
 "#;
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Theme::Dark);
 		assert_eq!(&cfg.lang, "fr");
+		assert_eq!(cfg.number_representation, NbRepr::Letters);
+		assert_eq!(cfg.content_file_name, Some("test".to_string()));
 	}
 
 	#[test]
@@ -88,6 +95,7 @@ lang = "fr"
 		let s = r#"
 theme = "dark invalid theme"
 lang = "not a valid language tag"
+number_representation = "still invalid"
 "#;
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Theme::default());

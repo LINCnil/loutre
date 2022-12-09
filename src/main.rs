@@ -9,6 +9,7 @@ mod file;
 mod file_list;
 mod hasher;
 mod i18n;
+mod nb_repr;
 mod path_cmp;
 mod theme;
 
