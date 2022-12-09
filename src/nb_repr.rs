@@ -347,4 +347,55 @@ mod tests {
 			assert_eq!(nb_repr.usize_to_string(nb, &i18n), nb_str);
 		}
 	}
+
+	#[test]
+	fn test_letters_fr_be() {
+		let i18n = I18n::from_language_tag("fr-BE");
+		let nb_repr = NbRepr::Letters;
+		let tests = [
+			(0, "zéro"),
+			(1, "un"),
+			(5, "cinq"),
+			(10, "dix"),
+			(21, "vingt-et-un"),
+			(42, "quarante-deux"),
+			(70, "septante"),
+			(80, "octante"),
+			(85, "octante-cinq"),
+			(92, "nonante-deux"),
+			(100, "cent"),
+			(101, "cent-un"),
+			(139, "cent-trente-neuf"),
+			(180, "cent-octante"),
+			(400, "quatre-cent"),
+			(501, "cinq-cent-un"),
+			(673, "six-cent-septante-trois"),
+			(1000, "mille"),
+			(1001, "mille-un"),
+			(2000, "deux-mille"),
+			(2155, "deux-mille-cent-cinquante-cinq"),
+			(3200, "trois-mille-deux-cent"),
+			(10_000, "dix-mille"),
+			(10_008, "dix-mille-huit"),
+			(12_108, "douze-mille-cent-huit"),
+			(345_678, "trois-cent-quarante-cinq-mille-six-cent-septante-huit"),
+			(1_000_000, "un-million"),
+			(1_234_567, "un-million-deux-cent-trente-quatre-mille-cinq-cent-soixante-sept"),
+			(123_456_789, "cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(234_567_890, "deux-cent-trente-quatre-millions-cinq-cent-soixante-sept-mille-huit-cent-nonante"),
+			(1_000_000_000, "un-milliard"),
+			(1_234_567_890, "un-milliard-deux-cent-trente-quatre-millions-cinq-cent-soixante-sept-mille-huit-cent-nonante"),
+			(98_123_456_789, "nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(798_123_456_789, "sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(6_798_123_456_789, "six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(56_798_123_456_789, "cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(456_798_123_456_789, "quatre-cent-cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(3_456_798_123_456_789, "trois-millions-quatre-cent-cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(23_456_798_123_456_789, "vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+			(123_456_798_123_456_789, "cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
+		];
+		for (nb, nb_str) in tests {
+			assert_eq!(nb_repr.usize_to_string(nb, &i18n), nb_str);
+		}
+	}
 }

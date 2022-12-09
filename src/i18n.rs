@@ -80,7 +80,14 @@ impl I18n {
 	fn get_ressource(lang_tag: &LanguageIdentifier) -> FluentResource {
 		let s = match lang_tag.language.as_str() {
 			"en" => I18n::get_ressource_str("en-US"),
-			"fr" => I18n::get_ressource_str("fr-FR"),
+			"fr" => match lang_tag.region {
+				Some(r) => match r.as_str() {
+					"BE" => I18n::get_ressource_str("fr-BE"),
+					"FR" => I18n::get_ressource_str("fr-FR"),
+					_ => I18n::get_ressource_str("fr-FR"),
+				},
+				None => I18n::get_ressource_str("fr-FR"),
+			},
 			_ => I18n::get_ressource_str(crate::DEFAULT_LANG),
 		};
 		FluentResource::try_new(s.to_string()).unwrap()
@@ -89,6 +96,7 @@ impl I18n {
 	fn get_ressource_str(lang_tag: &str) -> &str {
 		match lang_tag {
 			"en-US" => include_str!("../locale/en-US.ftl"),
+			"fr-BE" => include_str!("../locale/fr-BE.ftl"),
 			"fr-FR" => include_str!("../locale/fr-FR.ftl"),
 			_ => panic!("{}: unexpected language identifier", lang_tag),
 		}
@@ -103,6 +111,7 @@ mod tests {
 	fn test_language_files() {
 		let res_lst = [
 			("en-US", include_str!("../locale/en-US.ftl")),
+			("fr-BE", include_str!("../locale/fr-BE.ftl")),
 			("fr-FR", include_str!("../locale/fr-FR.ftl")),
 		];
 		for (tag, res) in res_lst {
