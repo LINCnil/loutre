@@ -16,6 +16,7 @@ const BTN_SELECT_DIR: &str = "🗁";
 const BTN_SELECT_MAIL: &str = "📧";
 const BTN_TRASH: &str = "🗑";
 const SIGN_INFO: &str = "ℹ";
+const SIGN_SUCCESS: &str = "✔";
 const SIGN_WARNING: &str = "⚠";
 const UI_EXTRA_SPACE: f32 = 6.0;
 const UI_BTN_PADDING_H: f32 = 10.0;
@@ -23,6 +24,7 @@ const UI_BTN_PADDING_V: f32 = 6.0;
 
 macro_rules! reset_messages {
 	($o: ident) => {
+		$o.info_msg = None;
 		$o.success_msg = None;
 		$o.error_msg = None;
 	};
@@ -39,6 +41,7 @@ pub struct ChecksumApp {
 	file_list_builder: Option<FileListBuilder>,
 	error_msg: Option<String>,
 	success_msg: Option<String>,
+	info_msg: Option<String>,
 	email: Option<Email>,
 }
 
@@ -82,6 +85,7 @@ impl ChecksumApp {
 			file_list_builder: None,
 			error_msg: None,
 			success_msg: None,
+			info_msg: None,
 			email: None,
 		}
 	}
@@ -446,8 +450,11 @@ impl ChecksumApp {
 					}
 				}
 			}
-			if let Some(msg) = &self.success_msg {
+			if let Some(msg) = &self.info_msg {
 				ChecksumApp::add_info_label(ui, msg);
+			}
+			if let Some(msg) = &self.success_msg {
+				ChecksumApp::add_success_label(ui, msg);
 			}
 			if let Some(msg) = &self.error_msg {
 				ChecksumApp::add_warning_label(ui, msg);
@@ -487,6 +494,16 @@ impl ChecksumApp {
 			SIGN_INFO,
 			&Color32::from_rgb(0x7a, 0xcb, 0xff),
 			extra,
+		);
+	}
+
+	fn add_success_label(ui: &mut egui::Ui, text: &str) {
+		ChecksumApp::add_label(
+			ui,
+			text,
+			SIGN_SUCCESS,
+			&Color32::from_rgb(0xe7, 0xf7, 0xed),
+			|_| {},
 		);
 	}
 
