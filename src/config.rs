@@ -1,3 +1,4 @@
+use crate::i18n::I18n;
 use crate::theme::Theme;
 use serde_derive::Deserialize;
 use std::fs::{create_dir_all, read_to_string, File};
@@ -9,6 +10,7 @@ use std::path::PathBuf;
 pub struct Config {
 	pub theme: Theme,
 	pub lang: String,
+	content_file_name: Option<String>,
 }
 
 impl Config {
@@ -35,6 +37,19 @@ impl Config {
 			}
 		};
 		Config::load_config(&ctn)
+	}
+
+	pub fn content_file_name(&self, i18n: &I18n) -> String {
+		match &self.content_file_name {
+			Some(name) => {
+				if name.is_empty() {
+					i18n.msg("content_file_name")
+				} else {
+					name.to_owned()
+				}
+			}
+			None => i18n.msg("content_file_name"),
+		}
 	}
 
 	fn load_config(content: &str) -> Config {

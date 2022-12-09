@@ -4,7 +4,7 @@
 # The default is light.
 theme = "light"
 
-# Defines the application language
+# Defines the application language.
 #
 # May be any valid IETF BCP 47 language tag. If the indicated language
 # is not supported, fallback to a supported one is guaranteed.
@@ -16,3 +16,7 @@ theme = "light"
 #
 # See also: https://www.rfc-editor.org/info/bcp47
 lang = "fr-FR"
+
+# Define the name of the content file.
+# The default is contenu.txt
+content_file_name = "contenu.txt"

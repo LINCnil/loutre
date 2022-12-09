@@ -31,6 +31,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
 - `lang` : chaîne de caractères représentant une étiquettes d’identification de langues IETF telle que définiee par la recommandation standard BCP 47
   * `en-US`
   * `fr-FR` (défaut)
+- `content_file_name` : chaîne de caractères définissant le nom du fichier dans lequel sont contenues les empreintes des pièces (par défaut, `contenu.txt`)
 
 
 ## Architecture technique

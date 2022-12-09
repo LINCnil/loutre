@@ -1,10 +1,10 @@
 use crate::checker::check_files;
 use crate::clipboard::Clipboard;
+use crate::config::Config;
 use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
-use crate::theme::Theme;
 use eframe::egui::{self, Color32, Context, RichText};
 use egui_extras::RetainedImage;
 use humansize::{make_format, DECIMAL};
@@ -67,10 +67,10 @@ impl eframe::App for ChecksumApp {
 }
 
 impl ChecksumApp {
-	pub fn new(theme: &Theme, lang: &str) -> Self {
-		let logo = RetainedImage::from_image_bytes("logo", &theme.get_logo_bytes()).unwrap();
-		let i18n = I18n::from_language_tag(lang);
-		let content_file_name = i18n.msg("content_file_name");
+	pub fn new(config: &Config) -> Self {
+		let logo = RetainedImage::from_image_bytes("logo", &config.theme.get_logo_bytes()).unwrap();
+		let i18n = I18n::from_language_tag(&config.lang);
+		let content_file_name = config.content_file_name(&i18n);
 		Self {
 			i18n,
 			clipboard: Clipboard::new(),

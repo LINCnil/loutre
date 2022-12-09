@@ -48,7 +48,7 @@ fn main() {
 		default_theme: config.theme.clone().into(),
 		..Default::default()
 	};
-	let app = app::ChecksumApp::new(&config.theme, &config.lang);
+	let app = app::ChecksumApp::new(&config);
 	let app_name = format!("{} v{}", APP_NAME, env!("CARGO_PKG_VERSION"));
 	eframe::run_native(&app_name, win_opts, Box::new(|_cc| Box::new(app)));
 }
