@@ -56,15 +56,15 @@ msg_file_choice_include = { $file_desc } Do you want to include it?
 msg_exhibit = EVIDENCE #{ $nb }:
 msg_ctn_file =
     { $nb ->
-        [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named "{ $file_name }" containing name, size and checksum ({ $hash_func }) of the digital evidence collected during the on-site investigation.
-        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named "{ $file_name }" containing name, size and checksum ({ $hash_func }) of the digital { $nb } evidences collected during the on-site investigation.
+        [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{ $file_name }” containing name, size and checksum ({ $hash_func }) of the digital evidence collected during the on-site investigation.
+        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{ $file_name }” containing name, size and checksum ({ $hash_func }) of the digital { $nb } evidences collected during the on-site investigation.
     }
 msg_directory =
     { $nb ->
-        [one] copy on a digital media of a directory named "{ $dir_name }" containing { $nb } document:
-        *[other] copy on a digital media of a directory named "{ $dir_name }" containing { $nb } documents:
+        [one] copy on a digital media of a directory named “{ $dir_name }” containing { $nb } document:
+        *[other] copy on a digital media of a directory named “{ $dir_name }” containing { $nb } documents:
     }
-msg_file = copy on a digital media of a file named "{ $file_name }"
+msg_file = copy on a digital media of a file named “{ $file_name }”
 msg_file_unit =
     { $nb ->
         [zero] octet
