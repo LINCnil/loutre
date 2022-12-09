@@ -19,6 +19,18 @@ impl I18n {
 			.unwrap_or_else(|_| crate::DEFAULT_LANG.parse().unwrap());
 		let ressource = I18n::get_ressource(&lang_tag);
 		let mut bundle = FluentBundle::new(vec![lang_tag]);
+		// Isolation allows a directional text (left-to-right or right-to-left)
+		// to be incorporated within a text that has a different direction.
+		// This is done by adding Unicode control characters around each variable.
+		// Because only left-to-right languages are currently supported and such
+		// control characters are not always displayed properly, isolation is
+		// disabled.
+		//
+		// See also:
+		// https://github.com/projectfluent/fluent/wiki/BiDi-in-Fluent
+		// https://docs.rs/fluent/latest/fluent/bundle/struct.FluentBundle.html#method.set_use_isolating
+		// https://github.com/projectfluent/fluent-rs/issues/172
+		bundle.set_use_isolating(false);
 		bundle.add_resource(ressource).unwrap();
 		Self { bundle }
 	}
