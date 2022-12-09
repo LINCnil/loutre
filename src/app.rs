@@ -156,6 +156,7 @@ impl ChecksumApp {
 									}
 								}
 							}
+							self.info_msg = Some(self.i18n.msg("msg_info_hash_done"));
 							self.file_hasher = None;
 							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
 						}

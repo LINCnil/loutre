@@ -77,6 +77,7 @@ msg_file_unit =
 
 msg_info_check_ok = Data integrity check passed.
 msg_info_has_ctn_file = The directory contains a { $file_name } file
+msg_info_hash_done = Checksum calculation completed.
 msg_info_del_ctn_file = delete
 msg_info_nb_files = The directory contains { $nb } files.
 error_desc = { $error }: { $description }
