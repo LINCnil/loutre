@@ -1,12 +1,10 @@
+use crate::content_file::ContentFile;
 use crate::email::Email;
 use crate::file_list::FileList;
-use crate::hasher::HashFunc;
 use crate::i18n::{Attr, I18n};
 use std::cmp::Ordering;
 use std::collections::hash_set::HashSet;
 use std::fmt::{self, Write};
-use std::fs;
-use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use unicode_normalization::UnicodeNormalization;
 
@@ -122,7 +120,7 @@ pub fn check_files(
 	content_file_name: &str,
 	email: &Option<Email>,
 ) -> Result<(), String> {
-	let content_file_set = load_content_file(file_list).map_err(|e| {
+	let content_file_set = load_content_file(i18n, file_list).map_err(|e| {
 		i18n.fmt(
 			"error_desc",
 			&[
@@ -165,53 +163,11 @@ pub fn check_files(
 	}
 }
 
-pub fn get_content_file_hash(file_list: &FileList) -> Result<HashFunc, String> {
-	let mut line = String::new();
-	let file = fs::File::open(file_list.get_content_file_path())
-		.map_err(|_| "Invalid file format".to_string())?;
-	let mut reader = BufReader::new(file);
-	reader
-		.read_line(&mut line)
-		.map_err(|_| "Invalid file format".to_string())?;
-	let v: Vec<&str> = line.split('\t').collect();
-	let nb_elems = v.len();
-	if nb_elems != 3 && nb_elems != 4 {
-		return Err("Invalid file format".to_string());
-	}
-	let hash_str = v
-		.get(2)
-		.ok_or_else(|| "Invalid file format".to_string())?
-		.trim();
-	HashFunc::parse(hash_str)
-}
-
-fn load_content_file(file_list: &FileList) -> Result<HashSet<File>, ContentFileError> {
-	let file = fs::File::open(file_list.get_content_file_path())?;
-	let reader = BufReader::new(file);
+fn load_content_file(i18n: &I18n, file_list: &FileList) -> Result<HashSet<File>, ContentFileError> {
+	let ctn_file = ContentFile::load(i18n, file_list).map_err(ContentFileError::Other)?;
 	let mut lst = HashSet::new();
-	let mut header = true;
-	for line in reader.lines() {
-		if header {
-			header = false;
-			continue;
-		}
-		let line = line?;
-		let v: Vec<&str> = line.split('\t').collect();
-		let nb_elems = v.len();
-		if nb_elems == 3 || nb_elems == 4 {
-			let mut path = *v.first().ok_or(ContentFileError::InvalidFormat)?;
-			if !crate::CONTENT_FILE_PATH_PREFIX.is_empty() {
-				path = match path.strip_prefix(crate::CONTENT_FILE_PATH_PREFIX) {
-					Some(rp) => rp,
-					None => path,
-				};
-			}
-			let file_path = PathBuf::from(path);
-			let file_hash = v.get(2).ok_or(ContentFileError::InvalidFormat)?.to_string();
-			lst.insert(File::new(&file_path, &file_hash));
-		} else {
-			return Err(ContentFileError::InvalidFormat);
-		}
+	for (path, hash) in ctn_file.iter_files() {
+		lst.insert(File::new(path, hash));
 	}
 	Ok(lst)
 }

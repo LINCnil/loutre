@@ -102,7 +102,7 @@ impl ChecksumApp {
 			if flb.is_ready() {
 				match flb.get_file_list(&self.i18n) {
 					Ok(fl) => {
-						self.hash = fl.get_session_hash_func(self.cfg_hash);
+						self.hash = fl.get_session_hash_func(&self.i18n, self.cfg_hash);
 						self.file_list = Some(fl);
 						self.file_list_builder = None;
 					}

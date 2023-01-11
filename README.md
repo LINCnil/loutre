@@ -49,6 +49,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `checker.rs` : comparaison des empreintes préalablement calculées
 - `clipboard.rs` : gestion du presse-papier
 - `config.rs` : gestion de la configuration
+- `content_file.rs` : gestion du fichier contenant les empreintes des pièces
 - `email.rs` : analyse syntaxique des accusés de réception envoyés par la plateforme d'échanges via courrier électronique
 - `file_list.rs` : gestion de la liste des fichiers
 - `file.rs` : représentation interne d'un fichier

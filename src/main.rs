@@ -4,6 +4,7 @@ mod app;
 mod checker;
 mod clipboard;
 mod config;
+mod content_file;
 mod email;
 mod file;
 mod file_list;

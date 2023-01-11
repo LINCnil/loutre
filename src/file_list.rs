@@ -1,4 +1,5 @@
 use crate::clipboard::Clipboard;
+use crate::content_file::ContentFile;
 use crate::file::File;
 use crate::hasher::{hash_single_file, HashFunc};
 use crate::i18n::{Attr, I18n};
@@ -274,15 +275,13 @@ impl FileList {
 		false
 	}
 
-	pub fn get_session_hash_func(&self, default_hash: HashFunc) -> HashFunc {
+	pub fn get_session_hash_func(&self, i18n: &I18n, default_hash: HashFunc) -> HashFunc {
 		if self.has_content_file() {
-			match crate::checker::get_content_file_hash(self) {
-				Ok(h) => h,
-				Err(_) => default_hash,
+			if let Ok(ctn_file) = ContentFile::load(i18n, self) {
+				return ctn_file.get_hash_func();
 			}
-		} else {
-			default_hash
 		}
+		default_hash
 	}
 
 	pub fn get_nb_files(&self) -> usize {
