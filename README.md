@@ -36,6 +36,9 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
 - `number_representation` : chaîne de caractères définissant la manière dont est représenté le nombre de pièces dans un dossier
   * `letters` : en toutes lettres
   * `western arabic numerals` (défaut) : en chiffres arabes
+- `hash_function` : chaîne de caractères définissant la fonction de hachage à utiliser
+  * `sha-256`
+  * `sha-512`
 
 
 ## Architecture technique

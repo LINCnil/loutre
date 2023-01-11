@@ -1,3 +1,4 @@
+use crate::hasher::HashFunc;
 use crate::i18n::I18n;
 use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
@@ -13,6 +14,7 @@ pub struct Config {
 	pub lang: String,
 	pub number_representation: NbRepr,
 	content_file_name: Option<String>,
+	pub hash_function: HashFunc,
 }
 
 impl Config {

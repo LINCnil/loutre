@@ -1,6 +1,6 @@
 use crate::clipboard::Clipboard;
 use crate::file::File;
-use crate::hasher::hash_single_file;
+use crate::hasher::{hash_single_file, HashFunc};
 use crate::i18n::{Attr, I18n};
 use std::io::{self, Write};
 #[cfg(windows)]
@@ -274,6 +274,17 @@ impl FileList {
 		false
 	}
 
+	pub fn get_session_hash_func(&self, default_hash: HashFunc) -> HashFunc {
+		if self.has_content_file() {
+			match crate::checker::get_content_file_hash(self) {
+				Ok(h) => h,
+				Err(_) => default_hash,
+			}
+		} else {
+			default_hash
+		}
+	}
+
 	pub fn get_nb_files(&self) -> usize {
 		self.files.len()
 	}
@@ -298,14 +309,14 @@ impl FileList {
 		self.files.push(new_file);
 	}
 
-	pub fn write_content_file(&mut self, i18n: &I18n) -> io::Result<()> {
+	pub fn write_content_file(&mut self, i18n: &I18n, hash: HashFunc) -> io::Result<()> {
 		self.files.sort_by(File::cmp_name);
 		let mut content_file = fs::File::create(&self.content_file_path)?;
 		let header = format!(
 			"{}\t{}\t{}\r\n",
 			i18n.msg("content_file_header.name"),
 			i18n.msg("content_file_header.size"),
-			"SHA256"
+			hash.to_string(),
 		);
 		content_file.write_all(header.as_bytes())?;
 		for f in &self.files {
@@ -319,10 +330,16 @@ impl FileList {
 		clipboard.set_clipboard(i18n, self, nb_start);
 	}
 
-	pub fn set_clipboard_ctn_file(&self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
+	pub fn set_clipboard_ctn_file(
+		&self,
+		i18n: &I18n,
+		clipboard: &mut Clipboard,
+		nb_start: u32,
+		hash: HashFunc,
+	) {
 		if let Ok(meta) = self.content_file_path.metadata() {
 			let file = File::create_dummy(&self.content_file_path, &self.path, meta.len(), "");
-			if let Ok(f) = hash_single_file(&file) {
+			if let Ok(f) = hash_single_file(&file, hash) {
 				clipboard.set_clipboard_ctn_file(i18n, &f, self.get_nb_files(), nb_start);
 			}
 		}

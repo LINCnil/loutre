@@ -35,3 +35,11 @@
 ## The default is "western arabic numerals"
 
 #number_representation = "western arabic numerals"
+
+
+## Defines the hash function. Possible values are:
+## - sha-256
+## - sha-512
+## The default is sha-256
+
+#hash_function = "sha-256"

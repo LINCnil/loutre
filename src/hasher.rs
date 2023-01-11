@@ -1,12 +1,46 @@
 use crate::file::File;
 use crate::file_list::FileList;
-use sha2::{Digest, Sha256};
+use serde::Deserialize;
+use sha2::{Digest, Sha256, Sha512};
 use std::cmp::Ordering;
 use std::io::{self, Read};
 use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use std::{fs, thread};
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+pub enum HashFunc {
+	#[serde(rename = "sha-256")]
+	Sha256,
+	#[serde(rename = "sha-512")]
+	Sha512,
+}
+
+impl HashFunc {
+	pub fn parse(s: &str) -> Result<Self, String> {
+		match s.to_ascii_lowercase().as_str() {
+			"sha256" => Ok(HashFunc::Sha256),
+			"sha512" => Ok(HashFunc::Sha512),
+			_ => Err("Invalid hash function".to_string()),
+		}
+	}
+}
+
+impl Default for HashFunc {
+	fn default() -> Self {
+		HashFunc::Sha256
+	}
+}
+
+impl ToString for HashFunc {
+	fn to_string(&self) -> String {
+		match self {
+			HashFunc::Sha256 => "SHA256".to_string(),
+			HashFunc::Sha512 => "SHA512".to_string(),
+		}
+	}
+}
 
 enum InternalHashStatus {
 	BytesConsumed(u64),
@@ -48,7 +82,7 @@ pub struct FileHasher {
 }
 
 impl FileHasher {
-	pub fn new(file_list: &FileList) -> Self {
+	pub fn new(file_list: &FileList, hash: HashFunc) -> Self {
 		// Define some king of metadata
 		let nb_threads = match thread::available_parallelism() {
 			Ok(nb) => nb.get(),
@@ -78,7 +112,7 @@ impl FileHasher {
 					}
 				};
 				std::mem::drop(mut_lst);
-				let _ = match hash_file(&file, Some(tx.clone())) {
+				let _ = match hash_file(&file, hash, Some(tx.clone())) {
 					Ok(nf) => tx.send(InternalHashStatus::NewFile(nf)),
 					Err(e) => {
 						let msg = format!("{}: {}", file.get_path().display(), e);
@@ -126,40 +160,53 @@ impl FileHasher {
 	}
 }
 
-pub fn hash_single_file(file: &File) -> io::Result<File> {
-	hash_file(file, None)
+pub fn hash_single_file(file: &File, hash: HashFunc) -> io::Result<File> {
+	hash_file(file, hash, None)
 }
 
-fn hash_file(file: &File, tx: Option<Sender<InternalHashStatus>>) -> io::Result<File> {
+macro_rules! alg_hash_file {
+	($f: expr, $buffer: expr, $tx: expr, $alg: ident) => {{
+		let mut hasher = $alg::new();
+		let mut processed_bytes = 0;
+		let mut last_notif = Instant::now();
+		let ref_duration = Duration::from_millis(crate::BUFF_NOTIF_THRESHOLD);
+		loop {
+			let n = $f.read(&mut $buffer)?;
+			if n == 0 {
+				if let Some(ref s) = $tx {
+					let _ = s.send(InternalHashStatus::BytesConsumed(processed_bytes));
+				}
+				break;
+			}
+			hasher.update(&$buffer[..n]);
+			processed_bytes += n as u64;
+			if last_notif.elapsed() >= ref_duration {
+				if let Some(ref s) = $tx {
+					let _ = s.send(InternalHashStatus::BytesConsumed(processed_bytes));
+					processed_bytes = 0;
+					last_notif = Instant::now();
+				}
+			}
+		}
+		hasher
+			.finalize()
+			.iter()
+			.map(|b| format!("{:02x}", b))
+			.collect::<String>()
+	}};
+}
+
+fn hash_file(
+	file: &File,
+	hash: HashFunc,
+	tx: Option<Sender<InternalHashStatus>>,
+) -> io::Result<File> {
 	let mut f = fs::File::open(file.get_path())?;
 	let mut buffer = [0; crate::BUFF_SIZE];
-	let mut hasher = Sha256::new();
-	let mut processed_bytes = 0;
-	let mut last_notif = Instant::now();
-	let ref_duration = Duration::from_millis(crate::BUFF_NOTIF_THRESHOLD);
-	loop {
-		let n = f.read(&mut buffer)?;
-		if n == 0 {
-			if let Some(ref s) = tx {
-				let _ = s.send(InternalHashStatus::BytesConsumed(processed_bytes));
-			}
-			break;
-		}
-		hasher.update(&buffer[..n]);
-		processed_bytes += n as u64;
-		if last_notif.elapsed() >= ref_duration {
-			if let Some(ref s) = tx {
-				let _ = s.send(InternalHashStatus::BytesConsumed(processed_bytes));
-				processed_bytes = 0;
-				last_notif = Instant::now();
-			}
-		}
-	}
-	let result = hasher
-		.finalize()
-		.iter()
-		.map(|b| format!("{:02x}", b))
-		.collect::<String>();
+	let result = match hash {
+		HashFunc::Sha256 => alg_hash_file!(f, buffer, tx, Sha256),
+		HashFunc::Sha512 => alg_hash_file!(f, buffer, tx, Sha512),
+	};
 	Ok(File::create_dummy(
 		file.get_path(),
 		file.get_prefix(),

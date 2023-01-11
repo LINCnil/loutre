@@ -1,5 +1,6 @@
 use crate::email::Email;
 use crate::file_list::FileList;
+use crate::hasher::HashFunc;
 use crate::i18n::{Attr, I18n};
 use std::cmp::Ordering;
 use std::collections::hash_set::HashSet;
@@ -162,6 +163,26 @@ pub fn check_files(
 	} else {
 		Err(error_msg)
 	}
+}
+
+pub fn get_content_file_hash(file_list: &FileList) -> Result<HashFunc, String> {
+	let mut line = String::new();
+	let file = fs::File::open(file_list.get_content_file_path())
+		.map_err(|_| "Invalid file format".to_string())?;
+	let mut reader = BufReader::new(file);
+	reader
+		.read_line(&mut line)
+		.map_err(|_| "Invalid file format".to_string())?;
+	let v: Vec<&str> = line.split('\t').collect();
+	let nb_elems = v.len();
+	if nb_elems != 3 && nb_elems != 4 {
+		return Err("Invalid file format".to_string());
+	}
+	let hash_str = v
+		.get(2)
+		.ok_or_else(|| "Invalid file format".to_string())?
+		.trim();
+	HashFunc::parse(hash_str)
 }
 
 fn load_content_file(file_list: &FileList) -> Result<HashSet<File>, ContentFileError> {

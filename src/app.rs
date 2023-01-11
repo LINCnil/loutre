@@ -3,6 +3,7 @@ use crate::clipboard::Clipboard;
 use crate::config::Config;
 use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
+use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
 use eframe::egui::{self, Color32, Context, RichText};
@@ -43,6 +44,8 @@ pub struct ChecksumApp {
 	success_msg: Option<String>,
 	info_msg: Option<String>,
 	email: Option<Email>,
+	cfg_hash: HashFunc,
+	hash: HashFunc,
 }
 
 impl eframe::App for ChecksumApp {
@@ -88,6 +91,8 @@ impl ChecksumApp {
 			success_msg: None,
 			info_msg: None,
 			email: None,
+			cfg_hash: config.hash_function,
+			hash: config.hash_function,
 		}
 	}
 
@@ -97,6 +102,7 @@ impl ChecksumApp {
 			if flb.is_ready() {
 				match flb.get_file_list(&self.i18n) {
 					Ok(fl) => {
+						self.hash = fl.get_session_hash_func(self.cfg_hash);
 						self.file_list = Some(fl);
 						self.file_list_builder = None;
 					}
@@ -140,7 +146,7 @@ impl ChecksumApp {
 										self.error_msg = Some(e);
 									}
 								}
-							} else if let Err(e) = fl.write_content_file(&self.i18n) {
+							} else if let Err(e) = fl.write_content_file(&self.i18n, self.hash) {
 								self.error_msg = Some(e.to_string());
 							} else if self.email.is_some() {
 								match check_files(
@@ -219,14 +225,14 @@ impl ChecksumApp {
 					if p.has_content_file() {
 						if ui.button(self.i18n.msg("btn_check_fingerprints")).clicked() {
 							reset_messages!(self);
-							self.file_hasher = Some(FileHasher::new(p));
+							self.file_hasher = Some(FileHasher::new(p, self.hash));
 						}
 					} else if ui.button(self.i18n.msg("btn_calc_fingerprints")).clicked() {
 						reset_messages!(self);
 						if let Err(e) = p.set_readonly() {
 							self.error_msg = Some(e.to_string());
 						}
-						self.file_hasher = Some(FileHasher::new(p));
+						self.file_hasher = Some(FileHasher::new(p, self.hash));
 					}
 					if p.has_hashes()
 						&& ui
@@ -242,7 +248,12 @@ impl ChecksumApp {
 						.on_hover_text(self.i18n.msg("btn_clipboard_ctn_file_tip"))
 						.clicked()
 					{
-						p.set_clipboard_ctn_file(&self.i18n, &mut self.clipboard, self.nb_start);
+						p.set_clipboard_ctn_file(
+							&self.i18n,
+							&mut self.clipboard,
+							self.nb_start,
+							self.hash,
+						);
 					}
 					ret = true;
 				}
