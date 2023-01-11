@@ -74,10 +74,12 @@ allow = [
     "BSD-2-Clause",
     "BSD-3-Clause",
     "BSL-1.0",
-    "CC0-1.0",
+    "CECILL-2.1",
     "ISC",
+    "LicenseRef-UFL-1.0",
     "MIT",
     "MPL-2.0",
+    "OFL-1.1",
     "Unicode-DFS-2016",
     "Zlib",
 ]
@@ -112,7 +114,6 @@ exceptions = [
     # Each entry is the crate and version constraint, and its specific allow
     # list
     #{ allow = ["Zlib"], name = "adler32", version = "*" },
-    { allow = ["CECILL-2.1"], name = "loutre", version = "*" },
 ]
 
 # Some crates don't have (easily) machine readable licensing information,
