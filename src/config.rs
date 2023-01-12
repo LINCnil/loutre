@@ -15,6 +15,7 @@ pub struct Config {
 	pub number_representation: NbRepr,
 	content_file_name: Option<String>,
 	pub hash_function: HashFunc,
+	pub clipboard_persistence: Option<bool>,
 }
 
 impl Config {

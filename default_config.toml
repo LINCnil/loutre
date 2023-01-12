@@ -50,3 +50,10 @@
 ## The default is sha-256
 
 #hash_function = "sha-256"
+
+
+## Defines whether or not the clipboard manager should persist in memory.
+## Set this setting only if you have issues with the copy&paste.
+## The value is a boolean.
+
+#clipboard_persistence = false

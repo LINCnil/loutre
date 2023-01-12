@@ -35,13 +35,15 @@ macro_rules! if_html {
 pub struct Clipboard {
 	internal: Option<arboard::Clipboard>,
 	nb_repr: NbRepr,
+	persistence: Option<bool>,
 }
 
 impl Clipboard {
-	pub fn new(nb_repr: NbRepr) -> Self {
+	pub fn new(nb_repr: NbRepr, persistence: Option<bool>) -> Self {
 		Self {
 			internal: None,
 			nb_repr,
+			persistence,
 		}
 	}
 }
@@ -76,7 +78,7 @@ impl Clipboard {
 			None => {
 				let mut clipboard = arboard::Clipboard::new().unwrap();
 				let _ = clipboard.set_html(html, Some(alt_text));
-				if cfg!(unix) {
+				if self.persistence.unwrap_or(cfg!(unix)) {
 					self.internal = Some(clipboard);
 				}
 			}
