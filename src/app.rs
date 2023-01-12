@@ -452,6 +452,9 @@ impl ChecksumApp {
 						},
 					);
 				} else {
+					if self.hash != self.cfg_hash {
+						self.hash = self.cfg_hash;
+					}
 					let nb_files = p.get_nb_files();
 					if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
 						ChecksumApp::add_warning_label(
