@@ -3,7 +3,7 @@ use crate::content_file::ContentFile;
 use crate::file::File;
 use crate::hasher::{hash_single_file, HashFunc};
 use crate::i18n::{Attr, I18n};
-use std::io::{self, Write};
+use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
 use std::path::{Path, PathBuf};
@@ -309,19 +309,7 @@ impl FileList {
 	}
 
 	pub fn write_content_file(&mut self, i18n: &I18n, hash: HashFunc) -> io::Result<()> {
-		self.files.sort_by(File::cmp_name);
-		let mut content_file = fs::File::create(&self.content_file_path)?;
-		let header = format!(
-			"{}\t{}\t{}\r\n",
-			i18n.msg("content_file_header.name"),
-			i18n.msg("content_file_header.size"),
-			hash.to_string(),
-		);
-		content_file.write_all(header.as_bytes())?;
-		for f in &self.files {
-			content_file.write_all(&f.get_content_file_line())?;
-		}
-		Ok(())
+		ContentFile::write(i18n, &self.content_file_path, &mut self.files, hash)
 	}
 
 	pub fn set_clipboard(&mut self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
