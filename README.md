@@ -38,6 +38,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `western arabic numerals` (défaut) : en chiffres arabes
 - `hash_function` : chaîne de caractères définissant la fonction de hachage à utiliser
   * `sha-256`
+  * `sha-384`
   * `sha-512`
 
 

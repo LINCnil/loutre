@@ -39,6 +39,7 @@
 
 ## Defines the hash function. Possible values are:
 ## - sha-256
+## - sha-384
 ## - sha-512
 ## The default is sha-256
 

@@ -1,7 +1,7 @@
 use crate::file::File;
 use crate::file_list::FileList;
 use serde::Deserialize;
-use sha2::{Digest, Sha256, Sha512};
+use sha2::{Digest, Sha256, Sha384, Sha512};
 use std::cmp::Ordering;
 use std::io::{self, Read};
 use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
@@ -13,6 +13,8 @@ use std::{fs, thread};
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
 	Sha256,
+	#[serde(rename = "sha-384")]
+	Sha384,
 	#[serde(rename = "sha-512")]
 	Sha512,
 }
@@ -21,6 +23,7 @@ impl HashFunc {
 	pub fn parse(s: &str) -> Result<Self, String> {
 		match s.to_ascii_lowercase().as_str() {
 			"sha256" => Ok(HashFunc::Sha256),
+			"sha384" => Ok(HashFunc::Sha384),
 			"sha512" => Ok(HashFunc::Sha512),
 			_ => Err("Invalid hash function".to_string()),
 		}
@@ -32,7 +35,7 @@ impl HashFunc {
 			Err(_) => 1,
 		};
 		match self {
-			HashFunc::Sha256 | HashFunc::Sha512 => available_parallelism,
+			HashFunc::Sha256 | HashFunc::Sha384 | HashFunc::Sha512 => available_parallelism,
 		}
 	}
 }
@@ -47,6 +50,7 @@ impl ToString for HashFunc {
 	fn to_string(&self) -> String {
 		match self {
 			HashFunc::Sha256 => "SHA256".to_string(),
+			HashFunc::Sha384 => "SHA384".to_string(),
 			HashFunc::Sha512 => "SHA512".to_string(),
 		}
 	}
@@ -211,6 +215,7 @@ fn hash_file(
 	let mut buffer = [0; crate::BUFF_SIZE];
 	let result = match hash {
 		HashFunc::Sha256 => alg_hash_file!(f, buffer, tx, Sha256),
+		HashFunc::Sha384 => alg_hash_file!(f, buffer, tx, Sha384),
 		HashFunc::Sha512 => alg_hash_file!(f, buffer, tx, Sha512),
 	};
 	Ok(File::create_dummy(
