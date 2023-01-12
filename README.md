@@ -43,6 +43,8 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `sha3-256`
   * `sha3-384`
   * `sha3-512`
+  * `blake2s`
+  * `blake2b`
 
 
 ## Architecture technique

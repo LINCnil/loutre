@@ -1,5 +1,6 @@
 use crate::file::File;
 use crate::file_list::FileList;
+use blake2::{Blake2b512, Blake2s256};
 use serde::Deserialize;
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
@@ -24,6 +25,10 @@ pub enum HashFunc {
 	Sha3_384,
 	#[serde(rename = "sha3-512")]
 	Sha3_512,
+	#[serde(rename = "blake2s")]
+	Blake2s,
+	#[serde(rename = "blake2b")]
+	Blake2b,
 }
 
 impl HashFunc {
@@ -35,6 +40,8 @@ impl HashFunc {
 			"sha3-256" => Ok(HashFunc::Sha3_256),
 			"sha3-384" => Ok(HashFunc::Sha3_384),
 			"sha3-512" => Ok(HashFunc::Sha3_512),
+			"blake2s" => Ok(HashFunc::Blake2s),
+			"blake2b" => Ok(HashFunc::Blake2b),
 			_ => Err("Invalid hash function".to_string()),
 		}
 	}
@@ -47,6 +54,7 @@ impl HashFunc {
 		match self {
 			HashFunc::Sha256 | HashFunc::Sha384 | HashFunc::Sha512 => available_parallelism,
 			HashFunc::Sha3_256 | HashFunc::Sha3_384 | HashFunc::Sha3_512 => available_parallelism,
+			HashFunc::Blake2s | HashFunc::Blake2b => available_parallelism,
 		}
 	}
 }
@@ -66,6 +74,8 @@ impl ToString for HashFunc {
 			HashFunc::Sha3_256 => "SHA3-256".to_string(),
 			HashFunc::Sha3_384 => "SHA3-384".to_string(),
 			HashFunc::Sha3_512 => "SHA3-512".to_string(),
+			HashFunc::Blake2s => "BLAKE2s".to_string(),
+			HashFunc::Blake2b => "BLAKE2b".to_string(),
 		}
 	}
 }
@@ -234,6 +244,8 @@ fn hash_file(
 		HashFunc::Sha3_256 => alg_hash_file!(f, buffer, tx, Sha3_256),
 		HashFunc::Sha3_384 => alg_hash_file!(f, buffer, tx, Sha3_384),
 		HashFunc::Sha3_512 => alg_hash_file!(f, buffer, tx, Sha3_512),
+		HashFunc::Blake2s => alg_hash_file!(f, buffer, tx, Blake2s256),
+		HashFunc::Blake2b => alg_hash_file!(f, buffer, tx, Blake2b512),
 	};
 	Ok(File::create_dummy(
 		file.get_path(),
