@@ -2,6 +2,7 @@ use crate::file::File;
 use crate::file_list::FileList;
 use serde::Deserialize;
 use sha2::{Digest, Sha256, Sha384, Sha512};
+use sha3::{Sha3_256, Sha3_384, Sha3_512};
 use std::cmp::Ordering;
 use std::io::{self, Read};
 use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
@@ -17,6 +18,12 @@ pub enum HashFunc {
 	Sha384,
 	#[serde(rename = "sha-512")]
 	Sha512,
+	#[serde(rename = "sha3-256")]
+	Sha3_256,
+	#[serde(rename = "sha3-384")]
+	Sha3_384,
+	#[serde(rename = "sha3-512")]
+	Sha3_512,
 }
 
 impl HashFunc {
@@ -25,6 +32,9 @@ impl HashFunc {
 			"sha256" => Ok(HashFunc::Sha256),
 			"sha384" => Ok(HashFunc::Sha384),
 			"sha512" => Ok(HashFunc::Sha512),
+			"sha3-256" => Ok(HashFunc::Sha3_256),
+			"sha3-384" => Ok(HashFunc::Sha3_384),
+			"sha3-512" => Ok(HashFunc::Sha3_512),
 			_ => Err("Invalid hash function".to_string()),
 		}
 	}
@@ -36,6 +46,7 @@ impl HashFunc {
 		};
 		match self {
 			HashFunc::Sha256 | HashFunc::Sha384 | HashFunc::Sha512 => available_parallelism,
+			HashFunc::Sha3_256 | HashFunc::Sha3_384 | HashFunc::Sha3_512 => available_parallelism,
 		}
 	}
 }
@@ -52,6 +63,9 @@ impl ToString for HashFunc {
 			HashFunc::Sha256 => "SHA256".to_string(),
 			HashFunc::Sha384 => "SHA384".to_string(),
 			HashFunc::Sha512 => "SHA512".to_string(),
+			HashFunc::Sha3_256 => "SHA3-256".to_string(),
+			HashFunc::Sha3_384 => "SHA3-384".to_string(),
+			HashFunc::Sha3_512 => "SHA3-512".to_string(),
 		}
 	}
 }
@@ -217,6 +231,9 @@ fn hash_file(
 		HashFunc::Sha256 => alg_hash_file!(f, buffer, tx, Sha256),
 		HashFunc::Sha384 => alg_hash_file!(f, buffer, tx, Sha384),
 		HashFunc::Sha512 => alg_hash_file!(f, buffer, tx, Sha512),
+		HashFunc::Sha3_256 => alg_hash_file!(f, buffer, tx, Sha3_256),
+		HashFunc::Sha3_384 => alg_hash_file!(f, buffer, tx, Sha3_384),
+		HashFunc::Sha3_512 => alg_hash_file!(f, buffer, tx, Sha3_512),
 	};
 	Ok(File::create_dummy(
 		file.get_path(),

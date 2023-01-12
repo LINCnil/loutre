@@ -40,6 +40,9 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `sha-256`
   * `sha-384`
   * `sha-512`
+  * `sha3-256`
+  * `sha3-384`
+  * `sha3-512`
 
 
 ## Architecture technique

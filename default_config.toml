@@ -41,6 +41,9 @@
 ## - sha-256
 ## - sha-384
 ## - sha-512
+## - sha3-256
+## - sha3-384
+## - sha3-512
 ## The default is sha-256
 
 #hash_function = "sha-256"
