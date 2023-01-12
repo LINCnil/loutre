@@ -12,6 +12,18 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use std::{fs, thread};
 
+pub const HASH_FUNCTIONS: &[HashFunc] = &[
+	HashFunc::Sha256,
+	HashFunc::Sha384,
+	HashFunc::Sha512,
+	HashFunc::Sha3_256,
+	HashFunc::Sha3_384,
+	HashFunc::Sha3_512,
+	HashFunc::Blake2s,
+	HashFunc::Blake2b,
+	HashFunc::Blake3,
+];
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
@@ -36,13 +48,14 @@ pub enum HashFunc {
 
 impl HashFunc {
 	pub fn parse(s: &str) -> Result<Self, String> {
+		let s = s.to_ascii_lowercase().replace(['-', ' '], "");
 		match s.to_ascii_lowercase().as_str() {
 			"sha256" => Ok(HashFunc::Sha256),
 			"sha384" => Ok(HashFunc::Sha384),
 			"sha512" => Ok(HashFunc::Sha512),
-			"sha3-256" => Ok(HashFunc::Sha3_256),
-			"sha3-384" => Ok(HashFunc::Sha3_384),
-			"sha3-512" => Ok(HashFunc::Sha3_512),
+			"sha3256" => Ok(HashFunc::Sha3_256),
+			"sha3384" => Ok(HashFunc::Sha3_384),
+			"sha3512" => Ok(HashFunc::Sha3_512),
 			"blake2s" => Ok(HashFunc::Blake2s),
 			"blake2b" => Ok(HashFunc::Blake2b),
 			"blake3" => Ok(HashFunc::Blake3),

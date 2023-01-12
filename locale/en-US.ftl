@@ -10,6 +10,7 @@ content_file_header =
 
 label_nb_files_start = Number of the first evidence
 label_content_file = Name of the checksum file
+label_hash_function = Hash function
 
 
 ## Selection buttons

@@ -46,12 +46,16 @@ pub struct ChecksumApp {
 	email: Option<Email>,
 	cfg_hash: HashFunc,
 	hash: HashFunc,
+	default_padding: egui::Vec2,
 }
 
 impl eframe::App for ChecksumApp {
 	fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 		egui::CentralPanel::default().show(ctx, |ui| {
-			ui.spacing_mut().button_padding = egui::vec2(UI_BTN_PADDING_H, UI_BTN_PADDING_V);
+			let mut spacing = ui.spacing_mut();
+			self.default_padding = spacing.button_padding;
+			spacing.button_padding = egui::vec2(UI_BTN_PADDING_H, UI_BTN_PADDING_V);
+
 			self.update_status(ctx);
 			self.add_header(ui);
 			ui.add_space(UI_EXTRA_SPACE);
@@ -93,6 +97,7 @@ impl ChecksumApp {
 			email: None,
 			cfg_hash: config.hash_function,
 			hash: config.hash_function,
+			default_padding: egui::Vec2::default(),
 		}
 	}
 
@@ -329,12 +334,28 @@ impl ChecksumApp {
 			egui::Grid::new("header_grid")
 				.num_columns(2)
 				.show(ui, |ui| {
+					ui.spacing_mut().button_padding = self.default_padding;
+
 					ui.label(self.i18n.msg("label_content_file"));
 					ui.add(
 						egui::TextEdit::singleline(&mut self.content_file_name)
 							.interactive(self.file_list.is_none())
 							.desired_width(200.0),
 					);
+					ui.end_row();
+
+					ui.label(self.i18n.msg("label_hash_function"));
+					egui::ComboBox::from_label("")
+						.selected_text(self.hash.to_string())
+						.show_ui(ui, |ui| {
+							for hash_func in crate::hasher::HASH_FUNCTIONS {
+								ui.selectable_value(
+									&mut self.hash,
+									*hash_func,
+									hash_func.to_string(),
+								);
+							}
+						});
 					ui.end_row();
 
 					ui.label(self.i18n.msg("label_nb_files_start"));
@@ -452,9 +473,6 @@ impl ChecksumApp {
 						},
 					);
 				} else {
-					if self.hash != self.cfg_hash {
-						self.hash = self.cfg_hash;
-					}
 					let nb_files = p.get_nb_files();
 					if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
 						ChecksumApp::add_warning_label(

@@ -10,6 +10,7 @@ content_file_header =
 
 label_nb_files_start = Numéro de la première pièce
 label_content_file = Nom du fichier d’empreintes
+label_hash_function = Fonction de hachage
 
 
 ## Selection buttons
