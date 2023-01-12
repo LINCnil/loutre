@@ -64,15 +64,9 @@ impl HashFunc {
 	}
 
 	fn nb_threads(&self) -> usize {
-		let available_parallelism = match thread::available_parallelism() {
+		match thread::available_parallelism() {
 			Ok(nb) => nb.get(),
 			Err(_) => 1,
-		};
-		match self {
-			HashFunc::Sha256 | HashFunc::Sha384 | HashFunc::Sha512 => available_parallelism,
-			HashFunc::Sha3_256 | HashFunc::Sha3_384 | HashFunc::Sha3_512 => available_parallelism,
-			HashFunc::Blake2s | HashFunc::Blake2b => available_parallelism,
-			HashFunc::Blake3 => available_parallelism / 2,
 		}
 	}
 }
