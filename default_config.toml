@@ -46,6 +46,7 @@
 ## - sha3-512
 ## - blake2s
 ## - blake2b
+## - blake3
 ## The default is sha-256
 
 #hash_function = "sha-256"

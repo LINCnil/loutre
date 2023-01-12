@@ -45,6 +45,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `sha3-512`
   * `blake2s`
   * `blake2b`
+  * `blake3`
 
 
 ## Architecture technique
