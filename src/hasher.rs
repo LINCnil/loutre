@@ -25,6 +25,16 @@ impl HashFunc {
 			_ => Err("Invalid hash function".to_string()),
 		}
 	}
+
+	fn nb_threads(&self) -> usize {
+		let available_parallelism = match thread::available_parallelism() {
+			Ok(nb) => nb.get(),
+			Err(_) => 1,
+		};
+		match self {
+			HashFunc::Sha256 | HashFunc::Sha512 => available_parallelism,
+		}
+	}
 }
 
 impl Default for HashFunc {
@@ -84,10 +94,6 @@ pub struct FileHasher {
 impl FileHasher {
 	pub fn new(file_list: &FileList, hash: HashFunc) -> Self {
 		// Define some king of metadata
-		let nb_threads = match thread::available_parallelism() {
-			Ok(nb) => nb.get(),
-			Err(_) => 1,
-		};
 		let total_bytes = file_list.get_total_size();
 		let (base_tx, rx) = channel();
 
@@ -97,7 +103,7 @@ impl FileHasher {
 		let shared_lst = Arc::new(Mutex::new(job_lst));
 
 		// Spawn hashing threads on each list
-		for _ in 0..nb_threads {
+		for _ in 0..hash.nb_threads() {
 			let tx = base_tx.clone();
 			let jobs = shared_lst.clone();
 			thread::spawn(move || loop {
