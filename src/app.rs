@@ -9,6 +9,7 @@ use crate::i18n::{Attr, I18n};
 use eframe::egui::{self, Color32, Context, RichText};
 use egui_extras::RetainedImage;
 use humansize::{make_format, DECIMAL};
+use std::collections::HashSet;
 use std::path::Path;
 
 const BTN_CLIPBOARD: &str = "🗐";
@@ -28,6 +29,29 @@ macro_rules! reset_messages {
 		$o.info_msg = None;
 		$o.success_msg = None;
 		$o.error_msg = None;
+	};
+}
+
+macro_rules! set_msg_info_check_ok {
+	($o: ident, $files: ident) => {
+		let mut msg = $o.i18n.msg("msg_info_hash_done");
+		if !$files.is_empty() {
+			msg += "\n";
+			msg += &$o.i18n.msg("msg_info_hash_ignored_files");
+			msg += "\n";
+			msg += &$files
+				.iter()
+				.map(|f| {
+					let f = f.components().next().unwrap().as_os_str();
+					let f = Path::new(f);
+					format!(" - {}", f.display())
+				})
+				.collect::<HashSet<String>>()
+				.into_iter()
+				.collect::<Vec<String>>()
+				.join("\n");
+		}
+		$o.info_msg = Some(msg);
 	};
 }
 
@@ -137,6 +161,7 @@ impl ChecksumApp {
 				HashStatus::Finished => {
 					match &mut self.file_list {
 						Some(fl) => {
+							let mut ignored_files = Vec::new();
 							if fl.has_content_file() {
 								match check_files(
 									&self.i18n,
@@ -144,7 +169,8 @@ impl ChecksumApp {
 									&self.content_file_name,
 									&self.email,
 								) {
-									Ok(_) => {
+									Ok(ifl) => {
+										ignored_files = ifl;
 										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
 									Err(e) => {
@@ -160,7 +186,8 @@ impl ChecksumApp {
 									&self.content_file_name,
 									&self.email,
 								) {
-									Ok(_) => {
+									Ok(ifl) => {
+										ignored_files = ifl;
 										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
 									Err(e) => {
@@ -168,7 +195,7 @@ impl ChecksumApp {
 									}
 								}
 							}
-							self.info_msg = Some(self.i18n.msg("msg_info_hash_done"));
+							set_msg_info_check_ok!(self, ignored_files);
 							self.file_hasher = None;
 							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
 						}

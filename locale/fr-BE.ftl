@@ -79,6 +79,7 @@ msg_file_unit =
 msg_info_check_ok = Les empreintes correspondent.
 msg_info_has_ctn_file = Le dossier comporte un fichier { $file_name }
 msg_info_hash_done = Calcul des empreintes effectué.
+msg_info_hash_ignored_files = Les fichiers suivants n'ont pas été trouvés dans le fichier des empreintes et ont donc été ignorés :
 msg_info_del_ctn_file = supprimer
 msg_info_nb_files = Le dossier comporte { $nb } fichiers.
 error_desc = { $error } : { $description }

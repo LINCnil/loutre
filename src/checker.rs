@@ -119,7 +119,7 @@ pub fn check_files(
 	file_list: &FileList,
 	content_file_name: &str,
 	email: &Option<Email>,
-) -> Result<(), String> {
+) -> Result<Vec<PathBuf>, String> {
 	let content_file_set = load_content_file(i18n, file_list).map_err(|e| {
 		i18n.fmt(
 			"error_desc",
@@ -157,7 +157,15 @@ pub fn check_files(
 		}
 	}
 	if error_msg.is_empty() {
-		Ok(())
+		let paths_on_disk: HashSet<PathBuf> =
+			calculated_set.iter().map(|e| e.path.to_owned()).collect();
+		let paths_in_ctn_file: HashSet<PathBuf> =
+			content_file_set.iter().map(|e| e.path.to_owned()).collect();
+		let ignored_files: Vec<PathBuf> = paths_on_disk
+			.difference(&paths_in_ctn_file)
+			.map(|e| e.to_owned())
+			.collect();
+		Ok(ignored_files)
 	} else {
 		Err(error_msg)
 	}
