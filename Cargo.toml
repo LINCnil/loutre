@@ -31,7 +31,7 @@ unic-langid = "0.9"
 blake3 = { version = "1.3", features = ["rayon"] }
 blake2 = "0.10"
 sha3 = "0.10"
-# sha2-asm does not support MSVC
+# sha2-asm does not support windows-MSVC
 # https://github.com/RustCrypto/asm-hashes/issues/17
 [target.'cfg(target_env = "msvc")'.dependencies]
 sha2 = { version = "0.10", features = [] }
@@ -43,6 +43,16 @@ winres = "0.1"
 
 [profile.release]
 strip = "symbols"
-lto = 'fat'
 codegen-units = 1
-panic = 'abort'
+panic = "abort"
+# It is far better to use the "thin" LTO instead of the "fat" one,
+# however Thin-LTO is broken on windows-MSVC. This setting should
+# be switched to "thin" as soon as this bug is fixed.
+#
+# ThinLTO:
+#  - https://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html
+# Bug:
+#  - https://github.com/rust-lang/rust/issues/109114
+#  - https://github.com/rust-lang/rust/issues/109067
+#  - https://github.com/rust-lang/rust/pull/109094
+lto = "fat"
