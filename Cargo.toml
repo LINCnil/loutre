@@ -22,7 +22,7 @@ image = { version = "0.24", features = ["png"] }
 msg_parser = "0.1"
 nom = "7.1"
 unicode-normalization = "0.1"
-rfd = "0.10"
+rfd = "0.11"
 serde = "1.0"
 serde_derive = "1.0"
 toml = "0.7"
