@@ -24,9 +24,10 @@ pub const HASH_FUNCTIONS: &[HashFunc] = &[
 	HashFunc::Blake3,
 ];
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
+	#[default]
 	Sha256,
 	#[serde(rename = "sha-384")]
 	Sha384,
@@ -68,12 +69,6 @@ impl HashFunc {
 			Ok(nb) => nb.get(),
 			Err(_) => 1,
 		}
-	}
-}
-
-impl Default for HashFunc {
-	fn default() -> Self {
-		HashFunc::Sha256
 	}
 }
 

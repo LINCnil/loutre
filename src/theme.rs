@@ -1,9 +1,10 @@
 use serde::Deserialize;
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Theme {
 	Dark,
+	#[default]
 	Light,
 }
 
@@ -17,12 +18,6 @@ impl Theme {
 			Theme::Dark => include_bytes!("../assets/cnil-logo-dark.png").to_vec(),
 			Theme::Light => include_bytes!("../assets/cnil-logo.png").to_vec(),
 		}
-	}
-}
-
-impl Default for Theme {
-	fn default() -> Self {
-		Theme::Light
 	}
 }
 
