@@ -18,10 +18,11 @@ L'exécutable se trouve alors dans le dossier `target/release/`.
 
 La configuration du logiciel se fait dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
 
-- Microsoft Windows : `C:\Users\{UTILISATEUR}\AppData\Roaming\CNIL\loutre`
-- GNU/Linux : `$XDG_CONFIG_HOME/cnil/loutre`
-- GNU/Linux : `$HOME/.config/cnil/loutre`
-- macOS : `$HOME/Library/Application Support/CNIL/loutre`
+| Système d'exploitation | Valeur                                            | Exemple pour l'utilisateur toto                      |
+| ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+| Microsoft Windows      | `{FOLDERID_RoamingAppData}\CNIL\loutre`           | `C:\Users\toto\AppData\Roaming\CNIL\loutre`          |
+| GNU/Linux              | `${XDG_CONFIG_HOME}/cnil/loutre`                  | `/home/toto/.config/cnil/loutre`                     |
+| macOS                  | `${HOME}/Library/Application Support/cnil/loutre` | `/home/toto/Library/Application Support/cnil/loutre` |
 
 Ce fichier est automatiquement généré lors du lancement du logiciel. Les options de configuration possible sont :
 
