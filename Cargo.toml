@@ -42,7 +42,6 @@ sha2 = { version = "0.10", features = ["asm"] }
 winres = "0.1"
 
 [profile.release]
-opt-level = 2
 strip = "symbols"
 lto = 'fat'
 codegen-units = 1
