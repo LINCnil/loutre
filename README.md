@@ -98,3 +98,15 @@ Afin d'extraire les informations nécessaires des courriers électroniques faisa
 ### Équivalence Unicode et normalisation
 
 Afin de pouvoir comparer des noms de fichiers provenant de différentes sources, il est important de prendre en compte les [équivalences Unicode](https://fr.wikipedia.org/wiki/%C3%89quivalence_Unicode) et leur impact. Afin d'éviter de considérer comme différents deux noms de fichiers identiques mais dont certains caractères sont représentés sous des formes différentes, il est nécessaire d'effectuer une [normalisation](https://fr.wikipedia.org/wiki/Normalisation_Unicode). Dans le cas présent, l'algorithme de normalisation utilisé est NFKC.
+
+### Choix d'une fonction de hachage
+
+À l'heure actuelle (début 2023), toutes les fonctions de hachage supportées utilisent un algorithme public réputé fort et exempt de vulnérabilité connue. Elles peuvent donc toutes être utilisées.
+
+Ces fonctions diffèrent principalement par leur taille d'empreinte, leur vitesse d'exécution et leur popularité.
+
+La fonction la plus répandue est SHA-256. Cette fonction extrêmement populaire, dispose de la taille d'empreinte la plus faible parmi les fonctions supportées et est assez rapide. C'est donc un excellent choix qui est grandement reconnu et fait consensus.
+
+La fonction la plus rapide est Blake-3. Très récente (2020) et de conception moderne, elle est encore peu répandue mais se démarque par sa rapidité d'exécution exceptionnelle. Sa taille d'empreinte est identique à celles de SHA-256. Il s'agit donc également d'un excellent choix particulièrement adapté au calcul d'empreintes sur de gros volumes de données.
+
+Les autres fonctions ne sont ni plus rapides ni plus populaires que SHA-256 et Blake-3. Elles n'apportent pas de gain significatif en terme de sécurité malgré des tailles d'empreintes supérieures ou égales. Leur présence est principalement motivé par la possibilité de les utiliser en urgence dans l'hypothèse où des vulnérabilités seraient découvertes dans SHA-256 et Blake-3.
