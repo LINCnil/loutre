@@ -237,7 +237,7 @@ impl ChecksumApp {
 	}
 
 	fn handle_dropped_files(&mut self, ctx: &Context) {
-		for f in &ctx.input().raw.dropped_files {
+		for f in &ctx.input(|i| i.raw.dropped_files.clone()) {
 			if let Some(path) = &f.path {
 				if path.is_dir() {
 					self.build_file_list(path);
