@@ -14,7 +14,7 @@ LegalCopyright = "Commission nationale de l’informatique et des libertés (CNI
 [dependencies]
 dirs = { version = "5.0.1", default-features = false }
 eframe = "0.27.2"
-egui_extras = { version = "0.27.2", default-features = false, features = ["all_loaders"] }
+egui_extras = { version = "0.27.2", default-features = false, features = ["image"] }
 fluent = { version = "0.16.0", default-features = false }
 humansize = { version = "2.1.3", default-features = false }
 image = { version = "0.25.1", default-features = false, features = ["png", "ico"] }
