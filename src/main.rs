@@ -39,14 +39,19 @@ const WIN_HEIGHT: f32 = 345.0;
 
 fn main() {
 	let config = config::Config::init();
-	let win_opts = eframe::NativeOptions {
-		decorated: true,
-		drag_and_drop_support: true,
-		icon_data: get_app_icon(&config.theme),
-		initial_window_size: Some(eframe::egui::Vec2 {
+	let viewport = eframe::egui::ViewportBuilder::default()
+		.with_decorations(true)
+		.with_drag_and_drop(true)
+		.with_inner_size(eframe::egui::Vec2 {
 			x: WIN_WIDTH,
 			y: WIN_HEIGHT,
-		}),
+		});
+	let viewport = match get_app_icon(&config.theme) {
+		Some(icon_data) => viewport.with_icon(icon_data),
+		None => viewport,
+	};
+	let win_opts = eframe::NativeOptions {
+		viewport,
 		default_theme: config.theme.clone().into(),
 		..Default::default()
 	};
@@ -57,7 +62,7 @@ fn main() {
 	}
 }
 
-fn get_app_icon(theme: &theme::Theme) -> Option<eframe::IconData> {
+fn get_app_icon(theme: &theme::Theme) -> Option<eframe::egui::IconData> {
 	let icon_res =
 		image::load_from_memory_with_format(&theme.get_icon_bytes(), image::ImageFormat::Png);
 	let icon = match icon_res {
@@ -67,7 +72,7 @@ fn get_app_icon(theme: &theme::Theme) -> Option<eframe::IconData> {
 		}
 	};
 	let (width, height) = icon.dimensions();
-	Some(eframe::IconData {
+	Some(eframe::egui::IconData {
 		rgba: icon.into_raw(),
 		width,
 		height,

@@ -6,8 +6,7 @@ use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
-use eframe::egui::{self, Color32, Context, RichText};
-use egui_extras::RetainedImage;
+use eframe::egui::{self, Color32, Context, Image, RichText};
 use humansize::{make_format, DECIMAL};
 use std::collections::HashSet;
 use std::path::Path;
@@ -58,7 +57,7 @@ macro_rules! set_msg_info_check_ok {
 pub struct ChecksumApp {
 	i18n: I18n,
 	clipboard: Clipboard,
-	logo: RetainedImage,
+	logo: Vec<u8>,
 	content_file_name: String,
 	nb_start: u32,
 	file_hasher: Option<FileHasher>,
@@ -75,8 +74,9 @@ pub struct ChecksumApp {
 
 impl eframe::App for ChecksumApp {
 	fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+		egui_extras::install_image_loaders(ctx);
 		egui::CentralPanel::default().show(ctx, |ui| {
-			let mut spacing = ui.spacing_mut();
+			let spacing = ui.spacing_mut();
 			self.default_padding = spacing.button_padding;
 			spacing.button_padding = egui::vec2(UI_BTN_PADDING_H, UI_BTN_PADDING_V);
 
@@ -102,14 +102,13 @@ impl eframe::App for ChecksumApp {
 
 impl ChecksumApp {
 	pub fn new(config: &Config) -> Self {
-		let logo = RetainedImage::from_image_bytes("logo", &config.theme.get_logo_bytes()).unwrap();
 		let i18n = I18n::from_language_tag(&config.lang);
 		let content_file_name = config.content_file_name(&i18n);
 		let clipboard = Clipboard::new(config.number_representation, config.clipboard_persistence);
 		Self {
 			i18n,
 			clipboard,
-			logo,
+			logo: config.theme.get_logo_bytes(),
 			content_file_name,
 			nb_start: crate::NB_FILES_START,
 			file_hasher: None,
@@ -356,7 +355,7 @@ impl ChecksumApp {
 
 	fn add_header(&mut self, ui: &mut egui::Ui) {
 		ui.horizontal(|ui| {
-			self.logo.show(ui);
+			ui.add(Image::from_bytes("bytes://logo", self.logo.clone()).fit_to_original_size(1.0));
 
 			egui::Grid::new("header_grid")
 				.num_columns(2)
@@ -527,7 +526,7 @@ impl ChecksumApp {
 	where
 		F: Fn(&mut egui::Ui),
 	{
-		let margin = egui::style::Margin::from(6.0);
+		let margin = egui::Margin::from(6.0);
 		egui::Frame::none()
 			.inner_margin(margin)
 			.fill(*color)
