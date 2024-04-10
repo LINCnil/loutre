@@ -101,26 +101,6 @@ pub enum HashStatus {
 	None,
 }
 
-struct FileJob {
-	file: File,
-	taken: bool,
-}
-
-impl FileJob {
-	fn cmp_size(a: &FileJob, b: &FileJob) -> Ordering {
-		b.file.get_size().cmp(&a.file.get_size())
-	}
-}
-
-impl From<&File> for FileJob {
-	fn from(f: &File) -> Self {
-		FileJob {
-			file: f.to_owned(),
-			taken: false,
-		}
-	}
-}
-
 pub struct FileHasher {
 	rx: Receiver<InternalHashStatus>,
 	processed_bytes: u64,
@@ -134,9 +114,9 @@ impl FileHasher {
 		let (base_tx, rx) = channel();
 
 		// Generate the shared job list
-		let mut job_lst: Vec<FileJob> = file_list.iter_files().map(FileJob::from).collect();
-		job_lst.sort_by(FileJob::cmp_size);
-		let shared_lst = Arc::new(Mutex::new(job_lst));
+		let mut file_list = file_list.files.clone();
+		file_list.sort_by(cmp_size);
+		let shared_lst = Arc::new(Mutex::new(file_list));
 
 		// Spawn hashing threads on each list
 		for _ in 0..hash.nb_threads() {
@@ -144,11 +124,8 @@ impl FileHasher {
 			let jobs = shared_lst.clone();
 			thread::spawn(move || loop {
 				let mut mut_lst = jobs.lock().unwrap();
-				let file = match (*mut_lst).iter_mut().find(|j| !j.taken) {
-					Some(job) => {
-						job.taken = true;
-						job.file.clone()
-					}
+				let file = match mut_lst.pop() {
+					Some(f) => f,
 					None => {
 						break;
 					}
@@ -200,6 +177,10 @@ impl FileHasher {
 	pub fn get_total_bytes(&self) -> u64 {
 		self.total_bytes
 	}
+}
+
+fn cmp_size(a: &File, b: &File) -> Ordering {
+	a.get_size().cmp(&b.get_size())
 }
 
 pub fn hash_single_file(file: &File, hash: HashFunc) -> io::Result<File> {

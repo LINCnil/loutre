@@ -244,7 +244,7 @@ impl FileListBuilder {
 pub struct FileList {
 	path: PathBuf,
 	content_file_path: PathBuf,
-	files: Vec<File>,
+	pub files: Vec<File>,
 }
 
 impl FileList {
