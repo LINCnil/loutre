@@ -91,7 +91,7 @@ impl From<&crate::file::File> for File {
 			hash: f
 				.get_hash()
 				.map(|e| e.to_owned())
-				.unwrap_or_else(String::new),
+				.unwrap_or_default(),
 		}
 	}
 }
