@@ -331,7 +331,7 @@ impl ChecksumApp {
 			{
 				reset_messages!(self);
 				if let Some(path) = rfd::FileDialog::new()
-					.add_filter(&self.i18n.msg("label_email"), &["msg"])
+					.add_filter(self.i18n.msg("label_email"), &["msg"])
 					.pick_file()
 				{
 					if let Ok(email) = Email::new(&path) {
