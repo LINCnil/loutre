@@ -12,6 +12,18 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use std::{fs, thread};
 
+macro_rules! exit_update_loop {
+	($self: ident, $empty_status: expr) => {
+		if $self.files_ready.is_empty() {
+			$empty_status
+		} else {
+			let ret = $self.files_ready.clone();
+			$self.files_ready.clear();
+			HashStatus::NewFiles(ret)
+		}
+	};
+}
+
 pub const HASH_FUNCTIONS: &[HashFunc] = &[
 	HashFunc::Sha256,
 	HashFunc::Sha384,
@@ -95,7 +107,7 @@ enum InternalHashStatus {
 }
 
 pub enum HashStatus {
-	NewFile(File),
+	NewFiles(Vec<File>),
 	Error(String),
 	Finished,
 	None,
@@ -105,16 +117,18 @@ pub struct FileHasher {
 	rx: Receiver<InternalHashStatus>,
 	processed_bytes: u64,
 	total_bytes: u64,
+	files_ready: Vec<File>,
 }
 
 impl FileHasher {
 	pub fn new(file_list: &FileList, hash: HashFunc) -> Self {
-		// Define some king of metadata
+		// Define some kind of metadata
 		let total_bytes = file_list.get_total_size();
 		let (base_tx, rx) = channel();
 
 		// Generate the shared job list
 		let mut file_list = file_list.files.clone();
+		let nb_files = file_list.len();
 		file_list.sort_by(cmp_size);
 		let shared_lst = Arc::new(Mutex::new(file_list));
 
@@ -146,23 +160,37 @@ impl FileHasher {
 			rx,
 			processed_bytes: 0,
 			total_bytes,
+			files_ready: Vec::with_capacity(nb_files),
 		}
 	}
 
 	pub fn update_status(&mut self) -> HashStatus {
-		match self.rx.try_recv() {
-			Ok(rsp) => match rsp {
-				InternalHashStatus::BytesConsumed(nb) => {
-					self.processed_bytes += nb;
-					HashStatus::None
-				}
-				InternalHashStatus::NewFile(f) => HashStatus::NewFile(f),
-				InternalHashStatus::Error(e) => HashStatus::Error(e),
-			},
-			Err(e) => match e {
-				TryRecvError::Empty => HashStatus::None,
-				TryRecvError::Disconnected => HashStatus::Finished,
-			},
+		let respond_after = Instant::now() + Duration::from_millis(crate::BUFF_NOTIF_THRESHOLD);
+		loop {
+			match self.rx.try_recv() {
+				Ok(rsp) => match rsp {
+					InternalHashStatus::BytesConsumed(nb) => {
+						self.processed_bytes += nb;
+					}
+					InternalHashStatus::NewFile(f) => {
+						self.files_ready.push(f);
+					}
+					InternalHashStatus::Error(e) => {
+						return HashStatus::Error(e);
+					}
+				},
+				Err(e) => match e {
+					TryRecvError::Empty => {
+						return exit_update_loop!(self, HashStatus::None);
+					}
+					TryRecvError::Disconnected => {
+						return exit_update_loop!(self, HashStatus::Finished);
+					}
+				},
+			};
+			if Instant::now() > respond_after {
+				return exit_update_loop!(self, HashStatus::None);
+			}
 		}
 	}
 
@@ -262,6 +290,7 @@ macro_rules! blake3_hash_file {
 	}};
 }
 
+#[inline]
 fn hash_file(
 	file: &File,
 	hash: HashFunc,

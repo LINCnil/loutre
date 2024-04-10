@@ -144,13 +144,15 @@ impl ChecksumApp {
 		}
 		if let Some(hr) = &mut self.file_hasher {
 			match hr.update_status() {
-				HashStatus::NewFile(f) => {
-					match &mut self.file_list {
-						Some(fl) => fl.replace_file(f),
-						None => {
-							self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
-						}
-					};
+				HashStatus::NewFiles(f_lst) => {
+					for f in f_lst {
+						match &mut self.file_list {
+							Some(fl) => fl.replace_file(f),
+							None => {
+								self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
+							}
+						};
+					}
 					ctx.request_repaint();
 				}
 				HashStatus::Error(e) => {
