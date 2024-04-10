@@ -3,11 +3,11 @@ use crate::content_file::ContentFile;
 use crate::file::File;
 use crate::hasher::{hash_single_file, HashFunc};
 use crate::i18n::{Attr, I18n};
+use std::collections::HashMap;
 use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
 use std::path::{Path, PathBuf};
-use std::slice::Iter;
 use std::sync::mpsc::{self, channel};
 use std::sync::Arc;
 use std::{fmt, fs, thread};
@@ -235,7 +235,11 @@ impl FileListBuilder {
 			FileListBuilderState::Ok => Ok(FileList {
 				path: self.path.to_owned(),
 				content_file_path: self.content_file_path.to_owned(),
-				files: self.files.to_owned(),
+				files: self
+					.files
+					.iter()
+					.map(|f| (f.get_id(), f.to_owned()))
+					.collect(),
 			}),
 		}
 	}
@@ -244,7 +248,7 @@ impl FileListBuilder {
 pub struct FileList {
 	path: PathBuf,
 	content_file_path: PathBuf,
-	pub files: Vec<File>,
+	files: HashMap<Vec<u8>, File>,
 }
 
 impl FileList {
@@ -258,8 +262,9 @@ impl FileList {
 		content_file_path
 	}
 
-	pub fn iter_files(&self) -> Iter<File> {
-		self.files.iter()
+	#[inline]
+	pub fn iter_files(&self) -> std::collections::hash_map::Values<Vec<u8>, File> {
+		self.files.values()
 	}
 
 	pub fn has_content_file(&self) -> bool {
@@ -267,12 +272,7 @@ impl FileList {
 	}
 
 	pub fn has_hashes(&self) -> bool {
-		for f in &self.files {
-			if f.get_hash().is_some() {
-				return true;
-			}
-		}
-		false
+		self.files.values().any(|f| f.get_hash().is_some())
 	}
 
 	pub fn get_session_hash_func(&self, i18n: &I18n, default_hash: HashFunc) -> HashFunc {
@@ -289,31 +289,26 @@ impl FileList {
 	}
 
 	pub fn get_total_size(&self) -> u64 {
-		let mut s = 0;
-		for f in &self.files {
-			s += f.get_size();
-		}
-		s
+		self.files.values().fold(0, |acc, f| acc + f.get_size())
 	}
 
 	pub fn set_readonly(&self) -> io::Result<()> {
-		for f in &self.files {
+		for f in self.iter_files() {
 			f.set_readonly()?;
 		}
 		Ok(())
 	}
 
 	pub fn replace_file(&mut self, new_file: File) {
-		self.files.retain(|e| *e.get_path() != *new_file.get_path());
-		self.files.push(new_file);
+		self.files.insert(new_file.get_id(), new_file);
 	}
 
 	pub fn write_content_file(&mut self, i18n: &I18n, hash: HashFunc) -> io::Result<()> {
-		ContentFile::write(i18n, &self.content_file_path, &mut self.files, hash)
+		let mut file_list: Vec<File> = self.iter_files().map(|f| f.to_owned()).collect();
+		ContentFile::write(i18n, &self.content_file_path, &mut file_list, hash)
 	}
 
 	pub fn set_clipboard(&mut self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
-		self.files.sort_by(File::cmp_name);
 		clipboard.set_clipboard(i18n, self, nb_start);
 	}
 

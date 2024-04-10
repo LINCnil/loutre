@@ -127,7 +127,7 @@ impl FileHasher {
 		let (base_tx, rx) = channel();
 
 		// Generate the shared job list
-		let mut file_list = file_list.files.clone();
+		let mut file_list: Vec<File> = file_list.iter_files().cloned().collect();
 		let nb_files = file_list.len();
 		file_list.sort_by(cmp_size);
 		let shared_lst = Arc::new(Mutex::new(file_list));

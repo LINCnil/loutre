@@ -68,7 +68,7 @@ impl ContentFile {
 	pub fn write(
 		i18n: &I18n,
 		path: &PathBuf,
-		files: &mut Vec<File>,
+		files: &mut [File],
 		hash: HashFunc,
 	) -> io::Result<()> {
 		files.sort_by(File::cmp_name);

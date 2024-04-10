@@ -50,8 +50,10 @@ impl Clipboard {
 
 impl Clipboard {
 	pub fn set_clipboard(&mut self, i18n: &I18n, file_list: &FileList, nb_start: u32) {
-		let html = get_clipboard_content(i18n, file_list, true, nb_start, self.nb_repr);
-		let alt_text = get_clipboard_content(i18n, file_list, false, nb_start, self.nb_repr);
+		let mut file_list: Vec<File> = file_list.iter_files().map(|f| f.to_owned()).collect();
+		file_list.sort_by(File::cmp_name);
+		let html = get_clipboard_content(i18n, &file_list, true, nb_start, self.nb_repr);
+		let alt_text = get_clipboard_content(i18n, &file_list, false, nb_start, self.nb_repr);
 		self.set_html(&html, &alt_text);
 	}
 
@@ -109,9 +111,9 @@ fn get_file_name_no_dir(file: &File, dir_name: &Path) -> String {
 		.to_string()
 }
 
-fn get_exhibits(file_list: &FileList) -> Vec<Exhibit> {
+fn get_exhibits(file_list: &[File]) -> Vec<Exhibit> {
 	let mut lst = Vec::new();
-	for f in file_list.iter_files() {
+	for f in file_list {
 		match get_dir_name(f) {
 			Some(dir_name) => match lst
 				.iter_mut()
@@ -271,7 +273,7 @@ fn format_dir(i18n: &I18n, n: u32, files: &[File], html: bool, nb_repr: NbRepr) 
 
 fn get_clipboard_content(
 	i18n: &I18n,
-	file_list: &FileList,
+	file_list: &[File],
 	html: bool,
 	nb_start: u32,
 	nb_repr: NbRepr,

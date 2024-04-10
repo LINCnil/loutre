@@ -46,6 +46,14 @@ impl File {
 		.into()
 	}
 
+	pub fn get_id(&self) -> Vec<u8> {
+		[
+			self.prefix.as_os_str().as_encoded_bytes(),
+			self.path.as_os_str().as_encoded_bytes(),
+		]
+		.join(&0)
+	}
+
 	pub fn get_path(&self) -> &Path {
 		self.path.as_path()
 	}
