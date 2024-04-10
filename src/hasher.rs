@@ -145,7 +145,7 @@ impl FileHasher {
 			thread::spawn(move || loop {
 				let mut mut_lst = jobs.lock().unwrap();
 				let file = match (*mut_lst).iter_mut().find(|j| !j.taken) {
-					Some(mut job) => {
+					Some(job) => {
 						job.taken = true;
 						job.file.clone()
 					}
