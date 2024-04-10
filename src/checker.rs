@@ -88,10 +88,7 @@ impl From<&crate::file::File> for File {
 	fn from(f: &crate::file::File) -> Self {
 		File {
 			path: normalize_path(&f.get_file_name(), false),
-			hash: f
-				.get_hash()
-				.map(|e| e.to_owned())
-				.unwrap_or_default(),
+			hash: f.get_hash().map(|e| e.to_owned()).unwrap_or_default(),
 		}
 	}
 }
