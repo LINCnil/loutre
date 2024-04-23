@@ -9,8 +9,7 @@ use std::io;
 use std::os::windows::prelude::*;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{self, channel};
-use std::sync::Arc;
-use std::{fmt, fs, thread};
+use std::{fmt, thread};
 
 // Microsoft Windows File Attribute Constants
 // https://docs.microsoft.com/en-us/windows/win32/fileio/file-attribute-constants
@@ -76,13 +75,7 @@ impl FileListBuilder {
 		};
 		let path = path.to_owned();
 		thread::spawn(move || {
-			match FileListBuilder::visit_dir(
-				tx.clone(),
-				Arc::new(fa_rx),
-				&path,
-				&content_file_path,
-				&path,
-			) {
+			match FileListBuilder::visit_dir(tx.clone(), fa_rx, &path, &content_file_path) {
 				Ok(_) => {
 					let _ = tx.send(FileListBuilderResponse::Done);
 				}
@@ -96,34 +89,52 @@ impl FileListBuilder {
 
 	fn visit_dir(
 		tx: mpsc::Sender<FileListBuilderResponse>,
-		fa_rx: Arc<mpsc::Receiver<bool>>,
+		fa_rx: mpsc::Receiver<bool>,
 		base_path: &Path,
 		ctn: &Path,
-		dir: &Path,
 	) -> io::Result<()> {
-		let mut files = vec![];
-		for entry in fs::read_dir(dir)? {
-			let entry = entry?;
-			let path = entry.path();
-			let is_hidden = is_hidden(&path)?;
-			let is_system = is_system(&path)?;
-			if is_hidden || is_system {
-				let _ = tx.send(FileListBuilderResponse::Ask(FileAsk {
-					path: path.to_owned(),
-					is_hidden,
-					is_system,
-				}));
-				if !fa_rx.recv().unwrap() {
-					continue;
+		let mut ignored_prefixes = vec![];
+		let files = walkdir::WalkDir::new(base_path)
+			.follow_links(false)
+			.into_iter()
+			.filter_map(|entry| {
+				let entry = entry.ok()?;
+				let file_type = entry.file_type();
+				if file_type.is_file() || file_type.is_dir() {
+					let path = entry.path();
+					for ignored_prefix in &ignored_prefixes {
+						if path.starts_with(ignored_prefix) {
+							return None;
+						}
+					}
+					if path == ctn {
+						return None;
+					}
+					let is_hidden = is_hidden(path).ok()?;
+					let is_system = is_system(path).ok()?;
+					if is_hidden || is_system {
+						let _ = tx.send(FileListBuilderResponse::Ask(FileAsk {
+							path: path.to_owned(),
+							is_hidden,
+							is_system,
+						}));
+						if !fa_rx.recv().unwrap() {
+							if file_type.is_dir() {
+								ignored_prefixes.push(path.to_owned());
+							}
+							return None;
+						}
+					}
+					if file_type.is_file() {
+						File::new(entry.path(), base_path).ok()
+					} else {
+						None
+					}
+				} else {
+					None
 				}
-			}
-			if path.is_dir() {
-				FileListBuilder::visit_dir(tx.clone(), fa_rx.clone(), base_path, ctn, &path)?;
-			} else if path != ctn {
-				let file = File::new(&path, base_path)?;
-				files.push(file);
-			}
-		}
+			})
+			.collect::<Vec<File>>();
 		if !files.is_empty() {
 			let _ = tx.send(FileListBuilderResponse::NewFiles(files));
 		}
@@ -335,6 +346,7 @@ impl fmt::Display for FileList {
 }
 
 #[cfg(unix)]
+#[inline]
 fn is_hidden(path: &Path) -> io::Result<bool> {
 	match path.file_name() {
 		Some(name) => Ok(name.to_string_lossy().starts_with('.')),
@@ -343,23 +355,27 @@ fn is_hidden(path: &Path) -> io::Result<bool> {
 }
 
 #[cfg(unix)]
+#[inline]
 fn is_system(_path: &Path) -> io::Result<bool> {
 	Ok(false)
 }
 
 #[cfg(windows)]
+#[inline]
 fn is_hidden(path: &Path) -> io::Result<bool> {
 	file_has_attr(path, FILE_ATTRIBUTE_HIDDEN)
 }
 
 #[cfg(windows)]
+#[inline]
 fn is_system(path: &Path) -> io::Result<bool> {
 	file_has_attr(path, FILE_ATTRIBUTE_SYSTEM)
 }
 
 #[cfg(windows)]
+#[inline]
 fn file_has_attr(path: &Path, attr: u32) -> io::Result<bool> {
-	let metadata = fs::metadata(path)?;
+	let metadata = std::fs::metadata(path)?;
 	let attributes = metadata.file_attributes();
 	Ok((attributes & attr) > 0)
 }

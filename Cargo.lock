@@ -2065,6 +2065,7 @@ dependencies = [
  "toml 0.8.12",
  "unic-langid",
  "unicode-normalization",
+ "walkdir",
  "winres",
 ]
 
