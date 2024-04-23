@@ -11,6 +11,10 @@ build = "build.rs"
 [package.metadata.winres]
 LegalCopyright = "Commission nationale de l’informatique et des libertés (CNIL)"
 
+[features]
+default = []
+nightly = []
+
 [dependencies]
 dirs = { version = "5.0.1", default-features = false }
 eframe = "0.27.2"

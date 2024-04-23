@@ -13,12 +13,12 @@ impl Theme {
 		include_bytes!("../assets/ico/32-32.png").to_vec()
 	}
 
-	#[cfg(debug_assertions)]
+	#[cfg(feature = "nightly")]
 	pub fn get_logo_bytes(&self) -> Vec<u8> {
 		include_bytes!("../assets/nightly-logo.png").to_vec()
 	}
 
-	#[cfg(not(debug_assertions))]
+	#[cfg(not(feature = "nightly"))]
 	pub fn get_logo_bytes(&self) -> Vec<u8> {
 		match self {
 			Theme::Dark => include_bytes!("../assets/cnil-logo-dark.png").to_vec(),
