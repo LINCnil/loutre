@@ -9,6 +9,12 @@ pub enum Theme {
 }
 
 impl Theme {
+	#[cfg(feature = "nightly")]
+	pub fn get_icon_bytes(&self) -> Vec<u8> {
+		include_bytes!("../assets/ico_nightly/32-32.png").to_vec()
+	}
+
+	#[cfg(not(feature = "nightly"))]
 	pub fn get_icon_bytes(&self) -> Vec<u8> {
 		include_bytes!("../assets/ico/32-32.png").to_vec()
 	}
