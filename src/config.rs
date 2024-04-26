@@ -41,7 +41,14 @@ impl Config {
 				Err(_) => crate::DEFAULT_CONFIG.to_string(),
 			}
 		};
-		Config::load_config(&ctn)
+		#[cfg(not(feature = "nightly"))]
+		return Config::load_config(&ctn);
+		#[cfg(feature = "nightly")]
+		{
+			let mut cnf = Config::load_config(&ctn);
+			cnf.theme = Theme::Nightly;
+			cnf
+		}
 	}
 
 	pub fn content_file_name(&self, i18n: &I18n) -> String {
