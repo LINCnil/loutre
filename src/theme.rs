@@ -1,3 +1,4 @@
+use eframe::egui::Color32;
 use serde::Deserialize;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
@@ -9,6 +10,45 @@ pub enum Theme {
 }
 
 impl Theme {
+	#[cfg(feature = "nightly")]
+	pub fn get_info_label_bg(&self) -> Color32 {
+		Color32::from_rgb(0x7a, 0xcb, 0xff)
+	}
+
+	#[cfg(not(feature = "nightly"))]
+	pub fn get_info_label_bg(&self) -> Color32 {
+		match self {
+			Theme::Dark => Color32::from_rgb(0x7a, 0xcb, 0xff),
+			Theme::Light => Color32::from_rgb(0x7a, 0xcb, 0xff),
+		}
+	}
+
+	#[cfg(feature = "nightly")]
+	pub fn get_success_label_bg(&self) -> Color32 {
+		Color32::from_rgb(0xe7, 0xf7, 0xed)
+	}
+
+	#[cfg(not(feature = "nightly"))]
+	pub fn get_success_label_bg(&self) -> Color32 {
+		match self {
+			Theme::Dark => Color32::from_rgb(0xe7, 0xf7, 0xed),
+			Theme::Light => Color32::from_rgb(0xe7, 0xf7, 0xed),
+		}
+	}
+
+	#[cfg(feature = "nightly")]
+	pub fn get_warning_label_bg(&self) -> Color32 {
+		Color32::from_rgb(0xff, 0xeb, 0x3e)
+	}
+
+	#[cfg(not(feature = "nightly"))]
+	pub fn get_warning_label_bg(&self) -> Color32 {
+		match self {
+			Theme::Dark => Color32::from_rgb(0xff, 0xeb, 0x3e),
+			Theme::Light => Color32::from_rgb(0xff, 0xeb, 0x3e),
+		}
+	}
+
 	#[cfg(feature = "nightly")]
 	pub fn get_icon_bytes(&self) -> Vec<u8> {
 		include_bytes!("../assets/ico_nightly/32-32.png").to_vec()

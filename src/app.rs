@@ -6,6 +6,7 @@ use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
+use crate::theme::Theme;
 use eframe::egui::{self, Color32, Context, Image, RichText};
 use humansize::{make_format, DECIMAL};
 use std::collections::HashSet;
@@ -70,6 +71,7 @@ pub struct ChecksumApp {
 	cfg_hash: HashFunc,
 	hash: HashFunc,
 	default_padding: egui::Vec2,
+	theme: Theme,
 }
 
 impl eframe::App for ChecksumApp {
@@ -121,6 +123,7 @@ impl ChecksumApp {
 			cfg_hash: config.hash_function,
 			hash: config.hash_function,
 			default_padding: egui::Vec2::default(),
+			theme: config.theme.clone(),
 		}
 	}
 
@@ -490,6 +493,7 @@ impl ChecksumApp {
 				if p.has_content_file() {
 					ChecksumApp::add_info_label_extra(
 						ui,
+						&self.theme,
 						&self.i18n.fmt(
 							"msg_info_has_ctn_file",
 							&[("file_name", Attr::String(self.content_file_name.clone()))],
@@ -505,6 +509,7 @@ impl ChecksumApp {
 					if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
 						ChecksumApp::add_warning_label(
 							ui,
+							&self.theme,
 							&self
 								.i18n
 								.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
@@ -513,13 +518,13 @@ impl ChecksumApp {
 				}
 			}
 			if let Some(msg) = &self.info_msg {
-				ChecksumApp::add_info_label(ui, msg);
+				ChecksumApp::add_info_label(ui, &self.theme, msg);
 			}
 			if let Some(msg) = &self.success_msg {
-				ChecksumApp::add_success_label(ui, msg);
+				ChecksumApp::add_success_label(ui, &self.theme, msg);
 			}
 			if let Some(msg) = &self.error_msg {
-				ChecksumApp::add_warning_label(ui, msg);
+				ChecksumApp::add_warning_label(ui, &self.theme, msg);
 			}
 		});
 	}
@@ -542,39 +547,33 @@ impl ChecksumApp {
 			});
 	}
 
-	fn add_info_label(ui: &mut egui::Ui, text: &str) {
-		ChecksumApp::add_info_label_extra(ui, text, |_| {});
+	fn add_info_label(ui: &mut egui::Ui, theme: &Theme, text: &str) {
+		ChecksumApp::add_info_label_extra(ui, theme, text, |_| {});
 	}
 
-	fn add_info_label_extra<F>(ui: &mut egui::Ui, text: &str, extra: F)
+	fn add_info_label_extra<F>(ui: &mut egui::Ui, theme: &Theme, text: &str, extra: F)
 	where
 		F: Fn(&mut egui::Ui),
 	{
-		ChecksumApp::add_label(
-			ui,
-			text,
-			SIGN_INFO,
-			&Color32::from_rgb(0x7a, 0xcb, 0xff),
-			extra,
-		);
+		ChecksumApp::add_label(ui, text, SIGN_INFO, &theme.get_info_label_bg(), extra);
 	}
 
-	fn add_success_label(ui: &mut egui::Ui, text: &str) {
+	fn add_success_label(ui: &mut egui::Ui, theme: &Theme, text: &str) {
 		ChecksumApp::add_label(
 			ui,
 			text,
 			SIGN_SUCCESS,
-			&Color32::from_rgb(0xe7, 0xf7, 0xed),
+			&theme.get_success_label_bg(),
 			|_| {},
 		);
 	}
 
-	fn add_warning_label(ui: &mut egui::Ui, text: &str) {
+	fn add_warning_label(ui: &mut egui::Ui, theme: &Theme, text: &str) {
 		ChecksumApp::add_label(
 			ui,
 			text,
 			SIGN_WARNING,
-			&Color32::from_rgb(0xff, 0xeb, 0x3e),
+			&theme.get_warning_label_bg(),
 			|_| {},
 		);
 	}
