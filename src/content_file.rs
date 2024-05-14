@@ -77,7 +77,7 @@ impl ContentFile {
 			"{}\t{}\t{}\r\n",
 			i18n.msg("content_file_header.name"),
 			i18n.msg("content_file_header.size"),
-			hash.to_string(),
+			hash,
 		);
 		content_file.write_all(header.as_bytes())?;
 		for f in files {

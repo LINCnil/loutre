@@ -10,7 +10,7 @@ use std::io::{self, Read};
 use std::sync::mpsc::{channel, Receiver, Sender, TryRecvError};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
-use std::{fs, thread};
+use std::{fmt, fs, thread};
 
 macro_rules! exit_update_loop {
 	($self: ident, $empty_status: expr) => {
@@ -84,19 +84,20 @@ impl HashFunc {
 	}
 }
 
-impl ToString for HashFunc {
-	fn to_string(&self) -> String {
-		match self {
-			HashFunc::Sha256 => "SHA256".to_string(),
-			HashFunc::Sha384 => "SHA384".to_string(),
-			HashFunc::Sha512 => "SHA512".to_string(),
-			HashFunc::Sha3_256 => "SHA3-256".to_string(),
-			HashFunc::Sha3_384 => "SHA3-384".to_string(),
-			HashFunc::Sha3_512 => "SHA3-512".to_string(),
-			HashFunc::Blake2s => "BLAKE2s".to_string(),
-			HashFunc::Blake2b => "BLAKE2b".to_string(),
-			HashFunc::Blake3 => "BLAKE3".to_string(),
-		}
+impl fmt::Display for HashFunc {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let s = match self {
+			HashFunc::Sha256 => "SHA256",
+			HashFunc::Sha384 => "SHA384",
+			HashFunc::Sha512 => "SHA512",
+			HashFunc::Sha3_256 => "SHA3-256",
+			HashFunc::Sha3_384 => "SHA3-384",
+			HashFunc::Sha3_512 => "SHA3-512",
+			HashFunc::Blake2s => "BLAKE2s",
+			HashFunc::Blake2b => "BLAKE2b",
+			HashFunc::Blake3 => "BLAKE3",
+		};
+		write!(f, "{s}")
 	}
 }
 
