@@ -21,6 +21,11 @@ const HTML_P_CLOSE: &str = "</p>";
 const HTML_SUP_OPEN: &str = "<sup>";
 const HTML_SUP_CLOSE: &str = "</sup>";
 const TPL_HASH_METHOD: &str = "SHA-256";
+pub const AVAILABLE_PERSISTENCES: &[ClipboardPersistence] = &[
+	ClipboardPersistence::Default,
+	ClipboardPersistence::Activated,
+	ClipboardPersistence::Deactivated,
+];
 
 macro_rules! if_html {
 	($tag: ident, $html: ident) => {
@@ -30,6 +35,43 @@ macro_rules! if_html {
 			""
 		}
 	};
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum ClipboardPersistence {
+	Default,
+	Activated,
+	Deactivated,
+}
+
+impl ClipboardPersistence {
+	pub fn display(&self, i18n: &I18n) -> String {
+		match self {
+			Self::Default => i18n.msg("default"),
+			Self::Activated => i18n.msg("activated"),
+			Self::Deactivated => i18n.msg("deactivated"),
+		}
+	}
+}
+
+impl From<Option<bool>> for ClipboardPersistence {
+	fn from(opt: Option<bool>) -> Self {
+		match opt {
+			None => Self::Default,
+			Some(true) => Self::Activated,
+			Some(false) => Self::Deactivated,
+		}
+	}
+}
+
+impl From<ClipboardPersistence> for Option<bool> {
+	fn from(val: ClipboardPersistence) -> Self {
+		match val {
+			ClipboardPersistence::Default => None,
+			ClipboardPersistence::Activated => Some(true),
+			ClipboardPersistence::Deactivated => Some(false),
+		}
+	}
 }
 
 pub struct Clipboard {
@@ -46,9 +88,15 @@ impl Clipboard {
 			persistence,
 		}
 	}
-}
 
-impl Clipboard {
+	pub fn get_nb_repr(&self) -> NbRepr {
+		self.nb_repr
+	}
+
+	pub fn get_persistence(&self) -> Option<bool> {
+		self.persistence
+	}
+
 	pub fn set_clipboard(&mut self, i18n: &I18n, file_list: &FileList, nb_start: u32) {
 		let mut file_list: Vec<File> = file_list.iter_files().map(|f| f.to_owned()).collect();
 		file_list.sort_by(File::cmp_name);

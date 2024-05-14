@@ -2,7 +2,7 @@ use crate::file::File;
 use crate::file_list::FileList;
 use blake2::{Blake2b512, Blake2s256};
 use blake3::Hasher as Blake3;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
 use std::cmp::Ordering;
@@ -36,7 +36,7 @@ pub const HASH_FUNCTIONS: &[HashFunc] = &[
 	HashFunc::Blake3,
 ];
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
 	#[default]

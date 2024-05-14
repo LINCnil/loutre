@@ -1,7 +1,12 @@
 use crate::i18n::{Attr, I18n};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+pub const AVAILABLE_NB_REPR: &[(NbRepr, &str)] = &[
+	(NbRepr::Letters, "letters"),
+	(NbRepr::WesternArabicNumerals, "western_arabic_numerals"),
+];
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum NbRepr {
 	Letters,
@@ -15,6 +20,13 @@ impl NbRepr {
 		match self {
 			NbRepr::Letters => format_letters(nb, i18n, true),
 			NbRepr::WesternArabicNumerals => nb.to_string(),
+		}
+	}
+
+	pub fn display(&self, i18n: &I18n) -> String {
+		match self {
+			NbRepr::Letters => i18n.msg("letters"),
+			NbRepr::WesternArabicNumerals => i18n.msg("western_arabic_numerals"),
 		}
 	}
 }

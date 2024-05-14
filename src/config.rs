@@ -2,24 +2,56 @@ use crate::hasher::HashFunc;
 use crate::i18n::I18n;
 use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
-use serde_derive::Deserialize;
+use serde_derive::{Deserialize, Serialize};
 use std::fs::{create_dir_all, read_to_string, File};
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-#[derive(Default, Deserialize)]
+#[derive(Clone, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Config {
 	pub theme: Theme,
 	pub lang: String,
 	pub number_representation: NbRepr,
-	content_file_name: Option<String>,
+	pub content_file_name: Option<String>,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
 }
 
 impl Config {
 	pub fn init() -> Self {
+		let path = Config::get_file_path();
+		let ctn = if path.is_file() {
+			match read_to_string(&path) {
+				Ok(ctn) => ctn,
+				Err(_) => String::new(),
+			}
+		} else {
+			String::new()
+		};
+		#[cfg(not(feature = "nightly"))]
+		return Config::load_config(&ctn);
+		#[cfg(feature = "nightly")]
+		{
+			let mut cnf = Config::load_config(&ctn);
+			cnf.theme = if cnf.theme == Theme::Dark {
+				Theme::NightlyDark
+			} else {
+				Theme::NightlyLight
+			};
+			cnf
+		}
+	}
+
+	pub fn write_to_file(&self) {
+		let path = Config::get_file_path();
+		if let Ok(mut f) = File::create(path) {
+			let ctn = toml::to_string(&self).unwrap();
+			let _ = f.write_all(ctn.as_bytes());
+		}
+	}
+
+	fn get_file_path() -> PathBuf {
 		let mut path = match dirs::config_dir() {
 			Some(p) => p,
 			None => PathBuf::new(),
@@ -30,25 +62,7 @@ impl Config {
 			let _ = create_dir_all(&path);
 		}
 		path.push(crate::CONFIG_FILE_NAME);
-		let ctn = if !path.is_file() {
-			if let Ok(mut f) = File::create(&path) {
-				let _ = f.write_all(crate::DEFAULT_CONFIG.as_bytes());
-			}
-			crate::DEFAULT_CONFIG.to_string()
-		} else {
-			match read_to_string(&path) {
-				Ok(ctn) => ctn,
-				Err(_) => crate::DEFAULT_CONFIG.to_string(),
-			}
-		};
-		#[cfg(not(feature = "nightly"))]
-		return Config::load_config(&ctn);
-		#[cfg(feature = "nightly")]
-		{
-			let mut cnf = Config::load_config(&ctn);
-			cnf.theme = Theme::Nightly;
-			cnf
-		}
+		path
 	}
 
 	pub fn content_file_name(&self, i18n: &I18n) -> String {

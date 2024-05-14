@@ -54,7 +54,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
 
 Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 
-- `app.rs` : gestion de l'interface graphique
+- `app.rs` : gestion de la base de l'application
 - `checker.rs` : comparaison des empreintes préalablement calculées
 - `clipboard.rs` : gestion du presse-papier
 - `config.rs` : gestion de la configuration
@@ -68,6 +68,9 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
 - `theme.rs` : gestion des thèmes
+- `views/config.rs`: gestion de l'interface de configuration
+- `views/main.rs`: gestion de la vue principale
+- `views.rs`: interface des différentes vues
 
 ### Interface graphique en mode immédiat
 

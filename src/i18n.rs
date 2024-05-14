@@ -1,6 +1,12 @@
 use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use unic_langid::LanguageIdentifier;
 
+pub const AVAILABLE_LANGUAGES: &[(&str, &str)] = &[
+	("en-US", "English (US)"),
+	("fr-BE", "Français (Belgique)"),
+	("fr-FR", "Français (France)"),
+];
+
 pub enum Attr {
 	String(String),
 	Usize(usize),
@@ -10,6 +16,7 @@ pub enum Attr {
 
 pub struct I18n {
 	bundle: FluentBundle<FluentResource>,
+	lang_tag: LanguageIdentifier,
 }
 
 impl I18n {
@@ -18,7 +25,7 @@ impl I18n {
 			.parse()
 			.unwrap_or_else(|_| crate::DEFAULT_LANG.parse().unwrap());
 		let ressource = I18n::get_ressource(&lang_tag);
-		let mut bundle = FluentBundle::new(vec![lang_tag]);
+		let mut bundle = FluentBundle::new(vec![lang_tag.clone()]);
 		// Isolation allows a directional text (left-to-right or right-to-left)
 		// to be incorporated within a text that has a different direction.
 		// This is done by adding Unicode control characters around each variable.
@@ -32,7 +39,11 @@ impl I18n {
 		// https://github.com/projectfluent/fluent-rs/issues/172
 		bundle.set_use_isolating(false);
 		bundle.add_resource(ressource).unwrap();
-		Self { bundle }
+		Self { bundle, lang_tag }
+	}
+
+	pub fn get_lang_tag(&self) -> String {
+		self.lang_tag.to_string()
 	}
 
 	pub fn msg(&self, key: &str) -> String {

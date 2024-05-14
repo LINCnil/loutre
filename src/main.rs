@@ -13,6 +13,7 @@ mod i18n;
 mod nb_repr;
 mod path_cmp;
 mod theme;
+mod views;
 
 const APP_NAME: &str = "LOUTRE — LOgiciel Unique de TRaitement des Empreintes";
 const BUFF_SIZE: usize = 524288; // 512 KiB
@@ -25,7 +26,6 @@ const CONFIG_FILE_DIR: &str = "cnil";
 const CONFIG_FILE_DIR: &str = "CNIL";
 const CONFIG_FILE_SUBDIR: &str = "loutre";
 const CONFIG_FILE_NAME: &str = "config.toml";
-const DEFAULT_CONFIG: &str = include_str!("../default_config.toml");
 
 #[cfg(windows)]
 const CONTENT_FILE_PATH_PREFIX: &str = "\\";
@@ -52,7 +52,7 @@ fn main() {
 	};
 	let win_opts = eframe::NativeOptions {
 		viewport,
-		default_theme: config.theme.clone().into(),
+		default_theme: config.theme.into(),
 		..Default::default()
 	};
 	let app = app::ChecksumApp::new(&config);
