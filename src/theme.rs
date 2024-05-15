@@ -12,6 +12,11 @@ const SIGN_INFO: char = '\u{F449}';
 const SIGN_SUCCESS: char = '\u{EB81}';
 const SIGN_WARNING: char = '\u{EA21}';
 
+struct LabelColors {
+	background: Color32,
+	border: Color32,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Theme {
@@ -134,8 +139,7 @@ impl Theme {
 		ui: &mut egui::Ui,
 		text: &str,
 		icon: RichText,
-		bg_color: Color32,
-		border_color: Color32,
+		colors: LabelColors,
 		is_main: bool,
 		extra: F,
 	) where
@@ -145,8 +149,8 @@ impl Theme {
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(0.0))
 				.rounding(LABEL_ROUNDING)
-				.fill(border_color)
-				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, border_color))
+				.fill(colors.border)
+				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, colors.border))
 				.show(ui, |ui| {
 					egui::Frame::none()
 						.outer_margin(egui::Margin {
@@ -162,7 +166,7 @@ impl Theme {
 							sw: 0.0,
 							se: LABEL_ROUNDING,
 						})
-						.fill(bg_color)
+						.fill(colors.background)
 						.show(ui, |ui| {
 							ui.horizontal(|ui| {
 								ui.label(icon.size(LABEL_ICON_SIZE));
@@ -178,9 +182,9 @@ impl Theme {
 		} else {
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(LABEL_PADDING))
-				.fill(bg_color)
+				.fill(colors.background)
 				.rounding(LABEL_ROUNDING)
-				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, border_color))
+				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, colors.border))
 				.show(ui, |ui| {
 					ui.horizontal(|ui| {
 						ui.label(icon.size(LABEL_ICON_SIZE));
@@ -200,71 +204,89 @@ impl Theme {
 	where
 		F: Fn(&mut egui::Ui),
 	{
-		let (bg, border) = self.get_info_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_INFO), bg, border, true, extra);
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_INFO),
+			self.get_info_label_colors(),
+			true,
+			extra,
+		);
 	}
 
 	pub fn add_success_label(&self, ui: &mut egui::Ui, text: &str) {
-		let (bg, border) = self.get_success_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_SUCCESS), bg, border, false, |_| {});
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_SUCCESS),
+			self.get_success_label_colors(),
+			false,
+			|_| {},
+		);
 	}
 
 	pub fn add_warning_label(&self, ui: &mut egui::Ui, text: &str) {
-		let (bg, border) = self.get_warning_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_WARNING), bg, border, true, |_| {});
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_WARNING),
+			self.get_warning_label_colors(),
+			true,
+			|_| {},
+		);
 	}
 
-	fn get_info_label_colors(&self) -> (Color32, Color32) {
+	fn get_info_label_colors(&self) -> LabelColors {
 		match self {
-			Theme::Dark => (
-				Color32::from_rgb(0x34, 0x8c, 0xff),
-				Color32::from_rgb(0x34, 0x8c, 0xff),
-			),
-			Theme::Light => (
-				Color32::from_rgb(0xbb, 0xe4, 0xff),
-				Color32::from_rgb(0x34, 0x8c, 0xff),
-			),
+			Theme::Dark => LabelColors {
+				background: Color32::from_rgb(0x34, 0x8c, 0xff),
+				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+			},
+			Theme::Light => LabelColors {
+				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
+				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+			},
 			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => (
-				Color32::from_rgb(0xbb, 0xe4, 0xff),
-				Color32::from_rgb(0x34, 0x8c, 0xff),
-			),
+			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
+				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
+				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+			},
 		}
 	}
 
-	fn get_success_label_colors(&self) -> (Color32, Color32) {
+	fn get_success_label_colors(&self) -> LabelColors {
 		match self {
-			Theme::Dark => (
-				Color32::from_rgb(0x10, 0x64, 0x32),
-				Color32::from_rgb(0x34, 0xff, 0x86),
-			),
-			Theme::Light => (
-				Color32::from_rgb(0xe5, 0xff, 0xf0),
-				Color32::from_rgb(0x21, 0xac, 0x59),
-			),
+			Theme::Dark => LabelColors {
+				background: Color32::from_rgb(0x10, 0x64, 0x32),
+				border: Color32::from_rgb(0x34, 0xff, 0x86),
+			},
+			Theme::Light => LabelColors {
+				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
+				border: Color32::from_rgb(0x21, 0xac, 0x59),
+			},
 			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => (
-				Color32::from_rgb(0xe5, 0xff, 0xf0),
-				Color32::from_rgb(0x21, 0xac, 0x59),
-			),
+			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
+				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
+				border: Color32::from_rgb(0x21, 0xac, 0x59),
+			},
 		}
 	}
 
-	fn get_warning_label_colors(&self) -> (Color32, Color32) {
+	fn get_warning_label_colors(&self) -> LabelColors {
 		match self {
-			Theme::Dark => (
-				Color32::from_rgb(0x9b, 0x7b, 0x23),
-				Color32::from_rgb(0xff, 0xd1, 0x51),
-			),
-			Theme::Light => (
-				Color32::from_rgb(0xff, 0xf8, 0xe5),
-				Color32::from_rgb(0xff, 0xd1, 0x51),
-			),
+			Theme::Dark => LabelColors {
+				background: Color32::from_rgb(0x9b, 0x7b, 0x23),
+				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+			},
+			Theme::Light => LabelColors {
+				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
+				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+			},
 			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => (
-				Color32::from_rgb(0xff, 0xf8, 0xe5),
-				Color32::from_rgb(0xff, 0xd1, 0x51),
-			),
+			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
+				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
+				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+			},
 		}
 	}
 
