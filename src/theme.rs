@@ -111,11 +111,11 @@ impl Theme {
 
 	pub fn get_logo_bytes(&self) -> Vec<u8> {
 		match self {
-			Theme::Dark => include_bytes!("../assets/cnil-logo-dark.png").to_vec(),
-			Theme::Light => include_bytes!("../assets/cnil-logo.png").to_vec(),
+			Theme::Dark => include_bytes!("../assets/main-logo-dark.png").to_vec(),
+			Theme::Light => include_bytes!("../assets/main-logo-light.png").to_vec(),
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => {
-				include_bytes!("../assets/nightly-logo.png").to_vec()
+				include_bytes!("../assets/main-logo-nightly.png").to_vec()
 			}
 		}
 	}
