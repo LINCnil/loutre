@@ -16,7 +16,7 @@ L'exécutable se trouve alors dans le dossier `target/release/`.
 
 ## Configuration
 
-La configuration du logiciel se fait dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
+La configuration du logiciel se fait depuis le panneau de configuration de l'interface graphique (recommandé) ou bien directement dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
 
 | Système d'exploitation | Valeur                                            | Exemple pour l'utilisateur toto                      |
 | ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
