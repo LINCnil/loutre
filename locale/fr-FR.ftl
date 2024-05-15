@@ -1,3 +1,9 @@
+## Theme
+
+theme = Thème
+theme_dark = sombre
+theme_light = clair
+
 ## Content file
 
 content_file_name = contenu.txt
@@ -11,6 +17,16 @@ content_file_header =
 label_nb_files_start = Numéro de la première pièce
 label_content_file = Nom du fichier d’empreintes
 label_hash_function = Fonction de hachage
+language = Langue
+number_representation = Représentation des nombres
+letters = lettres
+western_arabic_numerals = chiffres arabes
+clipboard_persistence = Persistance du presse-papier
+default = par défaut
+activated = activée
+deactivated = désactivée
+apply = Appliquer
+cancel = Annuler
 
 
 ## Selection buttons

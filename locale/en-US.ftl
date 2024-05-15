@@ -1,3 +1,9 @@
+## Theme
+
+theme = Theme
+theme_dark = dark
+theme_light = light
+
 ## Content file
 
 content_file_name = content.txt
@@ -11,6 +17,16 @@ content_file_header =
 label_nb_files_start = Number of the first evidence
 label_content_file = Name of the checksum file
 label_hash_function = Hash function
+language = Language
+number_representation = Number representation
+letters = letters
+western_arabic_numerals = western Arabic numerals
+clipboard_persistence = Clipboard persistence
+default = default
+activated = activated
+deactivated = deactivated
+apply = Apply
+cancel = Cancel
 
 
 ## Selection buttons

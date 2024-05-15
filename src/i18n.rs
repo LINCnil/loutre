@@ -2,9 +2,9 @@ use fluent::{FluentArgs, FluentBundle, FluentResource, FluentValue};
 use unic_langid::LanguageIdentifier;
 
 pub const AVAILABLE_LANGUAGES: &[(&str, &str)] = &[
-	("en-US", "English (US)"),
-	("fr-BE", "Français (Belgique)"),
-	("fr-FR", "Français (France)"),
+	("en-US", "english (US)"),
+	("fr-BE", "français (Belgique)"),
+	("fr-FR", "français (France)"),
 ];
 
 pub enum Attr {
