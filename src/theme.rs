@@ -196,6 +196,17 @@ impl Theme {
 		};
 	}
 
+	pub fn add_error_label(&self, ui: &mut egui::Ui, text: &str) {
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_SUCCESS),
+			self.get_error_label_colors(),
+			false,
+			|_| {},
+		);
+	}
+
 	pub fn add_info_label(&self, ui: &mut egui::Ui, text: &str) {
 		self.add_info_label_extra(ui, text, |_| {});
 	}
@@ -234,6 +245,24 @@ impl Theme {
 			true,
 			|_| {},
 		);
+	}
+
+	fn get_error_label_colors(&self) -> LabelColors {
+		match self {
+			Theme::Dark => LabelColors {
+				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
+				border: Color32::from_rgb(0xac, 0x21, 0x21),
+			},
+			Theme::Light => LabelColors {
+				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
+				border: Color32::from_rgb(0xac, 0x21, 0x21),
+			},
+			#[cfg(feature = "nightly")]
+			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
+				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
+				border: Color32::from_rgb(0xac, 0x21, 0x21),
+			},
+		}
 	}
 
 	fn get_info_label_colors(&self) -> LabelColors {
