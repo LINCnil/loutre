@@ -15,6 +15,8 @@ const SIGN_WARNING: char = '\u{EA21}';
 struct LabelColors {
 	background: Color32,
 	border: Color32,
+	icon: Color32,
+	font: Color32,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
@@ -169,8 +171,8 @@ impl Theme {
 						.fill(colors.background)
 						.show(ui, |ui| {
 							ui.horizontal(|ui| {
-								ui.label(icon.size(LABEL_ICON_SIZE));
-								ui.add(egui::Label::new(text).wrap(true));
+								ui.label(icon.size(LABEL_ICON_SIZE).color(colors.icon));
+								ui.add(egui::Label::new(RichText::new(text).color(colors.font)).wrap(true));
 								extra(ui);
 								ui.with_layout(
 									egui::Layout::right_to_left(egui::Align::TOP),
@@ -187,8 +189,8 @@ impl Theme {
 				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, colors.border))
 				.show(ui, |ui| {
 					ui.horizontal(|ui| {
-						ui.label(icon.size(LABEL_ICON_SIZE));
-						ui.add(egui::Label::new(text).wrap(true));
+						ui.label(icon.size(LABEL_ICON_SIZE).color(colors.icon));
+						ui.add(egui::Label::new(RichText::new(text).color(colors.font)).wrap(true));
 						extra(ui);
 						ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
 					});
@@ -252,15 +254,21 @@ impl Theme {
 			Theme::Dark => LabelColors {
 				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
 				border: Color32::from_rgb(0xac, 0x21, 0x21),
+				icon: Color32::from_rgb(0x21, 0xac, 0x59),
+				font: Color32::from_rgb(0x21, 0xac, 0x59),
 			},
 			Theme::Light => LabelColors {
 				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
 				border: Color32::from_rgb(0xac, 0x21, 0x21),
+				icon: Color32::from_rgb(0x21, 0xac, 0x59),
+				font: Color32::from_rgb(0x21, 0xac, 0x59),
 			},
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
 				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
 				border: Color32::from_rgb(0xac, 0x21, 0x21),
+				icon: Color32::from_rgb(0x21, 0xac, 0x59),
+				font: Color32::from_rgb(0x21, 0xac, 0x59),
 			},
 		}
 	}
@@ -270,15 +278,21 @@ impl Theme {
 			Theme::Dark => LabelColors {
 				background: Color32::from_rgb(0x34, 0x8c, 0xff),
 				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
+				font: Color32::from_rgb(0xe6, 0xf1, 0xff),
 			},
 			Theme::Light => LabelColors {
 				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
 				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
+				font: Color32::from_rgb(0x41, 0x41, 0x41),
 			},
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
 				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
 				border: Color32::from_rgb(0x34, 0x8c, 0xff),
+				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
+				font: Color32::from_rgb(0x41, 0x41, 0x41),
 			},
 		}
 	}
@@ -288,15 +302,21 @@ impl Theme {
 			Theme::Dark => LabelColors {
 				background: Color32::from_rgb(0x10, 0x64, 0x32),
 				border: Color32::from_rgb(0x34, 0xff, 0x86),
+				icon: Color32::from_rgb(0x34, 0xff, 0x86),
+				font: Color32::from_rgb(0xde, 0xff, 0xeb),
 			},
 			Theme::Light => LabelColors {
 				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
 				border: Color32::from_rgb(0x21, 0xac, 0x59),
+				icon: Color32::from_rgb(0x21, 0xac, 0x59),
+				font: Color32::from_rgb(0x21, 0xac, 0x59),
 			},
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
 				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
 				border: Color32::from_rgb(0x21, 0xac, 0x59),
+				icon: Color32::from_rgb(0x21, 0xac, 0x59),
+				font: Color32::from_rgb(0x21, 0xac, 0x59),
 			},
 		}
 	}
@@ -306,15 +326,21 @@ impl Theme {
 			Theme::Dark => LabelColors {
 				background: Color32::from_rgb(0x9b, 0x7b, 0x23),
 				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
+				font: Color32::from_rgb(0xff, 0xf8, 0x6e),
 			},
 			Theme::Light => LabelColors {
 				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
 				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
+				font: Color32::from_rgb(0x41, 0x41, 0x41),
 			},
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
 				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
 				border: Color32::from_rgb(0xff, 0xd1, 0x51),
+				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
+				font: Color32::from_rgb(0x41, 0x41, 0x41),
 			},
 		}
 	}
