@@ -3,6 +3,11 @@ use eframe::egui::{self, Color32, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
+const LABEL_BORDER_SIZE: f32 = 1.0;
+const LABEL_ICON_SIZE: f32 = 20.0;
+const LABEL_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
+const LABEL_PADDING: f32 = 6.0;
+const LABEL_ROUNDING: f32 = 7.0;
 const SIGN_INFO: char = '\u{F449}';
 const SIGN_SUCCESS: char = '\u{EB81}';
 const SIGN_WARNING: char = '\u{EA21}';
@@ -131,24 +136,60 @@ impl Theme {
 		icon: RichText,
 		bg_color: Color32,
 		border_color: Color32,
+		is_main: bool,
 		extra: F,
 	) where
 		F: Fn(&mut egui::Ui),
 	{
-		let margin = egui::Margin::from(6.0);
-		egui::Frame::none()
-			.inner_margin(margin)
-			.fill(bg_color)
-			.rounding(7.0f32)
-			.stroke(egui::Stroke::new(1.0, border_color))
-			.show(ui, |ui| {
-				ui.horizontal(|ui| {
-					ui.label(icon.size(20.0));
-					ui.add(egui::Label::new(text).wrap(true));
-					extra(ui);
-					ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
+		if is_main {
+			egui::Frame::none()
+				.inner_margin(egui::Margin::from(0.0))
+				.rounding(LABEL_ROUNDING)
+				.fill(border_color)
+				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, border_color))
+				.show(ui, |ui| {
+					egui::Frame::none()
+						.outer_margin(egui::Margin {
+							left: LABEL_MAIN_LEFT_BORDER_SIZE,
+							right: LABEL_BORDER_SIZE,
+							top: LABEL_BORDER_SIZE,
+							bottom: LABEL_BORDER_SIZE,
+						})
+						.inner_margin(egui::Margin::from(LABEL_PADDING))
+						.rounding(egui::Rounding {
+							nw: 0.0,
+							ne: LABEL_ROUNDING,
+							sw: 0.0,
+							se: LABEL_ROUNDING,
+						})
+						.fill(bg_color)
+						.show(ui, |ui| {
+							ui.horizontal(|ui| {
+								ui.label(icon.size(LABEL_ICON_SIZE));
+								ui.add(egui::Label::new(text).wrap(true));
+								extra(ui);
+								ui.with_layout(
+									egui::Layout::right_to_left(egui::Align::TOP),
+									|_ui| {},
+								);
+							});
+						});
 				});
-			});
+		} else {
+			egui::Frame::none()
+				.inner_margin(egui::Margin::from(LABEL_PADDING))
+				.fill(bg_color)
+				.rounding(LABEL_ROUNDING)
+				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, border_color))
+				.show(ui, |ui| {
+					ui.horizontal(|ui| {
+						ui.label(icon.size(LABEL_ICON_SIZE));
+						ui.add(egui::Label::new(text).wrap(true));
+						extra(ui);
+						ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
+					});
+				});
+		};
 	}
 
 	pub fn add_info_label(&self, ui: &mut egui::Ui, text: &str) {
@@ -160,17 +201,17 @@ impl Theme {
 		F: Fn(&mut egui::Ui),
 	{
 		let (bg, border) = self.get_info_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_INFO), bg, border, extra);
+		self.add_label(ui, text, self.icon(SIGN_INFO), bg, border, true, extra);
 	}
 
 	pub fn add_success_label(&self, ui: &mut egui::Ui, text: &str) {
 		let (bg, border) = self.get_success_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_SUCCESS), bg, border, |_| {});
+		self.add_label(ui, text, self.icon(SIGN_SUCCESS), bg, border, false, |_| {});
 	}
 
 	pub fn add_warning_label(&self, ui: &mut egui::Ui, text: &str) {
 		let (bg, border) = self.get_warning_label_colors();
-		self.add_label(ui, text, self.icon(SIGN_WARNING), bg, border, |_| {});
+		self.add_label(ui, text, self.icon(SIGN_WARNING), bg, border, true, |_| {});
 	}
 
 	fn get_info_label_colors(&self) -> (Color32, Color32) {
