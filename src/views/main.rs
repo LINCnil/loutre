@@ -46,7 +46,8 @@ pub fn handle_dropped_files(app: &mut ChecksumApp, ctx: &egui::Context) {
 
 fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
-		ui.add(Image::from_bytes("bytes://logo", app.logo.clone()).fit_to_original_size(1.0));
+		let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
+		ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
 
 		egui::Grid::new("header_grid")
 			.num_columns(2)

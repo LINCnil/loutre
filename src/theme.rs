@@ -116,14 +116,21 @@ impl Theme {
 		}
 	}
 
-	pub fn get_logo_bytes(&self) -> Vec<u8> {
+	pub fn get_logo_bytes(&self) -> (String, Vec<u8>) {
 		match self {
-			Theme::Dark => include_bytes!("../assets/main-logo-dark.png").to_vec(),
-			Theme::Light => include_bytes!("../assets/main-logo-light.png").to_vec(),
+			Theme::Dark => (
+				"bytes://logo-dark".to_string(),
+				include_bytes!("../assets/main-logo-dark.png").to_vec(),
+			),
+			Theme::Light => (
+				"bytes://logo-light".to_string(),
+				include_bytes!("../assets/main-logo-light.png").to_vec(),
+			),
 			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => {
-				include_bytes!("../assets/main-logo-nightly.png").to_vec()
-			}
+			Theme::NightlyDark | Theme::NightlyLight => (
+				"bytes://logo-nightly".to_string(),
+				include_bytes!("../assets/main-logo-nightly.png").to_vec(),
+			),
 		}
 	}
 
@@ -172,7 +179,10 @@ impl Theme {
 						.show(ui, |ui| {
 							ui.horizontal(|ui| {
 								ui.label(icon.size(LABEL_ICON_SIZE).color(colors.icon));
-								ui.add(egui::Label::new(RichText::new(text).color(colors.font)).wrap(true));
+								ui.add(
+									egui::Label::new(RichText::new(text).color(colors.font))
+										.wrap(true),
+								);
 								extra(ui);
 								ui.with_layout(
 									egui::Layout::right_to_left(egui::Align::TOP),
@@ -342,6 +352,15 @@ impl Theme {
 				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
 				font: Color32::from_rgb(0x41, 0x41, 0x41),
 			},
+		}
+	}
+
+	pub fn get_text_color(&self) -> Color32 {
+		match self {
+			Theme::Dark => Color32::from_rgb(0xe5, 0xea, 0xff),
+			Theme::Light => Color32::from_rgb(0x41, 0x41, 0x41),
+			#[cfg(feature = "nightly")]
+			Theme::NightlyDark | Theme::NightlyLight => Color32::from_rgb(0x41, 0x41, 0x41),
 		}
 	}
 

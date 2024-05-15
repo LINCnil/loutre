@@ -51,7 +51,6 @@ macro_rules! set_msg_info_check_ok {
 pub struct ChecksumApp {
 	pub i18n: I18n,
 	pub clipboard: Clipboard,
-	pub logo: Vec<u8>,
 	pub content_file_name: String,
 	pub nb_start: u32,
 	pub file_hasher: Option<FileHasher>,
@@ -75,6 +74,7 @@ impl eframe::App for ChecksumApp {
 		egui::CentralPanel::default()
 			.frame(self.theme.get_main_frame())
 			.show(ctx, |ui| {
+				ui.visuals_mut().override_text_color = Some(self.theme.get_text_color());
 				self.update_status(ctx);
 				let view = self.view.to_owned();
 				view.display(self, ui);
@@ -91,7 +91,6 @@ impl ChecksumApp {
 		Self {
 			i18n,
 			clipboard,
-			logo: config.theme.get_logo_bytes(),
 			content_file_name,
 			nb_start: crate::NB_FILES_START,
 			file_hasher: None,
