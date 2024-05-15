@@ -226,6 +226,15 @@ impl Theme {
 			),
 		}
 	}
+
+	pub fn get_main_frame(&self) -> egui::Frame {
+		egui::Frame::default().inner_margin(8.0).fill(match self {
+			Theme::Dark => Color32::from_rgb(0x17, 0x17, 0x2f),
+			Theme::Light => Color32::from_rgb(0xf8, 0xf8, 0xf8),
+			#[cfg(feature = "nightly")]
+			Theme::NightlyDark | Theme::NightlyLight => Color32::from_rgb(0xf8, 0xf8, 0xf8),
+		})
+	}
 }
 
 impl From<Theme> for eframe::Theme {
