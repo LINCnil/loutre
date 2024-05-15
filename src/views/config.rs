@@ -4,10 +4,13 @@ use crate::config::Config;
 use crate::i18n::I18n;
 use crate::theme::Theme;
 use crate::views::AppView;
-use eframe::egui;
+use eframe::egui::{self, Image};
 
 pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	let mut new_config = get_config(app);
+
+	let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
+	ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
 
 	egui::Grid::new("header_grid")
 		.num_columns(2)
