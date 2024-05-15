@@ -12,8 +12,8 @@ use eframe::egui::{self, Context};
 use std::collections::HashSet;
 use std::path::Path;
 
-const BTN_CLIPBOARD: &str = "🗐";
-const BTN_CLIPBOARD_CTN_FILE: &str = "📋";
+const BTN_CLIPBOARD: char = '\u{EB91}';
+const BTN_CLIPBOARD_CTN_FILE: char = '\u{ECD3}';
 
 macro_rules! reset_messages {
 	($o: ident) => {
@@ -106,6 +106,11 @@ impl ChecksumApp {
 			view: AppView::default(),
 			tmp_config: None,
 		}
+	}
+
+	pub fn init_theme(self, cc: &eframe::CreationContext<'_>) -> Self {
+		self.theme.set_fonts(&cc.egui_ctx);
+		self
 	}
 
 	fn update_status(&mut self, ctx: &Context) {
@@ -240,7 +245,7 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& ui
-							.button(BTN_CLIPBOARD)
+							.button(self.theme.icon(BTN_CLIPBOARD))
 							.on_hover_text(self.i18n.msg("btn_clipboard_tip"))
 							.clicked()
 					{
@@ -248,7 +253,7 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& p.has_content_file() && ui
-						.button(BTN_CLIPBOARD_CTN_FILE)
+						.button(self.theme.icon(BTN_CLIPBOARD_CTN_FILE))
 						.on_hover_text(self.i18n.msg("btn_clipboard_ctn_file_tip"))
 						.clicked()
 					{

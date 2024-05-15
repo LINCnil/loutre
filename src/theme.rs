@@ -1,11 +1,11 @@
 use crate::i18n::I18n;
-use eframe::egui::{self, Color32, RichText};
+use eframe::egui::{self, Color32, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
-const SIGN_INFO: &str = "ℹ";
-const SIGN_SUCCESS: &str = "✔";
-const SIGN_WARNING: &str = "⚠";
+const SIGN_INFO: char = '\u{F449}';
+const SIGN_SUCCESS: char = '\u{EB81}';
+const SIGN_WARNING: char = '\u{EA21}';
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -22,6 +22,78 @@ pub enum Theme {
 }
 
 impl Theme {
+	pub fn set_fonts(&self, ctx: &egui::Context) {
+		let mut fonts = egui::FontDefinitions::default();
+
+		// OpenSans-Bold
+		fonts.font_data.insert(
+			"OpenSans-Bold".to_owned(),
+			egui::FontData::from_static(include_bytes!("../assets/fonts/OpenSans-Bold.ttf")),
+		);
+		fonts
+			.families
+			.entry(FontFamily::Name("bold".into()))
+			.or_default()
+			.insert(0, "OpenSans-Bold".to_owned());
+
+		// OpenSans-Regular
+		fonts.font_data.insert(
+			"OpenSans-Regular".to_owned(),
+			egui::FontData::from_static(include_bytes!("../assets/fonts/OpenSans-Regular.ttf")),
+		);
+		fonts
+			.families
+			.entry(FontFamily::Proportional)
+			.or_default()
+			.insert(0, "OpenSans-Regular".to_owned());
+		fonts
+			.families
+			.entry(FontFamily::Name("icon".into()))
+			.or_default()
+			.push("OpenSans-Regular".to_owned());
+
+		// RemixIcon
+		fonts.font_data.insert(
+			"RemixIcon".to_owned(),
+			egui::FontData::from_static(include_bytes!("../assets/fonts/remixicon.ttf")),
+		);
+		fonts
+			.families
+			.entry(FontFamily::Name("icon".into()))
+			.or_default()
+			.insert(0, "RemixIcon".to_owned());
+
+		ctx.set_fonts(fonts);
+
+		let mut style = (*ctx.style()).clone();
+		style.text_styles = [
+			(
+				TextStyle::Heading,
+				FontId::new(16.0, FontFamily::Name("bold".into())),
+			),
+			(TextStyle::Body, FontId::new(16.0, FontFamily::Proportional)),
+			(
+				TextStyle::Button,
+				FontId::new(16.0, FontFamily::Proportional),
+			),
+			(TextStyle::Small, FontId::new(8.0, FontFamily::Proportional)),
+			(
+				TextStyle::Name("icon".into()),
+				FontId::new(16.0, FontFamily::Name("icon".into())),
+			),
+		]
+		.into();
+		ctx.set_style(style);
+	}
+
+	pub fn icon(&self, icon: char) -> RichText {
+		RichText::new(icon).text_style(TextStyle::Name("icon".into()))
+	}
+
+	pub fn icon_with_txt(&self, icon: char, text: &str) -> RichText {
+		RichText::new(format!("{icon} {text}")).text_style(TextStyle::Name("icon".into()))
+	}
+
 	pub fn get_icon_bytes(&self) -> Vec<u8> {
 		match self {
 			#[cfg(feature = "nightly")]
@@ -52,7 +124,7 @@ impl Theme {
 		}
 	}
 
-	fn add_label<F>(&self, ui: &mut egui::Ui, text: &str, icon: &str, color: &Color32, extra: F)
+	fn add_label<F>(&self, ui: &mut egui::Ui, text: &str, icon: RichText, color: &Color32, extra: F)
 	where
 		F: Fn(&mut egui::Ui),
 	{
@@ -62,7 +134,7 @@ impl Theme {
 			.fill(*color)
 			.show(ui, |ui| {
 				ui.horizontal(|ui| {
-					ui.label(RichText::new(icon).size(20.0));
+					ui.label(icon.size(20.0));
 					ui.add(egui::Label::new(text).wrap(true));
 					extra(ui);
 					ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
@@ -78,15 +150,33 @@ impl Theme {
 	where
 		F: Fn(&mut egui::Ui),
 	{
-		self.add_label(ui, text, SIGN_INFO, &self.get_info_label_bg(), extra);
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_INFO),
+			&self.get_info_label_bg(),
+			extra,
+		);
 	}
 
 	pub fn add_success_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_label(ui, text, SIGN_SUCCESS, &self.get_success_label_bg(), |_| {});
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_SUCCESS),
+			&self.get_success_label_bg(),
+			|_| {},
+		);
 	}
 
 	pub fn add_warning_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_label(ui, text, SIGN_WARNING, &self.get_warning_label_bg(), |_| {});
+		self.add_label(
+			ui,
+			text,
+			self.icon(SIGN_WARNING),
+			&self.get_warning_label_bg(),
+			|_| {},
+		);
 	}
 
 	fn get_info_label_bg(&self) -> Color32 {

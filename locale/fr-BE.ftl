@@ -15,8 +15,8 @@ label_hash_function = Fonction de hachage
 
 ## Selection buttons
 
-btn_select_dir = { $icon } Ouvrir un dossier…
-btn_select_mail = { $icon } Ouvrir un AR…
+btn_select_dir = Ouvrir un dossier
+btn_select_mail = Ouvrir un AR
 btn_trash_tip = Réinitialiser
 label_email = Courrier électronique
 

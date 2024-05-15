@@ -5,10 +5,10 @@ use crate::views::AppView;
 use eframe::egui::{self, Image};
 use humansize::{make_format, DECIMAL};
 
-const BTN_CONFIG: &str = "⚙";
-const BTN_SELECT_DIR: &str = "🗁";
-const BTN_SELECT_MAIL: &str = "📧";
-const BTN_TRASH: &str = "🗑";
+const BTN_CONFIG: char = '\u{F0E6}';
+const BTN_SELECT_DIR: char = '\u{ED58}';
+const BTN_SELECT_MAIL: char = '\u{EEEE}';
+const BTN_TRASH: char = '\u{EC2A}';
 
 pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	let spacing = ui.spacing_mut();
@@ -54,7 +54,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				ui.spacing_mut().button_padding = app.default_padding;
 
 				ui.label("");
-				let btn = egui::Button::new(BTN_CONFIG);
+				let btn = egui::Button::new(app.theme.icon(BTN_CONFIG));
 				let (enabled, hover_txt) = if app.file_list.is_none() {
 					(true, app.i18n.msg("config"))
 				} else {
@@ -87,10 +87,10 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if ui
-			.button(app.i18n.fmt(
-				"btn_select_dir",
-				&[("icon", Attr::String(BTN_SELECT_DIR.to_string()))],
-			))
+			.button(
+				app.theme
+					.icon_with_txt(BTN_SELECT_DIR, &app.i18n.msg("btn_select_dir")),
+			)
 			.clicked()
 		{
 			crate::app::reset_messages!(app);
@@ -100,7 +100,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(p) = &app.file_list {
 			if ui
-				.button(BTN_TRASH)
+				.button(app.theme.icon(BTN_TRASH))
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{
@@ -114,10 +114,10 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	});
 	ui.horizontal(|ui| {
 		if ui
-			.button(app.i18n.fmt(
-				"btn_select_mail",
-				&[("icon", Attr::String(BTN_SELECT_MAIL.to_string()))],
-			))
+			.button(
+				app.theme
+					.icon_with_txt(BTN_SELECT_MAIL, &app.i18n.msg("btn_select_mail")),
+			)
 			.clicked()
 		{
 			crate::app::reset_messages!(app);
@@ -132,7 +132,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(e) = &app.email {
 			if ui
-				.button(BTN_TRASH)
+				.button(app.theme.icon(BTN_TRASH))
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{

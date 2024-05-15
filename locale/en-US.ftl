@@ -15,8 +15,8 @@ label_hash_function = Hash function
 
 ## Selection buttons
 
-btn_select_dir = { $icon } Open a directory…
-btn_select_mail = { $icon } Open a notice of receipt…
+btn_select_dir = Open a directory
+btn_select_mail = Open a notice of receipt
 btn_trash_tip = Reset
 label_email = Email
 
