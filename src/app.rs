@@ -6,14 +6,11 @@ use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
-use crate::theme::Theme;
+use crate::theme::{Icon, Theme};
 use crate::views::AppView;
 use eframe::egui::{self, Context};
 use std::collections::HashSet;
 use std::path::Path;
-
-const BTN_CLIPBOARD: char = '\u{EB91}';
-const BTN_CLIPBOARD_CTN_FILE: char = '\u{ECD3}';
 
 macro_rules! reset_messages {
 	($o: ident) => {
@@ -246,7 +243,7 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& ui
-							.button(self.theme.icon(BTN_CLIPBOARD))
+							.button(self.theme.icon(Icon::ButtonClipboard.get_char()))
 							.on_hover_text(self.i18n.msg("btn_clipboard_tip"))
 							.clicked()
 					{
@@ -254,7 +251,7 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& p.has_content_file() && ui
-						.button(self.theme.icon(BTN_CLIPBOARD_CTN_FILE))
+						.button(self.theme.icon(Icon::ButtonClipboardContentFile.get_char()))
 						.on_hover_text(self.i18n.msg("btn_clipboard_ctn_file_tip"))
 						.clicked()
 					{

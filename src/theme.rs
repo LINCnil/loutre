@@ -1,3 +1,7 @@
+mod icon;
+
+pub use icon::Icon;
+
 use crate::i18n::I18n;
 use eframe::egui::{self, Color32, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
@@ -8,9 +12,6 @@ const LABEL_ICON_SIZE: f32 = 20.0;
 const LABEL_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
 const LABEL_PADDING: f32 = 6.0;
 const LABEL_ROUNDING: f32 = 7.0;
-const SIGN_INFO: char = '\u{F449}';
-const SIGN_SUCCESS: char = '\u{EB81}';
-const SIGN_WARNING: char = '\u{EA21}';
 
 struct LabelColors {
 	background: Color32,
@@ -212,7 +213,7 @@ impl Theme {
 		self.add_label(
 			ui,
 			text,
-			self.icon(SIGN_SUCCESS),
+			self.icon(Icon::SignError.get_char()),
 			self.get_error_label_colors(),
 			false,
 			|_| {},
@@ -230,7 +231,7 @@ impl Theme {
 		self.add_label(
 			ui,
 			text,
-			self.icon(SIGN_INFO),
+			self.icon(Icon::SignInfo.get_char()),
 			self.get_info_label_colors(),
 			true,
 			extra,
@@ -241,7 +242,7 @@ impl Theme {
 		self.add_label(
 			ui,
 			text,
-			self.icon(SIGN_SUCCESS),
+			self.icon(Icon::SignSuccess.get_char()),
 			self.get_success_label_colors(),
 			false,
 			|_| {},
@@ -252,7 +253,7 @@ impl Theme {
 		self.add_label(
 			ui,
 			text,
-			self.icon(SIGN_WARNING),
+			self.icon(Icon::SignWarning.get_char()),
 			self.get_warning_label_colors(),
 			true,
 			|_| {},
