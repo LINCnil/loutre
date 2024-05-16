@@ -71,7 +71,7 @@ impl eframe::App for ChecksumApp {
 		egui::CentralPanel::default()
 			.frame(self.theme.get_main_frame())
 			.show(ctx, |ui| {
-				ui.visuals_mut().override_text_color = Some(Color::MainTextColor.get(self.theme));
+				ui.visuals_mut().override_text_color = Some(Color::MainText.get(self.theme));
 				self.update_status(ctx);
 				let view = self.view.to_owned();
 				view.display(self, ui);

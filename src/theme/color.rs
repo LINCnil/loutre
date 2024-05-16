@@ -24,7 +24,7 @@ pub enum Color {
 	InfoBoxWarningText,
 
 	MainFrameBackground,
-	MainTextColor,
+	MainText,
 }
 
 impl Color {
@@ -92,7 +92,7 @@ impl Color {
 				#[cfg(feature = "nightly")]
 				Theme::NightlyDark | Theme::NightlyLight => BaseColor::GREY_2.to_egui_color(),
 			},
-			Self::MainTextColor => match theme {
+			Self::MainText => match theme {
 				Theme::Dark => BaseColor::GREY_4.to_egui_color(),
 				Theme::Light => BaseColor::GREY_1.to_egui_color(),
 				#[cfg(feature = "nightly")]
