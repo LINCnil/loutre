@@ -1,5 +1,7 @@
+mod color;
 mod icon;
 
+pub use color::Color;
 pub use icon::Icon;
 
 use crate::i18n::I18n;
@@ -261,117 +263,45 @@ impl Theme {
 	}
 
 	fn get_error_label_colors(&self) -> LabelColors {
-		match self {
-			Theme::Dark => LabelColors {
-				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
-				border: Color32::from_rgb(0xac, 0x21, 0x21),
-				icon: Color32::from_rgb(0x21, 0xac, 0x59),
-				font: Color32::from_rgb(0x21, 0xac, 0x59),
-			},
-			Theme::Light => LabelColors {
-				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
-				border: Color32::from_rgb(0xac, 0x21, 0x21),
-				icon: Color32::from_rgb(0x21, 0xac, 0x59),
-				font: Color32::from_rgb(0x21, 0xac, 0x59),
-			},
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
-				background: Color32::from_rgb(0xff, 0xf0, 0xf0),
-				border: Color32::from_rgb(0xac, 0x21, 0x21),
-				icon: Color32::from_rgb(0x21, 0xac, 0x59),
-				font: Color32::from_rgb(0x21, 0xac, 0x59),
-			},
+		LabelColors {
+			background: Color::InfoBoxErrorBackground.get(*self),
+			border: Color::InfoBoxErrorBorder.get(*self),
+			icon: Color::InfoBoxErrorIcon.get(*self),
+			font: Color::InfoBoxErrorText.get(*self),
 		}
 	}
 
 	fn get_info_label_colors(&self) -> LabelColors {
-		match self {
-			Theme::Dark => LabelColors {
-				background: Color32::from_rgb(0x34, 0x8c, 0xff),
-				border: Color32::from_rgb(0x34, 0x8c, 0xff),
-				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
-				font: Color32::from_rgb(0xe6, 0xf1, 0xff),
-			},
-			Theme::Light => LabelColors {
-				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
-				border: Color32::from_rgb(0x34, 0x8c, 0xff),
-				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
-				font: Color32::from_rgb(0x41, 0x41, 0x41),
-			},
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
-				background: Color32::from_rgb(0xbb, 0xe4, 0xff),
-				border: Color32::from_rgb(0x34, 0x8c, 0xff),
-				icon: Color32::from_rgb(0x34, 0x8c, 0xff),
-				font: Color32::from_rgb(0x41, 0x41, 0x41),
-			},
+		LabelColors {
+			background: Color::InfoBoxInfoBackground.get(*self),
+			border: Color::InfoBoxInfoBorder.get(*self),
+			icon: Color::InfoBoxInfoIcon.get(*self),
+			font: Color::InfoBoxInfoText.get(*self),
 		}
 	}
 
 	fn get_success_label_colors(&self) -> LabelColors {
-		match self {
-			Theme::Dark => LabelColors {
-				background: Color32::from_rgb(0x10, 0x64, 0x32),
-				border: Color32::from_rgb(0x34, 0xff, 0x86),
-				icon: Color32::from_rgb(0x34, 0xff, 0x86),
-				font: Color32::from_rgb(0xde, 0xff, 0xeb),
-			},
-			Theme::Light => LabelColors {
-				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
-				border: Color32::from_rgb(0x21, 0xac, 0x59),
-				icon: Color32::from_rgb(0x21, 0xac, 0x59),
-				font: Color32::from_rgb(0x21, 0xac, 0x59),
-			},
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
-				background: Color32::from_rgb(0xe5, 0xff, 0xf0),
-				border: Color32::from_rgb(0x21, 0xac, 0x59),
-				icon: Color32::from_rgb(0x21, 0xac, 0x59),
-				font: Color32::from_rgb(0x21, 0xac, 0x59),
-			},
+		LabelColors {
+			background: Color::InfoBoxSuccessBackground.get(*self),
+			border: Color::InfoBoxSuccessBorder.get(*self),
+			icon: Color::InfoBoxSuccessIcon.get(*self),
+			font: Color::InfoBoxSuccessText.get(*self),
 		}
 	}
 
 	fn get_warning_label_colors(&self) -> LabelColors {
-		match self {
-			Theme::Dark => LabelColors {
-				background: Color32::from_rgb(0x9b, 0x7b, 0x23),
-				border: Color32::from_rgb(0xff, 0xd1, 0x51),
-				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
-				font: Color32::from_rgb(0xff, 0xf8, 0x6e),
-			},
-			Theme::Light => LabelColors {
-				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
-				border: Color32::from_rgb(0xff, 0xd1, 0x51),
-				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
-				font: Color32::from_rgb(0x41, 0x41, 0x41),
-			},
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => LabelColors {
-				background: Color32::from_rgb(0xff, 0xf8, 0xe5),
-				border: Color32::from_rgb(0xff, 0xd1, 0x51),
-				icon: Color32::from_rgb(0xff, 0xd1, 0x51),
-				font: Color32::from_rgb(0x41, 0x41, 0x41),
-			},
-		}
-	}
-
-	pub fn get_text_color(&self) -> Color32 {
-		match self {
-			Theme::Dark => Color32::from_rgb(0xe5, 0xea, 0xff),
-			Theme::Light => Color32::from_rgb(0x41, 0x41, 0x41),
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => Color32::from_rgb(0x41, 0x41, 0x41),
+		LabelColors {
+			background: Color::InfoBoxWarningBackground.get(*self),
+			border: Color::InfoBoxWarningBorder.get(*self),
+			icon: Color::InfoBoxWarningIcon.get(*self),
+			font: Color::InfoBoxWarningText.get(*self),
 		}
 	}
 
 	pub fn get_main_frame(&self) -> egui::Frame {
-		egui::Frame::default().inner_margin(8.0).fill(match self {
-			Theme::Dark => Color32::from_rgb(0x17, 0x17, 0x2f),
-			Theme::Light => Color32::from_rgb(0xf8, 0xf8, 0xf8),
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => Color32::from_rgb(0xf8, 0xf8, 0xf8),
-		})
+		egui::Frame::default()
+			.inner_margin(8.0)
+			.fill(Color::MainFrameBackground.get(*self))
 	}
 }
 
