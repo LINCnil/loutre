@@ -40,6 +40,7 @@ impl InfoBoxLevel {
 	}
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct InfoBox {
 	infobox_type: InfoBoxType,
 	level: InfoBoxLevel,
