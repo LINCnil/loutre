@@ -1,7 +1,7 @@
 use crate::app::ChecksumApp;
 use crate::email::Email;
 use crate::i18n::Attr;
-use crate::theme::Icon;
+use crate::theme::{Icon, InfoBox, InfoBoxLevel, InfoBoxType};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 use humansize::{make_format, DECIMAL};
@@ -145,13 +145,13 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	egui::ScrollArea::vertical().show(ui, |ui| {
 		if let Some(p) = &app.file_list {
 			if p.has_content_file() {
-				app.theme.add_info_label_extra(
+				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_dyn(
 					ui,
-					&app.i18n.fmt(
-						"msg_info_has_ctn_file",
-						&[("file_name", Attr::String(app.content_file_name.clone()))],
-					),
 					|ui| {
+						ui.label(&app.i18n.fmt(
+							"msg_info_has_ctn_file",
+							&[("file_name", Attr::String(app.content_file_name.clone()))],
+						));
 						if ui.link(app.i18n.msg("msg_info_del_ctn_file")).clicked() {
 							let _ = std::fs::remove_file(p.get_content_file_path());
 						}
@@ -160,22 +160,23 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			} else {
 				let nb_files = p.get_nb_files();
 				if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
-					app.theme.add_warning_label(
+					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
 						ui,
-						&app.i18n
+						app.i18n
 							.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
 					);
 				}
 			}
 		}
 		if let Some(msg) = &app.info_msg {
-			app.theme.add_info_label(ui, msg);
+			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_text(ui, msg);
 		}
 		if let Some(msg) = &app.success_msg {
-			app.theme.add_success_label(ui, msg);
+			InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Success)
+				.render_text(ui, msg);
 		}
 		if let Some(msg) = &app.error_msg {
-			app.theme.add_warning_label(ui, msg);
+			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(ui, msg);
 		}
 	});
 }

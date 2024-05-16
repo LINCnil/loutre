@@ -70,6 +70,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `theme.rs` : gestion des thèmes
 - `theme/color.rs` : gestion des couleurs
 - `theme/icon.rs` : gestion des icônes
+- `theme/infobox.rs` : gestion des infobulles
 - `views.rs`: interface des différentes vues
 - `views/config.rs`: gestion de l'interface de configuration
 - `views/main.rs`: gestion de la vue principale

@@ -1,26 +1,16 @@
 mod color;
 mod icon;
+mod infobox;
 
 pub use color::Color;
 pub use icon::Icon;
+pub use infobox::{InfoBox, InfoBoxLevel, InfoBoxType};
 
 use crate::i18n::I18n;
-use eframe::egui::{self, Color32, FontFamily, FontId, RichText, TextStyle};
+use eframe::egui::{self, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
-const LABEL_BORDER_SIZE: f32 = 1.0;
-const LABEL_ICON_SIZE: f32 = 20.0;
-const LABEL_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
-const LABEL_PADDING: f32 = 6.0;
-const LABEL_ROUNDING: f32 = 7.0;
-
-struct LabelColors {
-	background: Color32,
-	border: Color32,
-	icon: Color32,
-	font: Color32,
-}
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -143,158 +133,6 @@ impl Theme {
 			Theme::Light => i18n.msg("theme_light"),
 			#[cfg(feature = "nightly")]
 			Theme::NightlyDark | Theme::NightlyLight => i18n.msg("theme_nightly"),
-		}
-	}
-
-	fn add_label<F>(
-		&self,
-		ui: &mut egui::Ui,
-		text: &str,
-		icon: RichText,
-		colors: LabelColors,
-		is_main: bool,
-		extra: F,
-	) where
-		F: Fn(&mut egui::Ui),
-	{
-		if is_main {
-			egui::Frame::none()
-				.inner_margin(egui::Margin::from(0.0))
-				.rounding(LABEL_ROUNDING)
-				.fill(colors.border)
-				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, colors.border))
-				.show(ui, |ui| {
-					egui::Frame::none()
-						.outer_margin(egui::Margin {
-							left: LABEL_MAIN_LEFT_BORDER_SIZE,
-							right: LABEL_BORDER_SIZE,
-							top: LABEL_BORDER_SIZE,
-							bottom: LABEL_BORDER_SIZE,
-						})
-						.inner_margin(egui::Margin::from(LABEL_PADDING))
-						.rounding(egui::Rounding {
-							nw: 0.0,
-							ne: LABEL_ROUNDING,
-							sw: 0.0,
-							se: LABEL_ROUNDING,
-						})
-						.fill(colors.background)
-						.show(ui, |ui| {
-							ui.horizontal(|ui| {
-								ui.label(icon.size(LABEL_ICON_SIZE).color(colors.icon));
-								ui.add(
-									egui::Label::new(RichText::new(text).color(colors.font))
-										.wrap(true),
-								);
-								extra(ui);
-								ui.with_layout(
-									egui::Layout::right_to_left(egui::Align::TOP),
-									|_ui| {},
-								);
-							});
-						});
-				});
-		} else {
-			egui::Frame::none()
-				.inner_margin(egui::Margin::from(LABEL_PADDING))
-				.fill(colors.background)
-				.rounding(LABEL_ROUNDING)
-				.stroke(egui::Stroke::new(LABEL_BORDER_SIZE, colors.border))
-				.show(ui, |ui| {
-					ui.horizontal(|ui| {
-						ui.label(icon.size(LABEL_ICON_SIZE).color(colors.icon));
-						ui.add(egui::Label::new(RichText::new(text).color(colors.font)).wrap(true));
-						extra(ui);
-						ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
-					});
-				});
-		};
-	}
-
-	pub fn add_error_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_label(
-			ui,
-			text,
-			self.icon(Icon::SignError.get_char()),
-			self.get_error_label_colors(),
-			false,
-			|_| {},
-		);
-	}
-
-	pub fn add_info_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_info_label_extra(ui, text, |_| {});
-	}
-
-	pub fn add_info_label_extra<F>(&self, ui: &mut egui::Ui, text: &str, extra: F)
-	where
-		F: Fn(&mut egui::Ui),
-	{
-		self.add_label(
-			ui,
-			text,
-			self.icon(Icon::SignInfo.get_char()),
-			self.get_info_label_colors(),
-			true,
-			extra,
-		);
-	}
-
-	pub fn add_success_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_label(
-			ui,
-			text,
-			self.icon(Icon::SignSuccess.get_char()),
-			self.get_success_label_colors(),
-			false,
-			|_| {},
-		);
-	}
-
-	pub fn add_warning_label(&self, ui: &mut egui::Ui, text: &str) {
-		self.add_label(
-			ui,
-			text,
-			self.icon(Icon::SignWarning.get_char()),
-			self.get_warning_label_colors(),
-			true,
-			|_| {},
-		);
-	}
-
-	fn get_error_label_colors(&self) -> LabelColors {
-		LabelColors {
-			background: Color::InfoBoxErrorBackground.get(*self),
-			border: Color::InfoBoxErrorBorder.get(*self),
-			icon: Color::InfoBoxErrorIcon.get(*self),
-			font: Color::InfoBoxErrorText.get(*self),
-		}
-	}
-
-	fn get_info_label_colors(&self) -> LabelColors {
-		LabelColors {
-			background: Color::InfoBoxInfoBackground.get(*self),
-			border: Color::InfoBoxInfoBorder.get(*self),
-			icon: Color::InfoBoxInfoIcon.get(*self),
-			font: Color::InfoBoxInfoText.get(*self),
-		}
-	}
-
-	fn get_success_label_colors(&self) -> LabelColors {
-		LabelColors {
-			background: Color::InfoBoxSuccessBackground.get(*self),
-			border: Color::InfoBoxSuccessBorder.get(*self),
-			icon: Color::InfoBoxSuccessIcon.get(*self),
-			font: Color::InfoBoxSuccessText.get(*self),
-		}
-	}
-
-	fn get_warning_label_colors(&self) -> LabelColors {
-		LabelColors {
-			background: Color::InfoBoxWarningBackground.get(*self),
-			border: Color::InfoBoxWarningBorder.get(*self),
-			icon: Color::InfoBoxWarningIcon.get(*self),
-			font: Color::InfoBoxWarningText.get(*self),
 		}
 	}
 
