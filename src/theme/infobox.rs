@@ -1,11 +1,11 @@
 use crate::theme::{Color, Icon, Theme};
 use eframe::egui;
 
-const LABEL_BORDER_SIZE: f32 = 1.0;
-const LABEL_ICON_SIZE: f32 = 20.0;
-const LABEL_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
-const LABEL_PADDING: f32 = 6.0;
-const LABEL_ROUNDING: f32 = 7.0;
+const INFOBOX_BORDER_SIZE: f32 = 1.0;
+const INFOBOX_ICON_SIZE: f32 = 20.0;
+const INFOBOX_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
+const INFOBOX_PADDING: f32 = 6.0;
+const INFOBOX_ROUNDING: f32 = 7.0;
 
 #[derive(Clone, Copy, Debug)]
 pub enum InfoBoxType {
@@ -35,7 +35,7 @@ impl InfoBoxLevel {
 		let (icon, color) = self.get_icon(theme);
 		egui::RichText::new(icon.get_char())
 			.text_style(egui::TextStyle::Name("icon".into()))
-			.size(LABEL_ICON_SIZE)
+			.size(INFOBOX_ICON_SIZE)
 			.color(color)
 	}
 }
@@ -82,26 +82,26 @@ impl InfoBox {
 		ui.visuals_mut().override_text_color = Some(self.get_text_color());
 		egui::Frame::none()
 			.inner_margin(egui::Margin::from(0.0))
-			.rounding(LABEL_ROUNDING)
+			.rounding(INFOBOX_ROUNDING)
 			.fill(self.get_border_color())
 			.stroke(egui::Stroke::new(
-				LABEL_BORDER_SIZE,
+				INFOBOX_BORDER_SIZE,
 				self.get_border_color(),
 			))
 			.show(ui, |ui| {
 				egui::Frame::none()
 					.outer_margin(egui::Margin {
-						left: LABEL_MAIN_LEFT_BORDER_SIZE,
-						right: LABEL_BORDER_SIZE,
-						top: LABEL_BORDER_SIZE,
-						bottom: LABEL_BORDER_SIZE,
+						left: INFOBOX_MAIN_LEFT_BORDER_SIZE,
+						right: INFOBOX_BORDER_SIZE,
+						top: INFOBOX_BORDER_SIZE,
+						bottom: INFOBOX_BORDER_SIZE,
 					})
-					.inner_margin(egui::Margin::from(LABEL_PADDING))
+					.inner_margin(egui::Margin::from(INFOBOX_PADDING))
 					.rounding(egui::Rounding {
 						nw: 0.0,
-						ne: LABEL_ROUNDING,
+						ne: INFOBOX_ROUNDING,
 						sw: 0.0,
-						se: LABEL_ROUNDING,
+						se: INFOBOX_ROUNDING,
 					})
 					.fill(self.get_bg_color())
 					.show(ui, |ui| {
@@ -120,11 +120,11 @@ impl InfoBox {
 	{
 		ui.visuals_mut().override_text_color = Some(self.get_text_color());
 		egui::Frame::none()
-			.inner_margin(egui::Margin::from(LABEL_PADDING))
-			.rounding(LABEL_ROUNDING)
+			.inner_margin(egui::Margin::from(INFOBOX_PADDING))
+			.rounding(INFOBOX_ROUNDING)
 			.fill(self.get_bg_color())
 			.stroke(egui::Stroke::new(
-				LABEL_BORDER_SIZE,
+				INFOBOX_BORDER_SIZE,
 				self.get_border_color(),
 			))
 			.show(ui, |ui| {
