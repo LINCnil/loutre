@@ -2,7 +2,7 @@ use crate::app::ChecksumApp;
 use crate::clipboard::{Clipboard, ClipboardPersistence};
 use crate::config::Config;
 use crate::i18n::I18n;
-use crate::theme::Theme;
+use crate::theme::{Button, ButtonStyle, Theme};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 
@@ -125,10 +125,24 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 
 	app.tmp_config = Some(new_config.clone());
 	ui.horizontal(|ui| {
-		if ui.button(app.i18n.msg("apply")).clicked() {
+		if ui
+			.add(
+				Button::new(app.theme, ButtonStyle::MainLight)
+					.text(app.i18n.msg("apply"))
+					.render(),
+			)
+			.clicked()
+		{
 			set_config(app);
 		}
-		if ui.button(app.i18n.msg("cancel")).clicked() {
+		if ui
+			.add(
+				Button::new(app.theme, ButtonStyle::MainLight)
+					.text(app.i18n.msg("cancel"))
+					.render(),
+			)
+			.clicked()
+		{
 			reset_config(app);
 		}
 	});

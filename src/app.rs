@@ -6,7 +6,7 @@ use crate::file_list::{FileAskAnswer, FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::{Attr, I18n};
-use crate::theme::{Color, Icon, Theme};
+use crate::theme::{Button, ButtonStyle, Color, Icon, Theme};
 use crate::views::AppView;
 use eframe::egui::{self, Context};
 use std::collections::HashSet;
@@ -230,11 +230,25 @@ impl ChecksumApp {
 			if self.file_hasher.is_none() {
 				if let Some(p) = &mut self.file_list {
 					if p.has_content_file() {
-						if ui.button(self.i18n.msg("btn_check_fingerprints")).clicked() {
+						if ui
+							.add(
+								Button::new(self.theme, ButtonStyle::MainLight)
+									.text(self.i18n.msg("btn_check_fingerprints"))
+									.render(),
+							)
+							.clicked()
+						{
 							reset_messages!(self);
 							self.file_hasher = Some(FileHasher::new(p, self.hash));
 						}
-					} else if ui.button(self.i18n.msg("btn_calc_fingerprints")).clicked() {
+					} else if ui
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.text(self.i18n.msg("btn_calc_fingerprints"))
+								.render(),
+						)
+						.clicked()
+					{
 						reset_messages!(self);
 						if let Err(e) = p.set_readonly() {
 							self.error_msg = Some(e.to_string());
@@ -243,7 +257,11 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& ui
-							.button(self.theme.icon(Icon::ButtonClipboard.get_char()))
+							.add(
+								Button::new(self.theme, ButtonStyle::MainLight)
+									.icon(Icon::ButtonClipboard)
+									.render(),
+							)
 							.on_hover_text(self.i18n.msg("btn_clipboard_tip"))
 							.clicked()
 					{
@@ -251,7 +269,11 @@ impl ChecksumApp {
 					}
 					if p.has_hashes()
 						&& p.has_content_file() && ui
-						.button(self.theme.icon(Icon::ButtonClipboardContentFile.get_char()))
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.icon(Icon::ButtonClipboardContentFile)
+								.render(),
+						)
 						.on_hover_text(self.i18n.msg("btn_clipboard_ctn_file_tip"))
 						.clicked()
 					{
@@ -308,19 +330,44 @@ impl ChecksumApp {
 					));
 				});
 				ui.horizontal(|ui| {
-					if ui.button(self.i18n.msg("btn_file_choice.yes")).clicked() {
+					if ui
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.text(self.i18n.msg("btn_file_choice.yes"))
+								.render(),
+						)
+						.clicked()
+					{
 						flb.answer(FileAskAnswer::Allow);
 					}
 					if ui
-						.button(self.i18n.msg("btn_file_choice.yes_all"))
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.text(self.i18n.msg("btn_file_choice.yes_all"))
+								.render(),
+						)
 						.clicked()
 					{
 						flb.answer(FileAskAnswer::AllowAll);
 					}
-					if ui.button(self.i18n.msg("btn_file_choice.no")).clicked() {
+					if ui
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.text(self.i18n.msg("btn_file_choice.no"))
+								.render(),
+						)
+						.clicked()
+					{
 						flb.answer(FileAskAnswer::Deny);
 					}
-					if ui.button(self.i18n.msg("btn_file_choice.no_all")).clicked() {
+					if ui
+						.add(
+							Button::new(self.theme, ButtonStyle::MainLight)
+								.text(self.i18n.msg("btn_file_choice.no_all"))
+								.render(),
+						)
+						.clicked()
+					{
 						flb.answer(FileAskAnswer::DenyAll);
 					}
 				});

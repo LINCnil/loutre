@@ -1,7 +1,7 @@
 use crate::app::ChecksumApp;
 use crate::email::Email;
 use crate::i18n::Attr;
-use crate::theme::{Icon, InfoBox, InfoBoxLevel, InfoBoxType};
+use crate::theme::{Button, ButtonStyle, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 use humansize::{make_format, DECIMAL};
@@ -51,7 +51,6 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				ui.spacing_mut().button_padding = app.default_padding;
 
 				ui.label("");
-				let btn = egui::Button::new(app.theme.icon(Icon::ButtonConfig.get_char()));
 				let (enabled, hover_txt) = if app.file_list.is_none() {
 					(true, app.i18n.msg("config"))
 				} else {
@@ -59,7 +58,12 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					(false, app.i18n.msg("config_not_available"))
 				};
 				if ui
-					.add_enabled(enabled, btn)
+					.add_enabled(
+						enabled,
+						Button::new(app.theme, ButtonStyle::MainLight)
+							.icon(Icon::ButtonConfig)
+							.render(),
+					)
 					.on_hover_text(hover_txt)
 					.clicked()
 				{
@@ -84,10 +88,12 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if ui
-			.button(app.theme.icon_with_txt(
-				Icon::ButtonSelectDir.get_char(),
-				&app.i18n.msg("btn_select_dir"),
-			))
+			.add(
+				Button::new(app.theme, ButtonStyle::MainLight)
+					.icon(Icon::ButtonSelectDir)
+					.text(app.i18n.msg("btn_select_dir"))
+					.render(),
+			)
 			.clicked()
 		{
 			crate::app::reset_messages!(app);
@@ -97,7 +103,11 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(p) = &app.file_list {
 			if ui
-				.button(app.theme.icon(Icon::ButtonTrash.get_char()))
+				.add(
+					Button::new(app.theme, ButtonStyle::MainLight)
+						.icon(Icon::ButtonTrash)
+						.render(),
+				)
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{
@@ -111,10 +121,12 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	});
 	ui.horizontal(|ui| {
 		if ui
-			.button(app.theme.icon_with_txt(
-				Icon::ButtonSelectMail.get_char(),
-				&app.i18n.msg("btn_select_mail"),
-			))
+			.add(
+				Button::new(app.theme, ButtonStyle::MainLight)
+					.icon(Icon::ButtonSelectMail)
+					.text(app.i18n.msg("btn_select_mail"))
+					.render(),
+			)
 			.clicked()
 		{
 			crate::app::reset_messages!(app);
@@ -129,7 +141,11 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(e) = &app.email {
 			if ui
-				.button(app.theme.icon(Icon::ButtonTrash.get_char()))
+				.add(
+					Button::new(app.theme, ButtonStyle::MainLight)
+						.icon(Icon::ButtonTrash)
+						.render(),
+				)
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{

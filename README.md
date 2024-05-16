@@ -68,6 +68,7 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
 - `theme.rs` : gestion des thèmes
+- `theme/button.rs` : gestion des boutons
 - `theme/color.rs` : gestion des couleurs
 - `theme/icon.rs` : gestion des icônes
 - `theme/infobox.rs` : gestion des infobulles

@@ -3,6 +3,16 @@ use eframe::egui;
 
 #[derive(Clone, Copy, Debug)]
 pub enum Color {
+	ButtonMainDarkBackground,
+	ButtonMainDarkBorder,
+	ButtonMainDarkIcon,
+	ButtonMainDarkText,
+
+	ButtonMainLightBackground,
+	ButtonMainLightBorder,
+	ButtonMainLightIcon,
+	ButtonMainLightText,
+
 	InfoBoxErrorBackground,
 	InfoBoxErrorBorder,
 	InfoBoxErrorIcon,
@@ -30,6 +40,14 @@ pub enum Color {
 impl Color {
 	pub fn get(&self, theme: Theme) -> egui::Color32 {
 		match self {
+			Self::ButtonMainDarkBackground => BaseColor::BLUE_7.to_egui_color(),
+			Self::ButtonMainDarkBorder => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonMainDarkIcon => BaseColor::BLUE_6.to_egui_color(),
+			Self::ButtonMainDarkText => BaseColor::BLUE_6.to_egui_color(),
+			Self::ButtonMainLightBackground => BaseColor::GREY_4.to_egui_color(),
+			Self::ButtonMainLightBorder => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonMainLightIcon => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonMainLightText => BaseColor::BLUE_5.to_egui_color(),
 			Self::InfoBoxErrorBackground => BaseColor::RED_1.to_egui_color(),
 			Self::InfoBoxErrorBorder => BaseColor::RED_3.to_egui_color(),
 			Self::InfoBoxErrorIcon => BaseColor::RED_2.to_egui_color(),
@@ -110,6 +128,9 @@ impl BaseColor {
 	const BLUE_2: Self = Self([0x34, 0x8c, 0xff, 0xff]); // #348CFF
 	const BLUE_3: Self = Self([0x34, 0x8c, 0xff, 0x33]); // #348CFF 20%
 	const BLUE_4: Self = Self([0xe6, 0xf1, 0xff, 0xff]); // #E6F1FF
+	const BLUE_5: Self = Self([0x00, 0x1d, 0x96, 0xff]); // #001D96
+	const BLUE_6: Self = Self([0x00, 0x1d, 0x96, 0x80]); // #001D96 50%
+	const BLUE_7: Self = Self([0x60, 0x45, 0xff, 0xff]); // #6045FF
 	const GREEN_1: Self = Self([0xe5, 0xff, 0xf0, 0xff]); // #E5FFF0
 	const GREEN_2: Self = Self([0x21, 0xac, 0x59, 0xff]); // #21AC59
 	const GREEN_3: Self = Self([0x21, 0xac, 0x59, 0x33]); // #21AC59 20%

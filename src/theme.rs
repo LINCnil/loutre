@@ -1,7 +1,9 @@
+mod button;
 mod color;
 mod icon;
 mod infobox;
 
+pub use button::{Button, ButtonStyle};
 pub use color::Color;
 pub use icon::Icon;
 pub use infobox::{InfoBox, InfoBoxLevel, InfoBoxType};
