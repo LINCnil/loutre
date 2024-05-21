@@ -1,9 +1,6 @@
 use crate::theme::Icon;
 use eframe::egui;
 
-const ICON_SIZE: f32 = 20.0;
-const TEXT_SIZE: f32 = 12.0;
-
 #[derive(Clone, Debug)]
 pub struct Button {
 	icon: Option<Icon>,
@@ -29,15 +26,14 @@ impl Button {
 	}
 
 	pub fn render(&self) -> egui::Button {
-		if let Some(text) = &self.text {
-			return egui::Button::new(text);
-		}
+		let mut txt = Vec::with_capacity(2);
 		if let Some(icon) = &self.icon {
-			let icon = egui::RichText::new(icon.get_char().to_string())
-				.family(egui::FontFamily::Name("icon".into()))
-				.size(ICON_SIZE);
-			return egui::Button::new(icon);
+			txt.push(icon.get_char().to_string());
 		}
-		unreachable!();
+		if let Some(text) = &self.text {
+			txt.push(text.to_string());
+		}
+		let txt = txt.join(" ");
+		egui::Button::new(txt)
 	}
 }

@@ -72,27 +72,11 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
 		ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
 
-		egui::Grid::new("header_grid")
-			.num_columns(2)
-			.show(ui, |ui| {
-				ui.spacing_mut().button_padding = app.default_padding;
+		ui.vertical(|ui| {
+			ui.add_space(super::UI_EXTRA_SPACE);
+			ui.add_space(super::UI_EXTRA_SPACE);
 
-				ui.label("");
-				let (enabled, hover_txt) = if app.file_list.is_none() {
-					(true, app.i18n.msg("config"))
-				} else {
-					// FIXME: hover text is not displayed
-					(false, app.i18n.msg("config_not_available"))
-				};
-				if ui
-					.add_enabled(enabled, Button::new().icon(Icon::ButtonConfig).render())
-					.on_hover_text(hover_txt)
-					.clicked()
-				{
-					app.view = AppView::ConfigView;
-				}
-				ui.end_row();
-
+			ui.horizontal(|ui| {
 				ui.label(app.i18n.msg("label_nb_files_start"));
 				let mut nb_str = app.nb_start.to_string();
 				let response = ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
@@ -102,27 +86,67 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						app.nb_start = nb.max(1);
 					}
 				}
-				ui.end_row();
 			});
+
+			ui.add_space(super::UI_EXTRA_SPACE);
+
+			ui.horizontal(|ui| {
+				// Button: select dir
+				if ui
+					.add(
+						Button::new()
+							.icon(Icon::ButtonSelectDir)
+							.text(app.i18n.msg("btn_select_dir"))
+							.render(),
+					)
+					.clicked()
+				{
+					crate::app::reset_messages!(app);
+					if let Some(path) = rfd::FileDialog::new().pick_folder() {
+						build_file_list(app, &path);
+					}
+				}
+				// Button: open mail
+				if ui
+					.add(
+						Button::new()
+							.icon(Icon::ButtonSelectMail)
+							.text(app.i18n.msg("btn_select_mail"))
+							.render(),
+					)
+					.clicked()
+				{
+					crate::app::reset_messages!(app);
+					if let Some(path) = rfd::FileDialog::new()
+						.add_filter(app.i18n.msg("label_email"), &["msg"])
+						.pick_file()
+					{
+						if let Ok(email) = Email::new(&path) {
+							app.email = Some(email);
+						}
+					}
+				}
+				// Button: config
+				if ui
+					.add_enabled(
+						app.file_list.is_none(),
+						Button::new()
+							.icon(Icon::ButtonConfig)
+							.text(app.i18n.msg("config"))
+							.render(),
+					)
+					.on_disabled_hover_text(app.i18n.msg("config_not_available"))
+					.clicked()
+				{
+					app.view = AppView::ConfigView;
+				}
+			});
+		});
 	});
 }
 
 fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
-		if ui
-			.add(
-				Button::new()
-					.icon(Icon::ButtonSelectDir)
-					.text(app.i18n.msg("btn_select_dir"))
-					.render(),
-			)
-			.clicked()
-		{
-			crate::app::reset_messages!(app);
-			if let Some(path) = rfd::FileDialog::new().pick_folder() {
-				build_file_list(app, &path);
-			}
-		}
 		if let Some(p) = &app.file_list {
 			if ui
 				.add(Button::new().icon(Icon::ButtonTrash).render())
@@ -138,25 +162,6 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 	});
 	ui.horizontal(|ui| {
-		if ui
-			.add(
-				Button::new()
-					.icon(Icon::ButtonSelectMail)
-					.text(app.i18n.msg("btn_select_mail"))
-					.render(),
-			)
-			.clicked()
-		{
-			crate::app::reset_messages!(app);
-			if let Some(path) = rfd::FileDialog::new()
-				.add_filter(app.i18n.msg("label_email"), &["msg"])
-				.pick_file()
-			{
-				if let Ok(email) = Email::new(&path) {
-					app.email = Some(email);
-				}
-			}
-		}
 		if let Some(e) = &app.email {
 			if ui
 				.add(Button::new().icon(Icon::ButtonTrash).render())

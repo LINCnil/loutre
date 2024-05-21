@@ -123,7 +123,12 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			ui.end_row();
 		});
 
+	let spacing = ui.spacing_mut();
+	app.default_padding = spacing.button_padding;
+	spacing.button_padding = egui::vec2(super::UI_BTN_PADDING_H, super::UI_BTN_PADDING_V);
+
 	app.tmp_config = Some(new_config.clone());
+	ui.add_space(super::UI_EXTRA_SPACE);
 	ui.horizontal(|ui| {
 		if ui
 			.add(Button::new().text(app.i18n.msg("apply")).render())
