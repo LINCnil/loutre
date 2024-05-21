@@ -42,7 +42,7 @@ impl Color {
 			Self::ButtonText => BaseColor::C_001D96.to_egui_color(),
 			Self::ButtonBackgroundHovered => BaseColor::C_6045FF.to_egui_color(),
 			Self::ButtonBorderHovered => BaseColor::C_001D96.to_egui_color(),
-			Self::ButtonTextHovered => BaseColor::C_001D96_50.to_egui_color(),
+			Self::ButtonTextHovered => BaseColor::C_FFFFFF.to_egui_color(),
 			Self::InfoBoxErrorBackground => BaseColor::C_FFF0F0.to_egui_color(),
 			Self::InfoBoxErrorBorder => BaseColor::C_AC2121_20.to_egui_color(),
 			Self::InfoBoxErrorIcon => BaseColor::C_AC2121.to_egui_color(),
@@ -155,6 +155,7 @@ impl BaseColor {
 	const C_FFF0F0: Self = Self([0xff, 0xf0, 0xf0, 0xff]);
 	const C_FFF8E5: Self = Self([0xff, 0xf8, 0xe5, 0xff]);
 	const C_FFF8E6: Self = Self([0xff, 0xf8, 0xe6, 0xff]);
+	const C_FFFFFF: Self = Self([0xff, 0xff, 0xff, 0xff]);
 
 	fn to_egui_color(&self) -> egui::Color32 {
 		egui::Color32::from_rgba_unmultiplied(self.0[0], self.0[1], self.0[2], self.0[3])

@@ -29,30 +29,15 @@ impl Button {
 	}
 
 	pub fn render(&self) -> egui::Button {
-		let mut job = egui::text::LayoutJob::default();
-		if let Some(icon) = &self.icon {
-			job.append(
-				icon.get_char().to_string().as_str(),
-				0.0,
-				egui::TextFormat {
-					font_id: egui::FontId::new(ICON_SIZE, egui::FontFamily::Name("icon".into())),
-					..Default::default()
-				},
-			);
-		}
-		if self.icon.is_some() && self.text.is_some() {
-			job.append("", 5.0, egui::TextFormat::default());
-		}
 		if let Some(text) = &self.text {
-			job.append(
-				&format!(" {text}"),
-				0.0,
-				egui::TextFormat {
-					font_id: egui::FontId::new(TEXT_SIZE, egui::FontFamily::Proportional),
-					..Default::default()
-				},
-			);
+			return egui::Button::new(text);
 		}
-		egui::Button::new(job)
+		if let Some(icon) = &self.icon {
+			let icon = egui::RichText::new(icon.get_char().to_string())
+				.family(egui::FontFamily::Name("icon".into()))
+				.size(ICON_SIZE);
+			return egui::Button::new(icon);
+		}
+		unreachable!();
 	}
 }

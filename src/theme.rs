@@ -178,7 +178,6 @@ impl Theme {
 		};
 
 		// Other
-		visuals.override_text_color = Some(Color::MainText.get(*self));
 		visuals.dark_mode = match self {
 			Theme::Dark => true,
 			Theme::Light => false,
