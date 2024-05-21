@@ -165,14 +165,14 @@ impl Theme {
 		};
 
 		// Widgets (hovered)
-		visuals.widgets.inactive.bg_fill = Color::ButtonBackgroundHovered.get(*self);
-		visuals.widgets.inactive.weak_bg_fill = visuals.widgets.inactive.bg_fill;
-		visuals.widgets.inactive.bg_stroke = egui::Stroke {
+		visuals.widgets.hovered.bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.hovered.weak_bg_fill = Color::ButtonBackgroundHovered.get(*self);
+		visuals.widgets.hovered.bg_stroke = egui::Stroke {
 			width: 1.0,
 			color: Color::ButtonBorderHovered.get(*self),
 		};
-		visuals.widgets.inactive.rounding = MAIN_ROUNDING.into();
-		visuals.widgets.inactive.fg_stroke = egui::Stroke {
+		visuals.widgets.hovered.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.hovered.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::ButtonTextHovered.get(*self),
 		};
