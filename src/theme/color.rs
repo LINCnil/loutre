@@ -145,6 +145,6 @@ impl BaseColor {
 	const RED_3: Self = Self([0xdf, 0x45, 0x45, 0x33]); // #DF4545 20%
 
 	fn to_egui_color(&self) -> egui::Color32 {
-		egui::Color32::from_rgba_premultiplied(self.0[0], self.0[1], self.0[2], self.0[3])
+		egui::Color32::from_rgba_unmultiplied(self.0[0], self.0[1], self.0[2], self.0[3])
 	}
 }
