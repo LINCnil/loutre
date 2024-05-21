@@ -187,9 +187,6 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 							"msg_info_has_ctn_file",
 							&[("file_name", Attr::String(app.content_file_name.clone()))],
 						));
-						if ui.link(app.i18n.msg("msg_info_del_ctn_file")).clicked() {
-							let _ = std::fs::remove_file(p.get_content_file_path());
-						}
 					},
 				);
 			} else {
