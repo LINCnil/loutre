@@ -5,7 +5,7 @@ const INFOBOX_BORDER_SIZE: f32 = 1.0;
 const INFOBOX_ICON_SIZE: f32 = 20.0;
 const INFOBOX_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
 const INFOBOX_PADDING: f32 = 6.0;
-const INFOBOX_ROUNDING: f32 = 7.0;
+const INFOBOX_ROUNDING: f32 = crate::theme::MAIN_ROUNDING;
 
 #[derive(Clone, Copy, Debug)]
 pub enum InfoBoxType {

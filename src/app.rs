@@ -6,7 +6,7 @@ use crate::file_list::{FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::I18n;
-use crate::theme::{Color, Theme};
+use crate::theme::Theme;
 use crate::views::AppView;
 use eframe::egui::{self, Context};
 use std::collections::HashSet;
@@ -71,7 +71,7 @@ impl eframe::App for ChecksumApp {
 		egui::CentralPanel::default()
 			.frame(self.theme.get_main_frame())
 			.show(ctx, |ui| {
-				ui.visuals_mut().override_text_color = Some(Color::MainText.get(self.theme));
+				self.theme.set_visuals(ui.visuals_mut());
 				self.update_status(ctx);
 				let view = self.view.to_owned();
 				view.display(self, ui);

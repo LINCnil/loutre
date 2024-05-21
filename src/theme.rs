@@ -3,7 +3,7 @@ mod color;
 mod icon;
 mod infobox;
 
-pub use button::{Button, ButtonStyle};
+pub use button::Button;
 pub use color::Color;
 pub use icon::Icon;
 pub use infobox::{InfoBox, InfoBoxLevel, InfoBoxType};
@@ -13,6 +13,7 @@ use eframe::egui::{self, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
+pub const MAIN_ROUNDING: f32 = 7.0;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -142,6 +143,48 @@ impl Theme {
 		egui::Frame::default()
 			.inner_margin(8.0)
 			.fill(Color::MainFrameBackground.get(*self))
+	}
+
+	pub fn set_visuals(&self, visuals: &mut egui::style::Visuals) {
+		// See also:
+		// https://docs.rs/egui/latest/egui/style/struct.Visuals.html
+		// https://docs.rs/egui/latest/egui/style/struct.Widgets.html
+		// https://docs.rs/egui/latest/egui/style/struct.WidgetVisuals.html
+
+		// Widgets (default)
+		visuals.widgets.inactive.bg_fill = Color::ButtonBackground.get(*self);
+		visuals.widgets.inactive.weak_bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.inactive.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorder.get(*self),
+		};
+		visuals.widgets.inactive.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.inactive.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonText.get(*self),
+		};
+
+		// Widgets (hovered)
+		visuals.widgets.inactive.bg_fill = Color::ButtonBackgroundHovered.get(*self);
+		visuals.widgets.inactive.weak_bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.inactive.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorderHovered.get(*self),
+		};
+		visuals.widgets.inactive.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.inactive.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonTextHovered.get(*self),
+		};
+
+		// Other
+		visuals.override_text_color = Some(Color::MainText.get(*self));
+		visuals.dark_mode = match self {
+			Theme::Dark => true,
+			Theme::Light => false,
+			#[cfg(feature = "nightly")]
+			Theme::NightlyDark | Theme::NightlyLight => false,
+		};
 	}
 }
 

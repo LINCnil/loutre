@@ -3,7 +3,7 @@ use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileListBuilder};
 use crate::hasher::FileHasher;
 use crate::i18n::Attr;
-use crate::theme::{Button, ButtonStyle, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
+use crate::theme::{Button, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 use humansize::{make_format, DECIMAL};
@@ -85,12 +85,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					(false, app.i18n.msg("config_not_available"))
 				};
 				if ui
-					.add_enabled(
-						enabled,
-						Button::new(app.theme, ButtonStyle::MainLight)
-							.icon(Icon::ButtonConfig)
-							.render(),
-					)
+					.add_enabled(enabled, Button::new().icon(Icon::ButtonConfig).render())
 					.on_hover_text(hover_txt)
 					.clicked()
 				{
@@ -116,7 +111,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if ui
 			.add(
-				Button::new(app.theme, ButtonStyle::MainLight)
+				Button::new()
 					.icon(Icon::ButtonSelectDir)
 					.text(app.i18n.msg("btn_select_dir"))
 					.render(),
@@ -130,11 +125,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(p) = &app.file_list {
 			if ui
-				.add(
-					Button::new(app.theme, ButtonStyle::MainLight)
-						.icon(Icon::ButtonTrash)
-						.render(),
-				)
+				.add(Button::new().icon(Icon::ButtonTrash).render())
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{
@@ -149,7 +140,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if ui
 			.add(
-				Button::new(app.theme, ButtonStyle::MainLight)
+				Button::new()
 					.icon(Icon::ButtonSelectMail)
 					.text(app.i18n.msg("btn_select_mail"))
 					.render(),
@@ -168,11 +159,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 		if let Some(e) = &app.email {
 			if ui
-				.add(
-					Button::new(app.theme, ButtonStyle::MainLight)
-						.icon(Icon::ButtonTrash)
-						.render(),
-				)
+				.add(Button::new().icon(Icon::ButtonTrash).render())
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
 				.clicked()
 			{
@@ -232,7 +219,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				if p.has_content_file() {
 					if ui
 						.add(
-							Button::new(app.theme, ButtonStyle::MainLight)
+							Button::new()
 								.text(app.i18n.msg("btn_check_fingerprints"))
 								.render(),
 						)
@@ -243,7 +230,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 					}
 				} else if ui
 					.add(
-						Button::new(app.theme, ButtonStyle::MainLight)
+						Button::new()
 							.text(app.i18n.msg("btn_calc_fingerprints"))
 							.render(),
 					)
@@ -257,11 +244,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if p.has_hashes()
 					&& ui
-						.add(
-							Button::new(app.theme, ButtonStyle::MainLight)
-								.icon(Icon::ButtonClipboard)
-								.render(),
-						)
+						.add(Button::new().icon(Icon::ButtonClipboard).render())
 						.on_hover_text(app.i18n.msg("btn_clipboard_tip"))
 						.clicked()
 				{
@@ -271,7 +254,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 					&& p.has_content_file()
 					&& ui
 						.add(
-							Button::new(app.theme, ButtonStyle::MainLight)
+							Button::new()
 								.icon(Icon::ButtonClipboardContentFile)
 								.render(),
 						)
@@ -347,7 +330,7 @@ pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			ui.horizontal(|ui| {
 				if ui
 					.add(
-						Button::new(app.theme, ButtonStyle::MainLight)
+						Button::new()
 							.text(app.i18n.msg("btn_file_choice.yes"))
 							.render(),
 					)
@@ -357,7 +340,7 @@ pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if ui
 					.add(
-						Button::new(app.theme, ButtonStyle::MainLight)
+						Button::new()
 							.text(app.i18n.msg("btn_file_choice.yes_all"))
 							.render(),
 					)
@@ -367,7 +350,7 @@ pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if ui
 					.add(
-						Button::new(app.theme, ButtonStyle::MainLight)
+						Button::new()
 							.text(app.i18n.msg("btn_file_choice.no"))
 							.render(),
 					)
@@ -377,7 +360,7 @@ pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if ui
 					.add(
-						Button::new(app.theme, ButtonStyle::MainLight)
+						Button::new()
 							.text(app.i18n.msg("btn_file_choice.no_all"))
 							.render(),
 					)

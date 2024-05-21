@@ -3,15 +3,12 @@ use eframe::egui;
 
 #[derive(Clone, Copy, Debug)]
 pub enum Color {
-	ButtonMainDarkBackground,
-	ButtonMainDarkBorder,
-	ButtonMainDarkIcon,
-	ButtonMainDarkText,
-
-	ButtonMainLightBackground,
-	ButtonMainLightBorder,
-	ButtonMainLightIcon,
-	ButtonMainLightText,
+	ButtonBackground,
+	ButtonBorder,
+	ButtonText,
+	ButtonBackgroundHovered,
+	ButtonBorderHovered,
+	ButtonTextHovered,
 
 	InfoBoxErrorBackground,
 	InfoBoxErrorBorder,
@@ -40,14 +37,12 @@ pub enum Color {
 impl Color {
 	pub fn get(&self, theme: Theme) -> egui::Color32 {
 		match self {
-			Self::ButtonMainDarkBackground => BaseColor::BLUE_7.to_egui_color(),
-			Self::ButtonMainDarkBorder => BaseColor::BLUE_5.to_egui_color(),
-			Self::ButtonMainDarkIcon => BaseColor::BLUE_6.to_egui_color(),
-			Self::ButtonMainDarkText => BaseColor::BLUE_6.to_egui_color(),
-			Self::ButtonMainLightBackground => BaseColor::GREY_4.to_egui_color(),
-			Self::ButtonMainLightBorder => BaseColor::BLUE_5.to_egui_color(),
-			Self::ButtonMainLightIcon => BaseColor::BLUE_5.to_egui_color(),
-			Self::ButtonMainLightText => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonBackground => BaseColor::GREY_4.to_egui_color(),
+			Self::ButtonBorder => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonText => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonBackgroundHovered => BaseColor::GREY_4.to_egui_color(),
+			Self::ButtonBorderHovered => BaseColor::BLUE_5.to_egui_color(),
+			Self::ButtonTextHovered => BaseColor::BLUE_5.to_egui_color(),
 			Self::InfoBoxErrorBackground => BaseColor::RED_1.to_egui_color(),
 			Self::InfoBoxErrorBorder => BaseColor::RED_3.to_egui_color(),
 			Self::InfoBoxErrorIcon => BaseColor::RED_2.to_egui_color(),
