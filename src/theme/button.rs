@@ -40,6 +40,9 @@ impl Button {
 				},
 			);
 		}
+		if self.icon.is_some() && self.text.is_some() {
+			job.append("", 5.0, egui::TextFormat::default());
+		}
 		if let Some(text) = &self.text {
 			job.append(
 				&format!(" {text}"),
