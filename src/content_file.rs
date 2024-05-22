@@ -85,4 +85,8 @@ impl ContentFile {
 		}
 		Ok(())
 	}
+
+	pub fn len(&self) -> usize {
+		self.files.len()
+	}
 }

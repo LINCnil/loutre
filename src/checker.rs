@@ -170,7 +170,7 @@ pub fn check_files(
 
 fn load_content_file(i18n: &I18n, file_list: &FileList) -> Result<HashSet<File>, ContentFileError> {
 	let ctn_file = ContentFile::load(i18n, file_list).map_err(ContentFileError::Other)?;
-	let mut lst = HashSet::new();
+	let mut lst = HashSet::with_capacity(ctn_file.len());
 	for (path, hash) in ctn_file.iter_files() {
 		lst.insert(File::new(path, hash));
 	}
