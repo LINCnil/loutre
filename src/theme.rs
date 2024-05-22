@@ -13,6 +13,7 @@ use eframe::egui::{self, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
+pub const LARGE_PADDING: f32 = 6.0;
 pub const MAIN_ROUNDING: f32 = 7.0;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]

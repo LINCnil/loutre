@@ -10,6 +10,9 @@ pub enum Color {
 	ButtonBorderHovered,
 	ButtonTextHovered,
 
+	FileSelectionBackground,
+	FileSelectionColor,
+
 	InfoBoxErrorBackground,
 	InfoBoxErrorBorder,
 	InfoBoxErrorIcon,
@@ -43,6 +46,20 @@ impl Color {
 			Self::ButtonBackgroundHovered => BaseColor::C_6045FF.to_egui_color(),
 			Self::ButtonBorderHovered => BaseColor::C_001D96.to_egui_color(),
 			Self::ButtonTextHovered => BaseColor::C_FFFFFF.to_egui_color(),
+			Self::FileSelectionBackground => match theme {
+				Theme::Dark => BaseColor::C_4F5D76,
+				Theme::Light => BaseColor::C_F0F2FB,
+				#[cfg(feature = "nightly")]
+				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_F0F2FB,
+			}
+			.to_egui_color(),
+			Self::FileSelectionColor => match theme {
+				Theme::Dark => BaseColor::C_FFF8E6,
+				Theme::Light => BaseColor::C_001D96,
+				#[cfg(feature = "nightly")]
+				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_001D96,
+			}
+			.to_egui_color(),
 			Self::InfoBoxErrorBackground => BaseColor::C_FFF0F0.to_egui_color(),
 			Self::InfoBoxErrorBorder => BaseColor::C_AC2121_20.to_egui_color(),
 			Self::InfoBoxErrorIcon => BaseColor::C_AC2121.to_egui_color(),
@@ -138,6 +155,7 @@ impl BaseColor {
 	const C_348CFF: Self = Self([0x34, 0x8c, 0xff, 0xff]);
 	const C_348CFF_20: Self = Self([0x34, 0x8c, 0xff, 0x33]);
 	const C_34FF86: Self = Self([0x34, 0xff, 0x86, 0xff]);
+	const C_4F5D76: Self = Self([0x4f, 0x5d, 0x76, 0xff]);
 	const C_6045FF: Self = Self([0x60, 0x45, 0xff, 0xff]);
 	const C_9B7B23_40: Self = Self([0x9b, 0x7b, 0x23, 0x66]);
 	const C_414141: Self = Self([0x41, 0x41, 0x41, 0xff]);
@@ -152,6 +170,7 @@ impl BaseColor {
 	const C_E6F1FF: Self = Self([0xe6, 0xf1, 0xff, 0xff]);
 	const C_F8F8F8: Self = Self([0xf8, 0xf8, 0xf8, 0xff]);
 	const C_FFD151: Self = Self([0xff, 0xd1, 0x51, 0xff]);
+	const C_F0F2FB: Self = Self([0xf0, 0xf2, 0xfb, 0xff]);
 	const C_FFF0F0: Self = Self([0xff, 0xf0, 0xf0, 0xff]);
 	const C_FFF8E5: Self = Self([0xff, 0xf8, 0xe5, 0xff]);
 	const C_FFF8E6: Self = Self([0xff, 0xf8, 0xe6, 0xff]);

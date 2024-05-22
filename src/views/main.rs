@@ -3,7 +3,7 @@ use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileListBuilder};
 use crate::hasher::FileHasher;
 use crate::i18n::Attr;
-use crate::theme::{Button, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
+use crate::theme::{Button, Color, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 use humansize::{make_format, DECIMAL};
@@ -18,6 +18,9 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.add_space(super::UI_EXTRA_SPACE);
 	add_file_selection(app, ui);
 	ui.add_space(super::UI_EXTRA_SPACE);
+	if add_messages(app, ui) {
+		ui.add_space(super::UI_EXTRA_SPACE);
+	}
 	if add_loading(app, ui) {
 		ui.add_space(super::UI_EXTRA_SPACE);
 	}
@@ -27,7 +30,6 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	if add_progress_bar(app, ui) {
 		ui.add_space(super::UI_EXTRA_SPACE);
 	}
-	add_messages(app, ui);
 }
 
 pub fn handle_dropped_files(app: &mut ChecksumApp, ctx: &egui::Context) {
@@ -147,36 +149,57 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 
 fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
-		if let Some(p) = &app.file_list {
-			if ui
-				.add(Button::new().icon(Icon::ButtonTrash).render())
-				.on_hover_text(app.i18n.msg("btn_trash_tip"))
-				.clicked()
-			{
-				crate::app::reset_messages!(app);
-				app.file_hasher = None;
-				app.file_list = None;
-			} else {
-				ui.add(egui::Label::new(p.to_string()).wrap(true));
-			}
+		if let Some(fl) = &app.file_list {
+			let p = fl.to_string();
+			ui.visuals_mut().override_text_color = Some(Color::FileSelectionColor.get(app.theme));
+			egui::Frame::none()
+				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
+				.rounding(crate::theme::MAIN_ROUNDING)
+				.fill(Color::FileSelectionBackground.get(app.theme))
+				.show(ui, |ui| {
+					ui.horizontal(|ui| {
+						ui.label(Icon::ButtonSelectDir.to_string());
+						ui.label(p);
+						if ui
+							.link(Icon::ButtonTrash.to_string())
+							.on_hover_text(app.i18n.msg("btn_trash_tip"))
+							.clicked()
+						{
+							crate::app::reset_messages!(app);
+							app.file_hasher = None;
+							app.file_list = None;
+						}
+					});
+				});
 		}
 	});
 	ui.horizontal(|ui| {
 		if let Some(e) = &app.email {
-			if ui
-				.add(Button::new().icon(Icon::ButtonTrash).render())
-				.on_hover_text(app.i18n.msg("btn_trash_tip"))
-				.clicked()
-			{
-				app.email = None;
-			} else {
-				ui.add(egui::Label::new(e.to_string()).wrap(true));
-			}
+			let e = e.to_string();
+			ui.visuals_mut().override_text_color = Some(Color::FileSelectionColor.get(app.theme));
+			egui::Frame::none()
+				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
+				.rounding(crate::theme::MAIN_ROUNDING)
+				.fill(Color::FileSelectionBackground.get(app.theme))
+				.show(ui, |ui| {
+					ui.horizontal(|ui| {
+						ui.label(Icon::ButtonSelectMail.to_string());
+						ui.label(e);
+						if ui
+							.link(Icon::ButtonTrash.to_string())
+							.on_hover_text(app.i18n.msg("btn_trash_tip"))
+							.clicked()
+						{
+							app.email = None;
+						}
+					});
+				});
 		}
 	});
 }
 
-fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
+fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+	let mut has_messages = false;
 	egui::ScrollArea::vertical().show(ui, |ui| {
 		if let Some(p) = &app.file_list {
 			if p.has_content_file() {
@@ -189,6 +212,7 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						));
 					},
 				);
+				has_messages = true;
 			} else {
 				let nb_files = p.get_nb_files();
 				if nb_files >= crate::NB_FILES_WARN_THRESHOLD {
@@ -197,102 +221,28 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						app.i18n
 							.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
 					);
+					has_messages = true;
 				}
 			}
 		}
 		if let Some(msg) = &app.info_msg {
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_text(ui, msg);
+			has_messages = true;
 		}
 		if let Some(msg) = &app.success_msg {
 			InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Success)
 				.render_text(ui, msg);
+			has_messages = true;
 		}
 		if let Some(msg) = &app.error_msg {
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(ui, msg);
+			has_messages = true;
 		}
 	});
+	has_messages
 }
 
-fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
-	let mut ret = false;
-	ui.horizontal(|ui| {
-		if app.file_hasher.is_none() {
-			if let Some(p) = &mut app.file_list {
-				if p.has_content_file() {
-					if ui
-						.add(
-							Button::new()
-								.text(app.i18n.msg("btn_check_fingerprints"))
-								.render(),
-						)
-						.clicked()
-					{
-						crate::app::reset_messages!(app);
-						app.file_hasher = Some(FileHasher::new(p, app.hash));
-					}
-				} else if ui
-					.add(
-						Button::new()
-							.text(app.i18n.msg("btn_calc_fingerprints"))
-							.render(),
-					)
-					.clicked()
-				{
-					crate::app::reset_messages!(app);
-					if let Err(e) = p.set_readonly() {
-						app.error_msg = Some(e.to_string());
-					}
-					app.file_hasher = Some(FileHasher::new(p, app.hash));
-				}
-				if p.has_hashes()
-					&& p.has_content_file()
-					&& ui
-						.add(Button::new().icon(Icon::ButtonClipboard).render())
-						.on_hover_text(app.i18n.msg("btn_clipboard_tip"))
-						.clicked()
-				{
-					p.set_clipboard(&app.i18n, &mut app.clipboard, app.nb_start);
-				}
-				if p.has_hashes()
-					&& p.has_content_file()
-					&& ui
-						.add(
-							Button::new()
-								.icon(Icon::ButtonClipboardContentFile)
-								.render(),
-						)
-						.on_hover_text(app.i18n.msg("btn_clipboard_ctn_file_tip"))
-						.clicked()
-				{
-					p.set_clipboard_ctn_file(&app.i18n, &mut app.clipboard, app.nb_start, app.hash);
-				}
-				ret = true;
-			}
-		}
-	});
-	ret
-}
-
-fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
-	if let Some(hr) = &app.file_hasher {
-		let progress_bar = egui::ProgressBar::new(hr.get_progress())
-			.show_percentage()
-			.animate(true);
-		ui.add(progress_bar);
-		let formatter = make_format(DECIMAL);
-		let remaining = app.i18n.fmt(
-			"progress",
-			&[
-				("done", Attr::String(formatter(hr.get_processed_bytes()))),
-				("total", Attr::String(formatter(hr.get_total_bytes()))),
-			],
-		);
-		ui.label(remaining);
-		return true;
-	}
-	false
-}
-pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 	if let Some(flb) = &mut app.file_list_builder {
 		if let Some(af) = flb.ask_for() {
 			ui.horizontal(|ui| {
@@ -375,6 +325,86 @@ pub fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 		} else {
 			ui.add(egui::Spinner::new());
 		}
+		return true;
+	}
+	false
+}
+
+fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+	let mut ret = false;
+	ui.horizontal(|ui| {
+		if app.file_hasher.is_none() {
+			if let Some(p) = &mut app.file_list {
+				if p.has_content_file() {
+					if ui
+						.add(
+							Button::new()
+								.text(app.i18n.msg("btn_check_fingerprints"))
+								.render(),
+						)
+						.clicked()
+					{
+						crate::app::reset_messages!(app);
+						app.file_hasher = Some(FileHasher::new(p, app.hash));
+					}
+				} else if ui
+					.add(
+						Button::new()
+							.text(app.i18n.msg("btn_calc_fingerprints"))
+							.render(),
+					)
+					.clicked()
+				{
+					crate::app::reset_messages!(app);
+					if let Err(e) = p.set_readonly() {
+						app.error_msg = Some(e.to_string());
+					}
+					app.file_hasher = Some(FileHasher::new(p, app.hash));
+				}
+				if p.has_hashes()
+					&& p.has_content_file()
+					&& ui
+						.add(Button::new().icon(Icon::ButtonClipboard).render())
+						.on_hover_text(app.i18n.msg("btn_clipboard_tip"))
+						.clicked()
+				{
+					p.set_clipboard(&app.i18n, &mut app.clipboard, app.nb_start);
+				}
+				if p.has_hashes()
+					&& p.has_content_file()
+					&& ui
+						.add(
+							Button::new()
+								.icon(Icon::ButtonClipboardContentFile)
+								.render(),
+						)
+						.on_hover_text(app.i18n.msg("btn_clipboard_ctn_file_tip"))
+						.clicked()
+				{
+					p.set_clipboard_ctn_file(&app.i18n, &mut app.clipboard, app.nb_start, app.hash);
+				}
+				ret = true;
+			}
+		}
+	});
+	ret
+}
+
+fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+	if let Some(hr) = &app.file_hasher {
+		let progress_bar = egui::ProgressBar::new(hr.get_progress())
+			.show_percentage()
+			.animate(true);
+		ui.add(progress_bar);
+		let formatter = make_format(DECIMAL);
+		let remaining = app.i18n.fmt(
+			"progress",
+			&[
+				("done", Attr::String(formatter(hr.get_processed_bytes()))),
+				("total", Attr::String(formatter(hr.get_total_bytes()))),
+			],
+		);
+		ui.label(remaining);
 		return true;
 	}
 	false

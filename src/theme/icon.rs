@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Clone, Copy, Debug)]
 pub enum Icon {
 	ButtonClipboard,
@@ -26,5 +28,11 @@ impl Icon {
 			Self::SignSuccess => '\u{EB81}',
 			Self::SignWarning => '\u{EA21}',
 		}
+	}
+}
+
+impl fmt::Display for Icon {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, " {} ", self.get_char())
 	}
 }

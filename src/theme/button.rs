@@ -28,7 +28,7 @@ impl Button {
 	pub fn render(&self) -> egui::Button {
 		let mut txt = Vec::with_capacity(2);
 		if let Some(icon) = &self.icon {
-			txt.push(icon.get_char().to_string());
+			txt.push(icon.to_string());
 		}
 		if let Some(text) = &self.text {
 			txt.push(text.to_string());
