@@ -30,38 +30,6 @@ macro_rules! load_differences {
 	};
 }
 
-enum ContentFileError {
-	InvalidFormat,
-	Other(String),
-}
-
-impl ContentFileError {
-	fn disp(&self, i18n: &I18n) -> String {
-		match self {
-			ContentFileError::InvalidFormat => i18n.msg("msg_check_invalid_format"),
-			ContentFileError::Other(msg) => msg.to_owned(),
-		}
-	}
-}
-
-impl From<&str> for ContentFileError {
-	fn from(error: &str) -> Self {
-		ContentFileError::Other(error.to_string())
-	}
-}
-
-impl From<std::num::ParseIntError> for ContentFileError {
-	fn from(_error: std::num::ParseIntError) -> Self {
-		ContentFileError::InvalidFormat
-	}
-}
-
-impl From<std::io::Error> for ContentFileError {
-	fn from(error: std::io::Error) -> Self {
-		ContentFileError::Other(error.to_string())
-	}
-}
-
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct File {
 	path: PathBuf,
@@ -122,7 +90,7 @@ pub fn check_files(
 			"error_desc",
 			&[
 				("error", Attr::String(content_file_name.to_string())),
-				("description", Attr::String(e.disp(i18n))),
+				("description", Attr::String(e)),
 			],
 		)
 	})?;
@@ -168,8 +136,8 @@ pub fn check_files(
 	}
 }
 
-fn load_content_file(i18n: &I18n, file_list: &FileList) -> Result<HashSet<File>, ContentFileError> {
-	let ctn_file = ContentFile::load(i18n, file_list).map_err(ContentFileError::Other)?;
+fn load_content_file(i18n: &I18n, file_list: &FileList) -> Result<HashSet<File>, String> {
+	let ctn_file = ContentFile::load(i18n, file_list)?;
 	let mut lst = HashSet::with_capacity(ctn_file.len());
 	for (path, hash) in ctn_file.iter_files() {
 		lst.insert(File::new(path, hash));
