@@ -245,6 +245,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 					app.file_hasher = Some(FileHasher::new(p, app.hash));
 				}
 				if p.has_hashes()
+					&& p.has_content_file()
 					&& ui
 						.add(Button::new().icon(Icon::ButtonClipboard).render())
 						.on_hover_text(app.i18n.msg("btn_clipboard_tip"))
