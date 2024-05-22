@@ -68,13 +68,15 @@ pub struct ChecksumApp {
 impl eframe::App for ChecksumApp {
 	fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 		egui_extras::install_image_loaders(ctx);
-		egui::CentralPanel::default().show(ctx, |ui| {
-			self.theme.set_visuals(ui.visuals_mut());
-			self.update_status(ctx);
-			let view = self.view.to_owned();
-			view.display(self, ui);
-			view.handle_dropped_files(self, ctx);
-		});
+		egui::CentralPanel::default()
+			.frame(self.theme.get_main_frame())
+			.show(ctx, |ui| {
+				self.theme.set_visuals(ui.visuals_mut());
+				self.update_status(ctx);
+				let view = self.view.to_owned();
+				view.display(self, ui);
+				view.handle_dropped_files(self, ctx);
+			});
 	}
 }
 

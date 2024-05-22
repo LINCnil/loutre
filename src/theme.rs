@@ -144,7 +144,77 @@ impl Theme {
 		}
 	}
 
+	pub fn get_main_frame(&self) -> egui::Frame {
+		egui::Frame::default()
+			.inner_margin(8.0)
+			.fill(Color::MainFrameBackground.get(*self))
+	}
+
 	pub fn set_visuals(&self, visuals: &mut egui::style::Visuals) {
+		// See also:
+		// https://docs.rs/egui/latest/egui/style/struct.Visuals.html
+		// https://docs.rs/egui/latest/egui/style/struct.Widgets.html
+		// https://docs.rs/egui/latest/egui/style/struct.WidgetVisuals.html
+
+		// Widgets (non interactive)
+		visuals.widgets.noninteractive.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::MainText.get(*self),
+		};
+
+		// Widgets (interactive - default)
+		visuals.widgets.inactive.bg_fill = Color::ButtonBackground.get(*self);
+		visuals.widgets.inactive.weak_bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.inactive.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorder.get(*self),
+		};
+		visuals.widgets.inactive.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.inactive.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonText.get(*self),
+		};
+
+		// Widgets (interactive - hovered)
+		visuals.widgets.hovered.bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.hovered.weak_bg_fill = Color::ButtonBackgroundHovered.get(*self);
+		visuals.widgets.hovered.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorderHovered.get(*self),
+		};
+		visuals.widgets.hovered.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.hovered.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonTextHovered.get(*self),
+		};
+
+		// Widgets (interactive - active)
+		visuals.widgets.active.bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.active.weak_bg_fill = Color::ButtonBackgroundHovered.get(*self);
+		visuals.widgets.active.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorderHovered.get(*self),
+		};
+		visuals.widgets.active.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.active.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonTextHovered.get(*self),
+		};
+
+		// Widgets (interactive - active)
+		visuals.widgets.open.bg_fill = visuals.widgets.inactive.bg_fill;
+		visuals.widgets.open.weak_bg_fill = Color::ButtonBackgroundHovered.get(*self);
+		visuals.widgets.open.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::ButtonBorderHovered.get(*self),
+		};
+		visuals.widgets.open.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.open.fg_stroke = egui::Stroke {
+			width: 12.0,
+			color: Color::ButtonTextHovered.get(*self),
+		};
+
+		// Other
 		visuals.dark_mode = match self {
 			Theme::Dark => true,
 			Theme::Light => false,
