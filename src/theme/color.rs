@@ -49,15 +49,11 @@ impl Color {
 			Self::FileSelectionBackground => match theme {
 				Theme::Dark => BaseColor::C_4F5D76,
 				Theme::Light => BaseColor::C_F0F2FB,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_F0F2FB,
 			}
 			.to_egui_color(),
 			Self::FileSelection => match theme {
 				Theme::Dark => BaseColor::C_FFF8E6,
 				Theme::Light => BaseColor::C_001D96,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_001D96,
 			}
 			.to_egui_color(),
 			Self::InfoBoxErrorBackground => BaseColor::C_FFF0F0.to_egui_color(),
@@ -67,8 +63,6 @@ impl Color {
 			Self::InfoBoxInfoBackground => match theme {
 				Theme::Dark => BaseColor::C_348CFF_20,
 				Theme::Light => BaseColor::C_BBE4FF,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_BBE4FF,
 			}
 			.to_egui_color(),
 			Self::InfoBoxInfoBorder => BaseColor::C_348CFF.to_egui_color(),
@@ -76,43 +70,31 @@ impl Color {
 			Self::InfoBoxInfoText => match theme {
 				Theme::Dark => BaseColor::C_E6F1FF,
 				Theme::Light => BaseColor::C_414141,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_414141,
 			}
 			.to_egui_color(),
 			Self::InfoBoxSuccessBackground => match theme {
 				Theme::Dark => BaseColor::C_106434,
 				Theme::Light => BaseColor::C_E5FFF0,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_E5FFF0,
 			}
 			.to_egui_color(),
 			Self::InfoBoxSuccessBorder => match theme {
 				Theme::Dark => BaseColor::C_34FF86,
 				Theme::Light => BaseColor::C_21AC59_20,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_21AC59_20,
 			}
 			.to_egui_color(),
 			Self::InfoBoxSuccessIcon => match theme {
 				Theme::Dark => BaseColor::C_34FF86,
 				Theme::Light => BaseColor::C_21AC59,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_21AC59,
 			}
 			.to_egui_color(),
 			Self::InfoBoxSuccessText => match theme {
 				Theme::Dark => BaseColor::C_DEFFEB,
 				Theme::Light => BaseColor::C_21AC59,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_21AC59,
 			}
 			.to_egui_color(),
 			Self::InfoBoxWarningBackground => match theme {
 				Theme::Dark => BaseColor::C_9B7B23_40,
 				Theme::Light => BaseColor::C_FFF8E5,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_FFF8E5,
 			}
 			.to_egui_color(),
 			Self::InfoBoxWarningBorder => BaseColor::C_FFD151.to_egui_color(),
@@ -120,22 +102,16 @@ impl Color {
 			Self::InfoBoxWarningText => match theme {
 				Theme::Dark => BaseColor::C_FFF8E6,
 				Theme::Light => BaseColor::C_414141,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_414141,
 			}
 			.to_egui_color(),
 			Self::MainFrameBackground => match theme {
 				Theme::Dark => BaseColor::C_17172F,
 				Theme::Light => BaseColor::C_F8F8F8,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_F8F8F8,
 			}
 			.to_egui_color(),
 			Self::MainText => match theme {
 				Theme::Dark => BaseColor::C_E5EAFF,
 				Theme::Light => BaseColor::C_414141,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_414141,
 			}
 			.to_egui_color(),
 		}

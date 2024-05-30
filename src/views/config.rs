@@ -2,7 +2,7 @@ use crate::app::ChecksumApp;
 use crate::clipboard::{Clipboard, ClipboardPersistence};
 use crate::config::Config;
 use crate::i18n::I18n;
-use crate::theme::{Button, Theme};
+use crate::theme::Button;
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 
@@ -49,15 +49,8 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 
 			// Theme
 			ui.label(app.i18n.msg("theme"));
-			let default_theme = match &new_config.theme {
-				#[cfg(feature = "nightly")]
-				Theme::NightlyDark => Theme::Dark,
-				#[cfg(feature = "nightly")]
-				Theme::NightlyLight => Theme::Light,
-				_ => new_config.theme,
-			};
 			egui::ComboBox::from_id_source("cfg_theme")
-				.selected_text(default_theme.display(&app.i18n))
+				.selected_text(new_config.theme.display(&app.i18n))
 				.show_ui(ui, |ui| {
 					for t in crate::theme::AVAILABLE_THEMES {
 						ui.selectable_value(&mut new_config.theme, *t, t.display(&app.i18n));
@@ -166,7 +159,7 @@ fn reset_config(app: &mut ChecksumApp) {
 
 fn set_config(app: &mut ChecksumApp) {
 	if let Some(cfg) = &app.tmp_config {
-		app.theme = get_app_theme(cfg);
+		app.theme = cfg.theme;
 		app.i18n = I18n::from_language_tag(&cfg.lang);
 		app.content_file_name = cfg.content_file_name(&app.i18n);
 		app.cfg_hash = cfg.hash_function;
@@ -175,18 +168,4 @@ fn set_config(app: &mut ChecksumApp) {
 		cfg.write_to_file();
 	}
 	reset_config(app)
-}
-
-#[cfg(not(feature = "nightly"))]
-fn get_app_theme(cfg: &Config) -> Theme {
-	cfg.theme
-}
-
-#[cfg(feature = "nightly")]
-fn get_app_theme(cfg: &Config) -> Theme {
-	if cfg.theme == Theme::Dark {
-		Theme::NightlyDark
-	} else {
-		Theme::NightlyLight
-	}
 }

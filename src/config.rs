@@ -29,18 +29,7 @@ impl Config {
 		} else {
 			String::new()
 		};
-		#[cfg(not(feature = "nightly"))]
-		return Config::load_config(&ctn);
-		#[cfg(feature = "nightly")]
-		{
-			let mut cnf = Config::load_config(&ctn);
-			cnf.theme = if cnf.theme == Theme::Dark {
-				Theme::NightlyDark
-			} else {
-				Theme::NightlyLight
-			};
-			cnf
-		}
+		Config::load_config(&ctn)
 	}
 
 	pub fn write_to_file(&self) {

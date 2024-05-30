@@ -22,12 +22,6 @@ pub enum Theme {
 	Dark,
 	#[default]
 	Light,
-	#[cfg(feature = "nightly")]
-	#[serde(rename(serialize = "dark"))]
-	NightlyDark,
-	#[cfg(feature = "nightly")]
-	#[serde(rename(serialize = "light"))]
-	NightlyLight,
 }
 
 impl Theme {
@@ -109,30 +103,30 @@ impl Theme {
 	}
 
 	pub fn get_icon_bytes(&self) -> Vec<u8> {
-		match self {
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => {
-				include_bytes!("../assets/ico_nightly/32-32.png").to_vec()
-			}
-			_ => include_bytes!("../assets/ico/32-32.png").to_vec(),
+		if cfg!(feature = "nightly") {
+			include_bytes!("../assets/ico_nightly/32-32.png").to_vec()
+		} else {
+			include_bytes!("../assets/ico/32-32.png").to_vec()
 		}
 	}
 
 	pub fn get_logo_bytes(&self) -> (String, Vec<u8>) {
-		match self {
-			Theme::Dark => (
-				"bytes://logo-dark".to_string(),
-				include_bytes!("../assets/main-logo-dark.png").to_vec(),
-			),
-			Theme::Light => (
-				"bytes://logo-light".to_string(),
-				include_bytes!("../assets/main-logo-light.png").to_vec(),
-			),
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => (
+		if cfg!(feature = "nightly") {
+			(
 				"bytes://logo-nightly".to_string(),
 				include_bytes!("../assets/main-logo-nightly.png").to_vec(),
-			),
+			)
+		} else {
+			match self {
+				Theme::Dark => (
+					"bytes://logo-dark".to_string(),
+					include_bytes!("../assets/main-logo-dark.png").to_vec(),
+				),
+				Theme::Light => (
+					"bytes://logo-light".to_string(),
+					include_bytes!("../assets/main-logo-light.png").to_vec(),
+				),
+			}
 		}
 	}
 
@@ -140,8 +134,6 @@ impl Theme {
 		match self {
 			Theme::Dark => i18n.msg("theme_dark"),
 			Theme::Light => i18n.msg("theme_light"),
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => i18n.msg("theme_nightly"),
 		}
 	}
 
@@ -219,8 +211,6 @@ impl Theme {
 		visuals.dark_mode = match self {
 			Theme::Dark => true,
 			Theme::Light => false,
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => false,
 		};
 	}
 }
@@ -230,8 +220,6 @@ impl From<Theme> for eframe::Theme {
 		match t {
 			Theme::Dark => eframe::Theme::Dark,
 			Theme::Light => eframe::Theme::Light,
-			#[cfg(feature = "nightly")]
-			Theme::NightlyDark | Theme::NightlyLight => eframe::Theme::Light,
 		}
 	}
 }
