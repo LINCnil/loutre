@@ -1,3 +1,5 @@
+![Logo LOUTRE](https://raw.githubusercontent.com/LINCnil/loutre/main/assets/banner.png)
+
 # LOgiciel Unique de TRaitement des Empreintes (LOUTRE)
 
 Lors d'un contrôle, les agents de la CNIL collectent des pièces numériques qui serviront à l'instruction du dossier. Afin de s'assurer de l'intégrité de ces pièces, ils calculent l'empreinte numérique de chacune d'entre elles. L'évolution des pratiques internes, en particulier l'arrivée de la plateforme d'échanges sécurisés, a conduit à la réalisation de différents outils, chacun utilisant des technologies différentes. Il a dont été décidé de regrouper ces différents outils en un seul : le logiciel unique de traitement des empreintes (LOUTRE).
@@ -12,6 +14,13 @@ cargo build --release
 ```
 
 L'exécutable se trouve alors dans le dossier `target/release/`.
+
+
+## Droit d'auteur
+
+![Logo EUPL](https://raw.githubusercontent.com/LINCnil/loutre/main/LICENSE/Logo_EUPL.png)
+
+Cet outil est utilisable sous les termes de la [licence publique de l'Union européenne (EUPL) v1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12). Une copie de cette licence est disponible dans le dossier `LICENSE`.
 
 
 ## Configuration
@@ -59,7 +68,6 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `clipboard.rs` : gestion du presse-papier
 - `config.rs` : gestion de la configuration
 - `content_file.rs` : gestion du fichier contenant les empreintes des pièces
-- `email.rs` : analyse syntaxique des accusés de réception envoyés par la plateforme d'échanges via courrier électronique
 - `file_list.rs` : gestion de la liste des fichiers
 - `file.rs` : représentation interne d'un fichier
 - `hasher.rs` : calcul des empreintes numériques
@@ -67,12 +75,14 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `main.rs` : point d'entrée du logiciel
 - `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
+- `receipt.rs` : analyse syntaxique des accusés de réception envoyés par la plateforme d'échanges via courrier électronique
 - `theme.rs` : gestion des thèmes
 - `theme/button.rs` : gestion des boutons
 - `theme/color.rs` : gestion des couleurs
 - `theme/icon.rs` : gestion des icônes
 - `theme/infobox.rs` : gestion des infobulles
 - `views.rs`: interface des différentes vues
+- `views/check_errors.rs`: gestion de l'interface de visualisation des erreurs de vérification des empreintes
 - `views/config.rs`: gestion de l'interface de configuration
 - `views/main.rs`: gestion de la vue principale
 
@@ -112,8 +122,8 @@ Afin de pouvoir comparer des noms de fichiers provenant de différentes sources,
 
 Ces fonctions diffèrent principalement par leur taille d'empreinte, leur vitesse d'exécution et leur popularité.
 
-La fonction la plus répandue est SHA-256. Cette fonction extrêmement populaire, dispose de la taille d'empreinte la plus faible parmi les fonctions supportées et est assez rapide. C'est donc un excellent choix qui est grandement reconnu et fait consensus.
+La fonction la plus répandue est SHA-256. Cette fonction extrêmement populaire, dispose de la taille d'empreinte la plus faible parmi les fonctions supportées et les processeurs modernes permettent généralement d'accélérer ses performances directement au niveau du matériel afin d'être extrêmement rapide. C'est donc un excellent choix qui est grandement reconnu et fait consensus.
 
-La fonction la plus rapide est Blake-3. Très récente (2020) et de conception moderne, elle est encore peu répandue mais se démarque par sa rapidité d'exécution exceptionnelle. Sa taille d'empreinte est identique à celles de SHA-256. Il s'agit donc également d'un excellent choix particulièrement adapté au calcul d'empreintes sur de gros volumes de données.
+La fonction intrinsèquement la plus rapide est Blake-3. Très récente (2020) et de conception moderne, elle est encore peu répandue mais se démarque par sa rapidité d'exécution exceptionnelle qui, sans accélération matérielle, rivalise avec une SHA-256 matériellement accélérée sans toutefois être nécessairement plus rapide que cette dernière. Sa taille d'empreinte est identique à celle de SHA-256. Il s'agit donc également d'un excellent choix particulièrement adapté au calcul d'empreintes de gros volumes de données sur les machines ne disposant pas d'accélération matérielle pour SHA-256.
 
 Les autres fonctions ne sont ni plus rapides ni plus populaires que SHA-256 et Blake-3. Elles n'apportent pas de gain significatif en terme de sécurité malgré des tailles d'empreintes supérieures ou égales. Leur présence est principalement motivé par la possibilité de les utiliser en urgence dans l'hypothèse où des vulnérabilités seraient découvertes dans SHA-256 et Blake-3.
