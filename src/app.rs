@@ -17,31 +17,34 @@ macro_rules! reset_messages {
 		$o.info_msg = None;
 		$o.success_msg = None;
 		$o.error_msg = None;
+		$o.file_check_result = None;
 	};
 }
 
 pub(crate) use reset_messages;
 
 macro_rules! set_msg_info_check_ok {
-	($o: ident, $files: ident) => {
-		let mut msg = $o.i18n.msg("msg_info_hash_done");
-		if !$files.is_empty() {
-			msg += "\n";
-			msg += &$o.i18n.msg("msg_info_hash_ignored_files");
-			msg += "\n";
-			msg += &$files
-				.iter()
-				.map(|f| {
-					let f = f.components().next().unwrap().as_os_str();
-					let f = Path::new(f);
-					format!(" - {}", f.display())
-				})
-				.collect::<HashSet<String>>()
-				.into_iter()
-				.collect::<Vec<String>>()
-				.join("\n");
+	($o: ident) => {
+		if let Some(CheckResult::Success(files)) = &$o.file_check_result {
+			let mut msg = $o.i18n.msg("msg_info_hash_done");
+			if !files.is_empty() {
+				msg += "\n";
+				msg += &$o.i18n.msg("msg_info_hash_ignored_files");
+				msg += "\n";
+				msg += &files
+					.iter()
+					.map(|f| {
+						let f = f.components().next().unwrap().as_os_str();
+						let f = Path::new(f);
+						format!(" - {}", f.display())
+					})
+					.collect::<HashSet<String>>()
+					.into_iter()
+					.collect::<Vec<String>>()
+					.join("\n");
+			}
+			$o.info_msg = Some(msg);
 		}
-		$o.info_msg = Some(msg);
 	};
 }
 
@@ -50,6 +53,7 @@ pub struct ChecksumApp {
 	pub clipboard: Clipboard,
 	pub content_file_name: String,
 	pub nb_start: u32,
+	pub file_check_result: Option<CheckResult>,
 	pub file_hasher: Option<FileHasher>,
 	pub file_list: Option<FileList>,
 	pub file_list_builder: Option<FileListBuilder>,
@@ -90,6 +94,7 @@ impl ChecksumApp {
 			clipboard,
 			content_file_name,
 			nb_start: crate::NB_FILES_START,
+			file_check_result: None,
 			file_hasher: None,
 			file_list: None,
 			file_list_builder: None,
@@ -149,45 +154,24 @@ impl ChecksumApp {
 				HashStatus::Finished => {
 					match &mut self.file_list {
 						Some(fl) => {
-							let mut ignored_files = Vec::new();
 							if fl.has_content_file() {
-								match check_files(
+								self.file_check_result = Some(check_files(
 									&self.i18n,
 									fl,
 									&self.content_file_name,
 									&self.email,
-								) {
-									CheckResult::Success(ifl) => {
-										ignored_files = ifl;
-										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
-									}
-									CheckResult::CheckErrors(fe) => {
-										// TODO: implement
-										self.error_msg = Some("TODO".to_string())
-									}
-									CheckResult::OtherError(s) => self.error_msg = Some(s),
-								}
+								));
 							} else if let Err(e) = fl.write_content_file(&self.i18n, self.hash) {
 								self.error_msg = Some(e.to_string());
 							} else if self.email.is_some() {
-								match check_files(
+								self.file_check_result = Some(check_files(
 									&self.i18n,
 									fl,
 									&self.content_file_name,
 									&self.email,
-								) {
-									CheckResult::Success(ifl) => {
-										ignored_files = ifl;
-										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
-									}
-									CheckResult::CheckErrors(fe) => {
-										// TODO: implement
-										self.error_msg = Some("TODO".to_string())
-									}
-									CheckResult::OtherError(s) => self.error_msg = Some(s),
-								}
+								));
 							}
-							set_msg_info_check_ok!(self, ignored_files);
+							set_msg_info_check_ok!(self);
 							self.file_hasher = None;
 							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
 						}

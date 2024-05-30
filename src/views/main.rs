@@ -1,4 +1,5 @@
 use crate::app::ChecksumApp;
+use crate::checker::CheckResult;
 use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileListBuilder};
 use crate::hasher::FileHasher;
@@ -140,7 +141,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					.on_disabled_hover_text(app.i18n.msg("config_not_available"))
 					.clicked()
 				{
-					app.view = AppView::ConfigView;
+					app.view = AppView::Config;
 				}
 			});
 		});
@@ -363,6 +364,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if p.has_hashes()
 					&& p.has_content_file()
+					&& app.file_check_result.as_ref().is_some_and(|e| e.is_of())
 					&& ui
 						.add(Button::new().icon(Icon::ButtonClipboard).render())
 						.on_hover_text(app.i18n.msg("btn_clipboard_tip"))
@@ -372,6 +374,7 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				}
 				if p.has_hashes()
 					&& p.has_content_file()
+					&& app.file_check_result.as_ref().is_some_and(|e| e.is_of())
 					&& ui
 						.add(
 							Button::new()
@@ -382,6 +385,28 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 						.clicked()
 				{
 					p.set_clipboard_ctn_file(&app.i18n, &mut app.clipboard, app.nb_start, app.hash);
+				}
+				if let Some(result) = &app.file_check_result {
+					match result {
+						CheckResult::Success(_) => {
+							InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Success)
+								.render_text(ui, app.i18n.msg("msg_info_check_ok"));
+						}
+						CheckResult::CheckErrors(_) => {
+							if ui
+								.add(Button::new().text(app.i18n.msg("view_errors")).render())
+								.clicked()
+							{
+								app.view = AppView::CheckErrors;
+							}
+							InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Error)
+								.render_text(ui, app.i18n.msg("msg_info_check_error"));
+						}
+						CheckResult::OtherError(s) => {
+							InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Error)
+								.render_text(ui, s);
+						}
+					}
 				}
 				ret = true;
 			}

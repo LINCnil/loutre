@@ -10,10 +10,10 @@ use unicode_normalization::UnicodeNormalization;
 
 #[derive(Debug, Default)]
 pub struct CheckErrors {
-	invalid_ctn_file: Vec<File>,
-	invalid_email: Vec<File>,
-	missing_ctn_file: Vec<File>,
-	missing_email: Vec<File>,
+	pub invalid_ctn_file: Vec<File>,
+	pub invalid_email: Vec<File>,
+	pub missing_ctn_file: Vec<File>,
+	pub missing_email: Vec<File>,
 }
 
 impl CheckErrors {
@@ -32,10 +32,16 @@ pub enum CheckResult {
 	Success(Vec<PathBuf>),
 }
 
+impl CheckResult {
+	pub fn is_of(&self) -> bool {
+		matches!(self, Self::Success(_))
+	}
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-struct File {
-	path: PathBuf,
-	hash: String,
+pub struct File {
+	pub path: PathBuf,
+	pub hash: String,
 }
 
 impl File {

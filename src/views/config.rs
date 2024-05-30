@@ -161,7 +161,7 @@ fn get_config(app: &ChecksumApp) -> Config {
 
 fn reset_config(app: &mut ChecksumApp) {
 	app.tmp_config = None;
-	app.view = AppView::MainView;
+	app.view = AppView::Main;
 }
 
 fn set_config(app: &mut ChecksumApp) {
