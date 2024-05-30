@@ -92,6 +92,17 @@ msg_file_unit =
     }
 
 
+## Check errors
+
+msg_info_check_error = Échec de la vérification des empreintes
+view_errors = Voir les erreurs
+title_invalid_ctn_file = Empreinte différente de celle du fichier de contenu
+title_invalid_receipt = Empreinte différente de celle de l'accusé de réception
+title_missing_ctn_file = Fichier non trouvé en local et présent dans le fichier de contenu
+title_missing_receipt = Fichier non trouvé en local et présent dans l'accusé de réception
+back = Retour
+
+
 ## Messages
 
 msg_info_check_ok = Les empreintes correspondent.

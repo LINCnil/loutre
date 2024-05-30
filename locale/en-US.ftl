@@ -92,6 +92,17 @@ msg_file_unit =
     }
 
 
+## Check errors
+
+msg_info_check_error = Data integrity check failed
+view_errors = View errors
+title_invalid_ctn_file = Checksum different from the one in the content file
+title_invalid_receipt = Checksum different from the one in the receipt
+title_missing_ctn_file = File not found locally but present in the content file
+title_missing_receipt = File not found locally but present in the receipt
+back = Back
+
+
 ## Messages
 
 msg_info_check_ok = Data integrity check passed.
