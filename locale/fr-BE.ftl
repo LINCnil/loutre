@@ -34,9 +34,9 @@ cancel = Annuler
 ## Selection buttons
 
 btn_select_dir = Ouvrir un dossier
-btn_select_mail = Ouvrir un AR
+btn_select_receipt = Ouvrir un AR
 btn_trash_tip = Réinitialiser
-label_email = Courrier électronique
+label_receipt = Accusé de réception
 
 
 ## Actions

@@ -18,14 +18,14 @@ macro_rules! ret_not_empty {
 	};
 }
 
-pub struct Email {
+pub struct Receipt {
 	path: PathBuf,
 	files: Vec<File>,
 }
 
-impl Email {
+impl Receipt {
 	pub fn new(path: &Path) -> Result<Self, ()> {
-		Ok(Email {
+		Ok(Self {
 			path: path.to_owned(),
 			files: get_files(path)?,
 		})
@@ -36,7 +36,7 @@ impl Email {
 	}
 }
 
-impl fmt::Display for Email {
+impl fmt::Display for Receipt {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		write!(f, "{}", self.path.display())
 	}

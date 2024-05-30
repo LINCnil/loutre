@@ -26,8 +26,8 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	}
 	if let Some(CheckResult::CheckErrors(err)) = &app.file_check_result {
 		file_error!(app, ui, err.invalid_ctn_file, "title_invalid_ctn_file");
-		file_error!(app, ui, err.invalid_email, "title_invalid_email");
+		file_error!(app, ui, err.invalid_receipt, "title_invalid_receipt");
 		file_error!(app, ui, err.missing_ctn_file, "title_missing_ctn_file");
-		file_error!(app, ui, err.missing_email, "title_missing_email");
+		file_error!(app, ui, err.missing_receipt, "title_missing_receipt");
 	}
 }

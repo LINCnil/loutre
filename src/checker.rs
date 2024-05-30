@@ -1,7 +1,7 @@
 use crate::content_file::ContentFile;
-use crate::email::Email;
 use crate::file_list::FileList;
 use crate::i18n::{Attr, I18n};
+use crate::receipt::Receipt;
 use std::cmp::Ordering;
 use std::collections::hash_set::HashSet;
 use std::fmt;
@@ -11,17 +11,17 @@ use unicode_normalization::UnicodeNormalization;
 #[derive(Debug, Default)]
 pub struct CheckErrors {
 	pub invalid_ctn_file: Vec<File>,
-	pub invalid_email: Vec<File>,
+	pub invalid_receipt: Vec<File>,
 	pub missing_ctn_file: Vec<File>,
-	pub missing_email: Vec<File>,
+	pub missing_receipt: Vec<File>,
 }
 
 impl CheckErrors {
 	pub fn is_empty(&self) -> bool {
 		self.invalid_ctn_file.is_empty()
-			&& self.invalid_email.is_empty()
+			&& self.invalid_receipt.is_empty()
 			&& self.missing_ctn_file.is_empty()
-			&& self.missing_email.is_empty()
+			&& self.missing_receipt.is_empty()
 	}
 }
 
@@ -91,15 +91,15 @@ pub fn check_files(
 	i18n: &I18n,
 	file_list: &FileList,
 	content_file_name: &str,
-	email: &Option<Email>,
+	receipt: &Option<Receipt>,
 ) -> CheckResult {
 	match load_content_file(i18n, file_list) {
 		Ok(content_file_set) => {
 			let calculated_set: HashSet<File> = file_list.iter_files().map(File::from).collect();
-			let email_set = email
+			let receipt_set = receipt
 				.as_ref()
 				.map(|lst| lst.iter_files().map(File::from).collect::<HashSet<File>>());
-			let errors = load_errors(&calculated_set, &content_file_set, &email_set);
+			let errors = load_errors(&calculated_set, &content_file_set, &receipt_set);
 			if errors.is_empty() {
 				let paths_on_disk: HashSet<PathBuf> =
 					calculated_set.iter().map(|e| e.path.to_owned()).collect();
@@ -131,7 +131,7 @@ fn loose_check_path(p1: &File, p2: &File) -> bool {
 fn load_errors(
 	calculated_set: &HashSet<File>,
 	content_file_set: &HashSet<File>,
-	email_set_opt: &Option<HashSet<File>>,
+	receipt_set_opt: &Option<HashSet<File>>,
 ) -> CheckErrors {
 	let invalid_ctn_file = content_file_set
 		.iter()
@@ -146,8 +146,8 @@ fn load_errors(
 			}
 		})
 		.collect();
-	let invalid_email = match email_set_opt {
-		Some(email_set) => email_set
+	let invalid_receipt = match receipt_set_opt {
+		Some(receipt_set) => receipt_set
 			.iter()
 			.filter_map(|f| {
 				if calculated_set
@@ -172,8 +172,8 @@ fn load_errors(
 			}
 		})
 		.collect();
-	let missing_email = match email_set_opt {
-		Some(email_set) => email_set
+	let missing_receipt = match receipt_set_opt {
+		Some(receipt_set) => receipt_set
 			.iter()
 			.filter_map(|f| {
 				if !calculated_set.iter().any(|e| e.path == f.path) {
@@ -188,9 +188,9 @@ fn load_errors(
 
 	CheckErrors {
 		invalid_ctn_file,
-		invalid_email,
+		invalid_receipt,
 		missing_ctn_file,
-		missing_email,
+		missing_receipt,
 	}
 }
 
@@ -399,17 +399,17 @@ mod tests {
 	fn test_ok() {
 		let calculated_set = get_file_set_ref();
 		let content_file_set = get_file_set_ref();
-		let email_set = None;
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = None;
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(res.is_empty(), "Unexpected errors: {:?}", res);
 	}
 
 	#[test]
-	fn test_ok_email() {
+	fn test_ok_receipt() {
 		let calculated_set = get_file_set_ref();
 		let content_file_set = get_file_set_ref();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(res.is_empty(), "Unexpected errors: {:?}", res);
 	}
 
@@ -417,8 +417,8 @@ mod tests {
 	fn test_ok_extra_files() {
 		let calculated_set = get_file_set_ref();
 		let content_file_set = get_file_set_err_missing();
-		let email_set = Some(get_file_set_err_missing());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_err_missing());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(res.is_empty(), "Unexpected errors: {:?}", res);
 	}
 
@@ -432,8 +432,8 @@ mod tests {
 			path: "Test file".into(),
 			hash: "0e07a44042407a54075710cf2be8a8a8fbe2bc360b1ce7e03ce0acf85f304827".into(),
 		}]);
-		let email_set = None;
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = None;
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(res.is_empty(), "Unexpected errors: {:?}", res);
 	}
 
@@ -441,116 +441,116 @@ mod tests {
 	fn test_err_missing() {
 		let calculated_set = get_file_set_err_missing();
 		let content_file_set = get_file_set_ref();
-		let email_set = None;
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = None;
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert!(res.invalid_ctn_file.is_empty());
-		assert!(res.invalid_email.is_empty());
+		assert!(res.invalid_receipt.is_empty());
 		assert_eq!(res.missing_ctn_file.len(), 2);
-		assert!(res.missing_email.is_empty());
+		assert!(res.missing_receipt.is_empty());
 	}
 
 	#[test]
-	fn test_err_missing_email() {
+	fn test_err_missing_receipt() {
 		let calculated_set = get_file_set_err_missing();
 		let content_file_set = get_file_set_ref();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert!(res.invalid_ctn_file.is_empty());
-		assert!(res.invalid_email.is_empty());
+		assert!(res.invalid_receipt.is_empty());
 		assert_eq!(res.missing_ctn_file.len(), 2);
-		assert_eq!(res.missing_email.len(), 2);
+		assert_eq!(res.missing_receipt.len(), 2);
 	}
 
 	#[test]
-	fn test_err_missing_email_only() {
+	fn test_err_missing_receipt_only() {
 		let calculated_set = get_file_set_err_missing();
 		let content_file_set = get_file_set_err_missing();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert!(res.invalid_ctn_file.is_empty());
-		assert!(res.invalid_email.is_empty());
+		assert!(res.invalid_receipt.is_empty());
 		assert!(res.missing_ctn_file.is_empty());
-		assert_eq!(res.missing_email.len(), 2);
+		assert_eq!(res.missing_receipt.len(), 2);
 	}
 
 	#[test]
 	fn test_err_invalid() {
 		let calculated_set = get_file_set_err_invalid();
 		let content_file_set = get_file_set_ref();
-		let email_set = None;
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = None;
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert_eq!(res.invalid_ctn_file.len(), 3);
-		assert!(res.invalid_email.is_empty());
+		assert!(res.invalid_receipt.is_empty());
 		assert!(res.missing_ctn_file.is_empty());
-		assert!(res.missing_email.is_empty());
+		assert!(res.missing_receipt.is_empty());
 	}
 
 	#[test]
-	fn test_err_invalid_email() {
+	fn test_err_invalid_receipt() {
 		let calculated_set = get_file_set_err_invalid();
 		let content_file_set = get_file_set_ref();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert_eq!(res.invalid_ctn_file.len(), 3);
-		assert_eq!(res.invalid_email.len(), 3);
+		assert_eq!(res.invalid_receipt.len(), 3);
 		assert!(res.missing_ctn_file.is_empty());
-		assert!(res.missing_email.is_empty());
+		assert!(res.missing_receipt.is_empty());
 	}
 
 	#[test]
-	fn test_err_invalid_email_only() {
+	fn test_err_invalid_receipt_only() {
 		let calculated_set = get_file_set_err_invalid();
 		let content_file_set = get_file_set_err_invalid();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert!(res.invalid_ctn_file.is_empty());
-		assert_eq!(res.invalid_email.len(), 3);
+		assert_eq!(res.invalid_receipt.len(), 3);
 		assert!(res.missing_ctn_file.is_empty());
-		assert!(res.missing_email.is_empty());
+		assert!(res.missing_receipt.is_empty());
 	}
 
 	#[test]
 	fn test_err_both() {
 		let calculated_set = get_file_set_err_both();
 		let content_file_set = get_file_set_ref();
-		let email_set = None;
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = None;
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert_eq!(res.invalid_ctn_file.len(), 4);
-		assert!(res.invalid_email.is_empty());
+		assert!(res.invalid_receipt.is_empty());
 		assert_eq!(res.missing_ctn_file.len(), 3);
-		assert!(res.missing_email.is_empty());
+		assert!(res.missing_receipt.is_empty());
 	}
 
 	#[test]
-	fn test_err_both_email() {
+	fn test_err_both_receipt() {
 		let calculated_set = get_file_set_err_both();
 		let content_file_set = get_file_set_ref();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert_eq!(res.invalid_ctn_file.len(), 4);
-		assert_eq!(res.invalid_email.len(), 4);
+		assert_eq!(res.invalid_receipt.len(), 4);
 		assert_eq!(res.missing_ctn_file.len(), 3);
-		assert_eq!(res.missing_email.len(), 3);
+		assert_eq!(res.missing_receipt.len(), 3);
 	}
 
 	#[test]
-	fn test_err_both_email_only() {
+	fn test_err_both_receipt_only() {
 		let calculated_set = get_file_set_err_both();
 		let content_file_set = get_file_set_err_both();
-		let email_set = Some(get_file_set_ref());
-		let res = load_errors(&calculated_set, &content_file_set, &email_set);
+		let receipt_set = Some(get_file_set_ref());
+		let res = load_errors(&calculated_set, &content_file_set, &receipt_set);
 		assert!(!res.is_empty());
 		assert!(res.invalid_ctn_file.is_empty());
-		assert_eq!(res.invalid_email.len(), 4);
+		assert_eq!(res.invalid_receipt.len(), 4);
 		assert!(res.missing_ctn_file.is_empty());
-		assert_eq!(res.missing_email.len(), 3);
+		assert_eq!(res.missing_receipt.len(), 3);
 	}
 }

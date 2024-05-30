@@ -5,13 +5,13 @@ mod checker;
 mod clipboard;
 mod config;
 mod content_file;
-mod email;
 mod file;
 mod file_list;
 mod hasher;
 mod i18n;
 mod nb_repr;
 mod path_cmp;
+mod receipt;
 mod theme;
 mod views;
 

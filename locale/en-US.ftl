@@ -34,9 +34,9 @@ cancel = Cancel
 ## Selection buttons
 
 btn_select_dir = Open a directory
-btn_select_mail = Open a notice of receipt
+btn_select_receipt = Open a notice of receipt
 btn_trash_tip = Reset
-label_email = Email
+label_receipt = Receipt
 
 
 ## Actions

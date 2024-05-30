@@ -1,9 +1,9 @@
 use crate::app::ChecksumApp;
 use crate::checker::CheckResult;
-use crate::email::Email;
 use crate::file_list::{FileAskAnswer, FileListBuilder};
 use crate::hasher::FileHasher;
 use crate::i18n::Attr;
+use crate::receipt::Receipt;
 use crate::theme::{Button, Color, Icon, InfoBox, InfoBoxLevel, InfoBoxType};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
@@ -39,8 +39,8 @@ pub fn handle_dropped_files(app: &mut ChecksumApp, ctx: &egui::Context) {
 			if path.is_dir() {
 				build_file_list(app, path);
 			}
-			if let Ok(email) = Email::new(path) {
-				app.email = Some(email);
+			if let Ok(receipt) = Receipt::new(path) {
+				app.receipt = Some(receipt);
 			}
 		}
 	}
@@ -109,23 +109,23 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						build_file_list(app, &path);
 					}
 				}
-				// Button: open mail
+				// Button: open receipt
 				if ui
 					.add(
 						Button::new()
-							.icon(Icon::ButtonSelectMail)
-							.text(app.i18n.msg("btn_select_mail"))
+							.icon(Icon::ButtonSelectReceipt)
+							.text(app.i18n.msg("btn_select_receipt"))
 							.render(),
 					)
 					.clicked()
 				{
 					crate::app::reset_messages!(app);
 					if let Some(path) = rfd::FileDialog::new()
-						.add_filter(app.i18n.msg("label_email"), &["msg"])
+						.add_filter(app.i18n.msg("label_receipt"), &["msg"])
 						.pick_file()
 					{
-						if let Ok(email) = Email::new(&path) {
-							app.email = Some(email);
+						if let Ok(receipt) = Receipt::new(&path) {
+							app.receipt = Some(receipt);
 						}
 					}
 				}
@@ -175,7 +175,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 		}
 	});
 	ui.horizontal(|ui| {
-		if let Some(e) = &app.email {
+		if let Some(e) = &app.receipt {
 			let e = e.to_string();
 			ui.visuals_mut().override_text_color = Some(Color::FileSelection.get(app.theme));
 			egui::Frame::none()
@@ -184,14 +184,14 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				.fill(Color::FileSelectionBackground.get(app.theme))
 				.show(ui, |ui| {
 					ui.horizontal(|ui| {
-						ui.label(Icon::ButtonSelectMail.to_string());
+						ui.label(Icon::ButtonSelectReceipt.to_string());
 						ui.label(e);
 						if ui
 							.link(Icon::ButtonTrash.to_string())
 							.on_hover_text(app.i18n.msg("btn_trash_tip"))
 							.clicked()
 						{
-							app.email = None;
+							app.receipt = None;
 						}
 					});
 				});

@@ -1,11 +1,11 @@
 use crate::checker::{check_files, CheckResult};
 use crate::clipboard::Clipboard;
 use crate::config::Config;
-use crate::email::Email;
 use crate::file_list::{FileList, FileListBuilder};
 use crate::hasher::HashFunc;
 use crate::hasher::{FileHasher, HashStatus};
 use crate::i18n::I18n;
+use crate::receipt::Receipt;
 use crate::theme::Theme;
 use crate::views::AppView;
 use eframe::egui::{self, Context};
@@ -60,7 +60,7 @@ pub struct ChecksumApp {
 	pub error_msg: Option<String>,
 	pub success_msg: Option<String>,
 	pub info_msg: Option<String>,
-	pub email: Option<Email>,
+	pub receipt: Option<Receipt>,
 	pub cfg_hash: HashFunc,
 	pub hash: HashFunc,
 	pub default_padding: egui::Vec2,
@@ -101,7 +101,7 @@ impl ChecksumApp {
 			error_msg: None,
 			success_msg: None,
 			info_msg: None,
-			email: None,
+			receipt: None,
 			cfg_hash: config.hash_function,
 			hash: config.hash_function,
 			default_padding: egui::Vec2::default(),
@@ -159,16 +159,16 @@ impl ChecksumApp {
 									&self.i18n,
 									fl,
 									&self.content_file_name,
-									&self.email,
+									&self.receipt,
 								));
 							} else if let Err(e) = fl.write_content_file(&self.i18n, self.hash) {
 								self.error_msg = Some(e.to_string());
-							} else if self.email.is_some() {
+							} else if self.receipt.is_some() {
 								self.file_check_result = Some(check_files(
 									&self.i18n,
 									fl,
 									&self.content_file_name,
-									&self.email,
+									&self.receipt,
 								));
 							}
 							set_msg_info_check_ok!(self);
