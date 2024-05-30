@@ -11,7 +11,7 @@ pub enum Color {
 	ButtonTextHovered,
 
 	FileSelectionBackground,
-	FileSelectionColor,
+	FileSelection,
 
 	InfoBoxErrorBackground,
 	InfoBoxErrorBorder,
@@ -53,7 +53,7 @@ impl Color {
 				Theme::NightlyDark | Theme::NightlyLight => BaseColor::C_F0F2FB,
 			}
 			.to_egui_color(),
-			Self::FileSelectionColor => match theme {
+			Self::FileSelection => match theme {
 				Theme::Dark => BaseColor::C_FFF8E6,
 				Theme::Light => BaseColor::C_001D96,
 				#[cfg(feature = "nightly")]

@@ -151,7 +151,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if let Some(fl) = &app.file_list {
 			let p = fl.to_string();
-			ui.visuals_mut().override_text_color = Some(Color::FileSelectionColor.get(app.theme));
+			ui.visuals_mut().override_text_color = Some(Color::FileSelection.get(app.theme));
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
 				.rounding(crate::theme::MAIN_ROUNDING)
@@ -176,7 +176,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	ui.horizontal(|ui| {
 		if let Some(e) = &app.email {
 			let e = e.to_string();
-			ui.visuals_mut().override_text_color = Some(Color::FileSelectionColor.get(app.theme));
+			ui.visuals_mut().override_text_color = Some(Color::FileSelection.get(app.theme));
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
 				.rounding(crate::theme::MAIN_ROUNDING)
