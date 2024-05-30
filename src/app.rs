@@ -1,4 +1,4 @@
-use crate::checker::check_files;
+use crate::checker::{check_files, CheckResult};
 use crate::clipboard::Clipboard;
 use crate::config::Config;
 use crate::email::Email;
@@ -157,13 +157,15 @@ impl ChecksumApp {
 									&self.content_file_name,
 									&self.email,
 								) {
-									Ok(ifl) => {
+									CheckResult::Success(ifl) => {
 										ignored_files = ifl;
 										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
-									Err(e) => {
-										self.error_msg = Some(e);
+									CheckResult::CheckErrors(fe) => {
+										// TODO: implement
+										self.error_msg = Some("TODO".to_string())
 									}
+									CheckResult::OtherError(s) => self.error_msg = Some(s),
 								}
 							} else if let Err(e) = fl.write_content_file(&self.i18n, self.hash) {
 								self.error_msg = Some(e.to_string());
@@ -174,13 +176,15 @@ impl ChecksumApp {
 									&self.content_file_name,
 									&self.email,
 								) {
-									Ok(ifl) => {
+									CheckResult::Success(ifl) => {
 										ignored_files = ifl;
 										self.success_msg = Some(self.i18n.msg("msg_info_check_ok"));
 									}
-									Err(e) => {
-										self.error_msg = Some(e);
+									CheckResult::CheckErrors(fe) => {
+										// TODO: implement
+										self.error_msg = Some("TODO".to_string())
 									}
+									CheckResult::OtherError(s) => self.error_msg = Some(s),
 								}
 							}
 							set_msg_info_check_ok!(self, ignored_files);
