@@ -33,7 +33,6 @@ const CONTENT_FILE_PATH_PREFIX: &str = "\\";
 const CONTENT_FILE_PATH_PREFIX: &str = "";
 
 const NB_FILES_START: u32 = 1;
-const NB_FILES_WARN_THRESHOLD: usize = 30;
 const WIN_WIDTH: f32 = 720.0;
 const WIN_HEIGHT: f32 = 345.0;
 
