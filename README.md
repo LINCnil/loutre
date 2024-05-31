@@ -57,6 +57,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `blake2s`
   * `blake2b`
   * `blake3`
+- `clipboard_threshold` : nombre entier positif représentant le nombre de fichiers à partir duquel le presse papier contient par défaut l'empreinte du fichier de contenu plutôt que les empreintes de chaque pièce
 - `clipboard_persistence` : booléen définissant si le gestionnaire de presse-papier doit persister ou non en mémoire (ne définissez ce paramètre que si vous rencontrez des problèmes avec le copier/coller)
 
 

@@ -23,6 +23,7 @@ language = Language
 number_representation = Number representation
 letters = letters
 western_arabic_numerals = western Arabic numerals
+clipboard_threshold = Clipboard threshold
 clipboard_persistence = Clipboard persistence
 default = default
 activated = activated

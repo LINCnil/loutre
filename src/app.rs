@@ -51,6 +51,7 @@ macro_rules! set_msg_info_check_ok {
 pub struct ChecksumApp {
 	pub i18n: I18n,
 	pub clipboard: Clipboard,
+	pub clipboard_threshold: usize,
 	pub content_file_name: String,
 	pub nb_start: u32,
 	pub file_check_result: Option<CheckResult>,
@@ -92,6 +93,7 @@ impl ChecksumApp {
 		Self {
 			i18n,
 			clipboard,
+			clipboard_threshold: config.get_clipboard_threshold(),
 			content_file_name,
 			nb_start: crate::NB_FILES_START,
 			file_check_result: None,
@@ -178,6 +180,7 @@ impl ChecksumApp {
 								&mut self.clipboard,
 								self.nb_start,
 								self.hash,
+								self.clipboard_threshold,
 							);
 							fl.build_duplicate_hashes();
 						}

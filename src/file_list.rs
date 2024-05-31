@@ -374,9 +374,9 @@ impl FileList {
 		clipboard: &mut Clipboard,
 		nb_start: u32,
 		hash: HashFunc,
+		threshold: usize,
 	) {
-		// TODO: allow to configure this number
-		if self.files.len() > 42 {
+		if self.files.len() >= threshold {
 			self.set_clipboard_ctn_file(i18n, clipboard, nb_start, hash);
 		} else {
 			self.set_clipboard(i18n, clipboard, nb_start);

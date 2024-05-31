@@ -23,6 +23,7 @@ language = Langue
 number_representation = Représentation des nombres
 letters = lettres
 western_arabic_numerals = chiffres arabes
+clipboard_threshold = Seuil du presse-papier
 clipboard_persistence = Persistance du presse-papier
 default = par défaut
 activated = activée

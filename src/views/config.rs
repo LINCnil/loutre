@@ -98,6 +98,18 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				});
 			ui.end_row();
 
+			// Clipboard threshold
+			ui.label(app.i18n.msg("clipboard_threshold"));
+			let mut nb_str = app.clipboard_threshold.to_string();
+			let response = ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
+			if response.changed() {
+				nb_str.retain(|c| c.is_ascii_digit());
+				if let Ok(nb) = nb_str.parse::<usize>() {
+					app.clipboard_threshold = nb.max(1);
+				}
+			}
+			ui.end_row();
+
 			// Clipboard persistence
 			ui.label(app.i18n.msg("clipboard_persistence"));
 			let selected: ClipboardPersistence = new_config.clipboard_persistence.into();
@@ -148,6 +160,7 @@ fn get_config(app: &ChecksumApp) -> Config {
 			content_file_name: Some(app.content_file_name.clone()),
 			hash_function: app.cfg_hash,
 			clipboard_persistence: app.clipboard.get_persistence(),
+			clipboard_threshold: Some(app.clipboard_threshold),
 		},
 	}
 }

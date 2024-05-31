@@ -16,6 +16,7 @@ pub struct Config {
 	pub content_file_name: Option<String>,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
+	pub clipboard_threshold: Option<usize>,
 }
 
 impl Config {
@@ -52,6 +53,11 @@ impl Config {
 		}
 		path.push(crate::CONFIG_FILE_NAME);
 		path
+	}
+
+	pub fn get_clipboard_threshold(&self) -> usize {
+		self.clipboard_threshold
+			.unwrap_or(crate::DEFAULT_CLIPBOARD_THRESHOLD)
 	}
 
 	pub fn content_file_name(&self, i18n: &I18n) -> String {
