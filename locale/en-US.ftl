@@ -106,6 +106,7 @@ back = Back
 ## Messages
 
 msg_info_check_ok = Data integrity check passed.
+msg_info_duplicate_hash = Identical files:
 msg_info_empty_file = Empty file: { $file_name }
 msg_info_has_ctn_file = The directory contains a { $file_name } file
 msg_info_hash_done = Checksum calculation completed.

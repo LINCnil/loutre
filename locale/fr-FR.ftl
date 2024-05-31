@@ -106,6 +106,7 @@ back = Retour
 ## Messages
 
 msg_info_check_ok = Les empreintes correspondent.
+msg_info_duplicate_hash = Fichiers identiques :
 msg_info_empty_file = Fichier vide : { $file_name }
 msg_info_has_ctn_file = Le dossier comporte un fichier { $file_name }
 msg_info_hash_done = Calcul des empreintes effectué.

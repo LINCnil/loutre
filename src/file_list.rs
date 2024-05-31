@@ -265,6 +265,7 @@ impl FileListBuilder {
 						Err(_) => None,
 					})
 					.collect(),
+				duplicate_hashes: Vec::new(),
 			}),
 		}
 	}
@@ -275,6 +276,7 @@ pub struct FileList {
 	content_file_path: PathBuf,
 	files: HashMap<Vec<u8>, File>,
 	empty_files: Vec<File>,
+	duplicate_hashes: Vec<Vec<File>>,
 }
 
 impl FileList {
@@ -296,6 +298,33 @@ impl FileList {
 	#[inline]
 	pub fn iter_empty_files(&self) -> std::slice::Iter<File> {
 		self.empty_files.iter()
+	}
+
+	#[inline]
+	pub fn iter_duplicate_hashes(&self) -> std::slice::Iter<Vec<File>> {
+		self.duplicate_hashes.iter()
+	}
+
+	pub fn build_duplicate_hashes(&mut self) {
+		self.duplicate_hashes = self
+			.files
+			.values()
+			.filter(|f| f.get_hash().is_some())
+			.fold(HashMap::new(), |mut acc: HashMap<String, Vec<File>>, f| {
+				let h = f.get_hash().unwrap().clone();
+				match acc.get_mut(&h) {
+					Some(v) => {
+						v.push(f.clone());
+					}
+					None => {
+						acc.insert(h, vec![f.clone()]);
+					}
+				};
+				acc
+			})
+			.values()
+			.filter_map(|l| if l.len() > 1 { Some(l.clone()) } else { None })
+			.collect()
 	}
 
 	pub fn has_content_file(&self) -> bool {

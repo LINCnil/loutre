@@ -174,6 +174,7 @@ impl ChecksumApp {
 							set_msg_info_check_ok!(self);
 							self.file_hasher = None;
 							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
+							fl.build_duplicate_hashes();
 						}
 						None => {
 							self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
