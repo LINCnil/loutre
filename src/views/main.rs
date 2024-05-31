@@ -231,13 +231,26 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			has_messages = true;
 		}
 		if let Some(msg) = &app.success_msg {
-			InfoBox::new(app.theme, InfoBoxType::Simple, InfoBoxLevel::Success)
-				.render_text(ui, msg);
+			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Success).render_text(ui, msg);
 			has_messages = true;
 		}
 		if let Some(msg) = &app.error_msg {
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(ui, msg);
 			has_messages = true;
+		}
+		if let Some(p) = &app.file_list {
+			for f in p.iter_empty_files() {
+				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
+					ui,
+					&app.i18n.fmt(
+						"msg_info_empty_file",
+						&[(
+							"file_name",
+							Attr::String(f.get_path().display().to_string()),
+						)],
+					),
+				);
+			}
 		}
 	});
 	has_messages

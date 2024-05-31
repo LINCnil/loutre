@@ -251,6 +251,20 @@ impl FileListBuilder {
 					.iter()
 					.map(|f| (f.get_id(), f.to_owned()))
 					.collect(),
+				empty_files: self
+					.files
+					.iter()
+					.filter_map(|f| match f.get_path().metadata() {
+						Ok(m) => {
+							if m.len() == 0 {
+								Some(f.clone())
+							} else {
+								None
+							}
+						}
+						Err(_) => None,
+					})
+					.collect(),
 			}),
 		}
 	}
@@ -260,6 +274,7 @@ pub struct FileList {
 	path: PathBuf,
 	content_file_path: PathBuf,
 	files: HashMap<Vec<u8>, File>,
+	empty_files: Vec<File>,
 }
 
 impl FileList {
@@ -276,6 +291,11 @@ impl FileList {
 	#[inline]
 	pub fn iter_files(&self) -> std::collections::hash_map::Values<Vec<u8>, File> {
 		self.files.values()
+	}
+
+	#[inline]
+	pub fn iter_empty_files(&self) -> std::slice::Iter<File> {
+		self.empty_files.iter()
 	}
 
 	pub fn has_content_file(&self) -> bool {

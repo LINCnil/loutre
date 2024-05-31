@@ -106,6 +106,7 @@ back = Retour
 ## Messages
 
 msg_info_check_ok = Les empreintes correspondent.
+msg_info_empty_file = Fichier vide : { $file_name }
 msg_info_has_ctn_file = Le dossier comporte un fichier { $file_name }
 msg_info_hash_done = Calcul des empreintes effectué.
 msg_info_hash_ignored_files = Les fichiers suivants n'ont pas été trouvés dans le fichier des empreintes et ont donc été ignorés :
