@@ -20,7 +20,8 @@ L'exécutable se trouve alors dans le dossier `target/release/`.
 
 ![Logo EUPL](https://raw.githubusercontent.com/LINCnil/loutre/main/LICENSE/Logo_EUPL.png)
 
-Cet outil est utilisable sous les termes de la [licence publique de l'Union européenne (EUPL) v1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12). Une copie de cette licence est disponible dans le dossier `LICENSE`.
+Vous êtes libres d'utiliser, de modifier et de redistribuer ces outil sous les termes de la [licence publique de l'Union européenne (EUPL) v1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
+Une copie de cette licence est disponible dans le dossier `LICENSE`.
 
 
 ## Configuration
