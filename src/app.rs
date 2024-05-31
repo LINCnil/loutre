@@ -173,7 +173,12 @@ impl ChecksumApp {
 							}
 							set_msg_info_check_ok!(self);
 							self.file_hasher = None;
-							fl.set_clipboard(&self.i18n, &mut self.clipboard, self.nb_start);
+							fl.set_clipboard_auto(
+								&self.i18n,
+								&mut self.clipboard,
+								self.nb_start,
+								self.hash,
+							);
 							fl.build_duplicate_hashes();
 						}
 						None => {

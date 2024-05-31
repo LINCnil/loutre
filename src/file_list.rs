@@ -368,6 +368,21 @@ impl FileList {
 		ContentFile::write(i18n, &self.content_file_path, &mut file_list, hash)
 	}
 
+	pub fn set_clipboard_auto(
+		&mut self,
+		i18n: &I18n,
+		clipboard: &mut Clipboard,
+		nb_start: u32,
+		hash: HashFunc,
+	) {
+		// TODO: allow to configure this number
+		if self.files.len() > 42 {
+			self.set_clipboard_ctn_file(i18n, clipboard, nb_start, hash);
+		} else {
+			self.set_clipboard(i18n, clipboard, nb_start);
+		}
+	}
+
 	pub fn set_clipboard(&mut self, i18n: &I18n, clipboard: &mut Clipboard, nb_start: u32) {
 		clipboard.set_clipboard(i18n, self, nb_start);
 	}
