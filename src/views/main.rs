@@ -214,6 +214,16 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 					},
 				);
 				has_messages = true;
+			} else {
+				let nb_files = p.get_nb_files();
+				if nb_files >= app.clipboard_threshold {
+					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
+						ui,
+						app.i18n
+							.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
+					);
+					has_messages = true;
+				}
 			}
 		}
 		if let Some(msg) = &app.info_msg {
