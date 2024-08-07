@@ -25,6 +25,7 @@ letters = letters
 western_arabic_numerals = western Arabic numerals
 clipboard_threshold = Clipboard threshold
 clipboard_persistence = Clipboard persistence
+clipboard_persistence_help = Defines whether or not the internal clipboard management object should be kept into memory. This parameter depends on your operating system. It is recommended to keep the default value unless you encounter troubles with the clipboard.
 default = default
 activated = activated
 deactivated = deactivated

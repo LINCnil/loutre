@@ -25,6 +25,7 @@ letters = lettres
 western_arabic_numerals = chiffres arabes
 clipboard_threshold = Seuil du presse-papier
 clipboard_persistence = Persistance du presse-papier
+clipboard_persistence_help = Indique si l’objet interne gérant le presse-papier soit être conservé en mémoire ou non. Ce paramètre dépends du système d’exploitation. En l'absence de problème avec le presse-papier, il est recommandé de conserver la valeur par défaut.
 default = par défaut
 activated = activée
 deactivated = désactivée

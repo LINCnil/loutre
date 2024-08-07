@@ -2,7 +2,7 @@ use crate::app::ChecksumApp;
 use crate::clipboard::{Clipboard, ClipboardPersistence};
 use crate::config::Config;
 use crate::i18n::I18n;
-use crate::theme::Button;
+use crate::theme::{Button, Icon};
 use crate::views::AppView;
 use eframe::egui::{self, Image};
 
@@ -111,7 +111,8 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			ui.end_row();
 
 			// Clipboard persistence
-			ui.label(app.i18n.msg("clipboard_persistence"));
+			ui.label(app.i18n.msg("clipboard_persistence") + &Icon::SignHelp.to_string())
+				.on_hover_text(app.i18n.msg("clipboard_persistence_help"));
 			let selected: ClipboardPersistence = new_config.clipboard_persistence.into();
 			let selected = selected.display(&app.i18n);
 			egui::ComboBox::from_id_source("cfg_clipboard_persistence")
