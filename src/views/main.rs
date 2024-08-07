@@ -207,7 +207,7 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_dyn(
 					ui,
 					|ui| {
-						ui.label(&app.i18n.fmt(
+						ui.label(app.i18n.fmt(
 							"msg_info_has_ctn_file",
 							&[("file_name", Attr::String(app.content_file_name.clone()))],
 						));
@@ -250,7 +250,7 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			for f in p.iter_empty_files() {
 				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
 					ui,
-					&app.i18n.fmt(
+					app.i18n.fmt(
 						"msg_info_empty_file",
 						&[(
 							"file_name",
