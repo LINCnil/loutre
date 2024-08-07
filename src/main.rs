@@ -60,7 +60,7 @@ fn main() {
 	if let Err(e) = eframe::run_native(
 		&app_name,
 		win_opts,
-		Box::new(|cc| Box::new(app.init_theme(cc))),
+		Box::new(|cc| Ok(Box::new(app.init_theme(cc)))),
 	) {
 		eprintln!("Error: {e}");
 	}

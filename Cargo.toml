@@ -17,8 +17,8 @@ nightly = []
 
 [dependencies]
 dirs = { version = "5.0.1", default-features = false }
-eframe = { version = "0.27.2", default-features = false, features = ["accesskit", "glow", "wayland", "x11"] }
-egui_extras = { version = "0.27.2", default-features = false, features = ["image"] }
+eframe = { version = "0.28.1", default-features = false, features = ["accesskit", "glow", "wayland", "x11"] }
+egui_extras = { version = "0.28.1", default-features = false, features = ["image"] }
 fluent = { version = "0.16.0", default-features = false }
 humansize = { version = "2.1.3", default-features = false }
 image = { version = "0.25.1", default-features = false, features = ["png", "ico"] }
