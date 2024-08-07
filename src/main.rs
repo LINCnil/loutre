@@ -10,6 +10,7 @@ mod file_list;
 mod hasher;
 mod i18n;
 mod nb_repr;
+mod parsers;
 mod path_cmp;
 mod receipt;
 mod theme;

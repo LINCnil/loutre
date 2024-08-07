@@ -100,8 +100,10 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `main.rs` : point d'entrée du logiciel
 - `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
-- `receipt.rs` : analyse syntaxique des accusés de réception envoyés par la
-  plateforme d'échanges via courrier électronique
+- `src/parsers.rs` : gestion de l'analyse syntaxique
+- `src/parsers/cnil_platform_email.rs` : analyse syntaxique des accusés de
+  réception envoyés par la plateforme d'échanges via courrier électronique
+- `receipt.rs` : gestion des accusés de réception
 - `theme.rs` : gestion des thèmes
 - `theme/button.rs` : gestion des boutons
 - `theme/color.rs` : gestion des couleurs
