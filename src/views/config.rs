@@ -99,7 +99,8 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			ui.end_row();
 
 			// Clipboard threshold
-			ui.label(app.i18n.msg("clipboard_threshold"));
+			ui.label(app.i18n.msg("clipboard_threshold") + &Icon::SignHelp.to_string())
+				.on_hover_text(app.i18n.msg("clipboard_threshold_help"));
 			let mut nb_str = app.clipboard_threshold.to_string();
 			let response = ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
 			if response.changed() {
