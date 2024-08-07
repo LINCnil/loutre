@@ -38,6 +38,11 @@ impl ContentFile {
 				let mut path = *v
 					.first()
 					.ok_or_else(|| i18n.msg("msg_check_invalid_format"))?;
+				// Although CONTENT_FILE_PATH_PREFIX is a const, its value may vary between
+				// platforms. And no, checking the platform here is not the correct solution since
+				// that would require to keep it updated with CONTENT_FILE_PATH_PREFIX, which I'm
+				// 100% sure it will be forgotten.
+				#[allow(clippy::const_is_empty)]
 				if !crate::CONTENT_FILE_PATH_PREFIX.is_empty() {
 					path = match path.strip_prefix(crate::CONTENT_FILE_PATH_PREFIX) {
 						Some(rp) => rp,
