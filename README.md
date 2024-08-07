@@ -101,10 +101,11 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `i18n.rs` : gestion de l'[internationalisation](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))
 - `main.rs` : point d'entrée du logiciel
 - `nb_repr.rs` : gère la représentation des nombres
+- `parsers.rs` : gestion de l'analyse syntaxique
+- `parsers/cnil_platform_email.rs` : analyse syntaxique des accusés de
+  réception envoyés par la plateforme d'échanges de la CNIL via courrier
+  électronique
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
-- `src/parsers.rs` : gestion de l'analyse syntaxique
-- `src/parsers/cnil_platform_email.rs` : analyse syntaxique des accusés de
-  réception envoyés par la plateforme d'échanges via courrier électronique
 - `receipt.rs` : gestion des accusés de réception
 - `theme.rs` : gestion des thèmes
 - `theme/button.rs` : gestion des boutons
