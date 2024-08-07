@@ -129,3 +129,20 @@ La fonction la plus répandue est SHA-256. Cette fonction extrêmement populaire
 La fonction intrinsèquement la plus rapide est Blake-3. Très récente (2020) et de conception moderne, elle est encore peu répandue mais se démarque par sa rapidité d'exécution exceptionnelle qui, sans accélération matérielle, rivalise avec une SHA-256 matériellement accélérée sans toutefois être nécessairement plus rapide que cette dernière. Sa taille d'empreinte est identique à celle de SHA-256. Il s'agit donc également d'un excellent choix particulièrement adapté au calcul d'empreintes de gros volumes de données sur les machines ne disposant pas d'accélération matérielle pour SHA-256.
 
 Les autres fonctions ne sont ni plus rapides ni plus populaires que SHA-256 et Blake-3. Elles n'apportent pas de gain significatif en terme de sécurité malgré des tailles d'empreintes supérieures ou égales. Leur présence est principalement motivé par la possibilité de les utiliser en urgence dans l'hypothèse où des vulnérabilités seraient découvertes dans SHA-256 et Blake-3.
+
+
+## Favicon
+
+Une favicon peut être générée à partir de plusieurs images PNJ. Pour cela, il faut que les images PNG utilisent une colormap de 8 bits. Toutes ces opérations sont réalisables à l'aide de l'outil `convert` fourni avec ImageMagick.
+
+Convertir la colormap 16 bits d'un PNG en une colormap 8 bits :
+
+```
+convert name.png PNG8:name.png
+```
+
+Créer le fichier `.ico` à partir des différentes images :
+
+```
+convert *.png -colors 256 favicon.ico
+```
