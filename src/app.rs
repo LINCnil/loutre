@@ -67,6 +67,8 @@ pub struct ChecksumApp {
 	pub default_padding: egui::Vec2,
 	pub theme: Theme,
 	pub view: AppView,
+	pub enable_duplicate_file_warning: bool,
+	pub enable_empty_file_warning: bool,
 	pub tmp_config: Option<Config>,
 }
 
@@ -109,6 +111,8 @@ impl ChecksumApp {
 			default_padding: egui::Vec2::default(),
 			theme: config.theme,
 			view: AppView::default(),
+			enable_duplicate_file_warning: config.is_duplicate_file_warning_enabled(),
+			enable_empty_file_warning: config.is_empty_file_warning_enabled(),
 			tmp_config: None,
 		}
 	}

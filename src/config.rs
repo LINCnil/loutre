@@ -17,6 +17,8 @@ pub struct Config {
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
 	pub clipboard_threshold: Option<usize>,
+	pub enable_duplicate_file_warning: Option<bool>,
+	pub enable_empty_file_warning: Option<bool>,
 }
 
 impl Config {
@@ -71,6 +73,14 @@ impl Config {
 			}
 			None => i18n.msg("content_file_name"),
 		}
+	}
+
+	pub fn is_duplicate_file_warning_enabled(&self) -> bool {
+		self.enable_duplicate_file_warning.unwrap_or(true)
+	}
+
+	pub fn is_empty_file_warning_enabled(&self) -> bool {
+		self.enable_empty_file_warning.unwrap_or(true)
 	}
 
 	fn load_config(content: &str) -> Config {

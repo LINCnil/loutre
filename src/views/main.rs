@@ -239,25 +239,29 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			has_messages = true;
 		}
 		if let Some(p) = &app.file_list {
-			for fl in p.iter_duplicate_hashes() {
-				let mut msg = app.i18n.msg("msg_info_duplicate_hash");
-				for f in fl {
-					msg += &format!("\n - {}", f.get_path().display());
+			if app.enable_duplicate_file_warning {
+				for fl in p.iter_duplicate_hashes() {
+					let mut msg = app.i18n.msg("msg_info_duplicate_hash");
+					for f in fl {
+						msg += &format!("\n - {}", f.get_path().display());
+					}
+					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning)
+						.render_text(ui, &msg);
 				}
-				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning)
-					.render_text(ui, &msg);
 			}
-			for f in p.iter_empty_files() {
-				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
-					ui,
-					app.i18n.fmt(
-						"msg_info_empty_file",
-						&[(
-							"file_name",
-							Attr::String(f.get_path().display().to_string()),
-						)],
-					),
-				);
+			if app.enable_empty_file_warning {
+				for f in p.iter_empty_files() {
+					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
+						ui,
+						app.i18n.fmt(
+							"msg_info_empty_file",
+							&[(
+								"file_name",
+								Attr::String(f.get_path().display().to_string()),
+							)],
+						),
+					);
+				}
 			}
 		}
 	});

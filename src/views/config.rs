@@ -98,6 +98,52 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				});
 			ui.end_row();
 
+			// Duplicate file warning
+			ui.label(app.i18n.msg("duplicate_file_warning"));
+			let selected_text = if new_config.is_duplicate_file_warning_enabled() {
+				app.i18n.msg("activated")
+			} else {
+				app.i18n.msg("deactivated")
+			};
+			egui::ComboBox::from_id_source("cfg_duplicate_file_warning")
+				.selected_text(selected_text)
+				.show_ui(ui, |ui| {
+					ui.selectable_value(
+						&mut new_config.enable_duplicate_file_warning,
+						Some(true),
+						app.i18n.msg("activated"),
+					);
+					ui.selectable_value(
+						&mut new_config.enable_duplicate_file_warning,
+						Some(false),
+						app.i18n.msg("deactivated"),
+					);
+				});
+			ui.end_row();
+
+			// Empty file warning
+			ui.label(app.i18n.msg("empty_file_warning"));
+			let selected_text = if new_config.is_empty_file_warning_enabled() {
+				app.i18n.msg("activated")
+			} else {
+				app.i18n.msg("deactivated")
+			};
+			egui::ComboBox::from_id_source("cfg_empty_file_warning")
+				.selected_text(selected_text)
+				.show_ui(ui, |ui| {
+					ui.selectable_value(
+						&mut new_config.enable_empty_file_warning,
+						Some(true),
+						app.i18n.msg("activated"),
+					);
+					ui.selectable_value(
+						&mut new_config.enable_empty_file_warning,
+						Some(false),
+						app.i18n.msg("deactivated"),
+					);
+				});
+			ui.end_row();
+
 			// Clipboard threshold
 			ui.label(app.i18n.msg("clipboard_threshold") + &Icon::SignHelp.to_string())
 				.on_hover_text(app.i18n.msg("clipboard_threshold_help"));
@@ -163,6 +209,8 @@ fn get_config(app: &ChecksumApp) -> Config {
 			hash_function: app.cfg_hash,
 			clipboard_persistence: app.clipboard.get_persistence(),
 			clipboard_threshold: Some(app.clipboard_threshold),
+			enable_duplicate_file_warning: Some(app.enable_duplicate_file_warning),
+			enable_empty_file_warning: Some(app.enable_empty_file_warning),
 		},
 	}
 }
@@ -180,6 +228,8 @@ fn set_config(app: &mut ChecksumApp) {
 		app.cfg_hash = cfg.hash_function;
 		app.hash = cfg.hash_function;
 		app.clipboard = Clipboard::new(cfg.number_representation, cfg.clipboard_persistence);
+		app.enable_duplicate_file_warning = cfg.is_duplicate_file_warning_enabled();
+		app.enable_empty_file_warning = cfg.is_empty_file_warning_enabled();
 		cfg.write_to_file();
 	}
 	reset_config(app)
