@@ -2,7 +2,7 @@
 
 # LOgiciel Unique de TRaitement des Empreintes (LOUTRE)
 
-Lors d'un contrôle, les agents de la CNIL collectent des pièces numériques qui serviront à l'instruction du dossier. Afin de s'assurer de l'intégrité de ces pièces, ils calculent l'empreinte numérique de chacune d'entre elles. L'évolution des pratiques internes, en particulier l'arrivée de la plateforme d'échanges sécurisés, a conduit à la réalisation de différents outils, chacun utilisant des technologies différentes. Il a dont été décidé de regrouper ces différents outils en un seul : le logiciel unique de traitement des empreintes (LOUTRE).
+Lors d'un contrôle, les agents de la CNIL collectent des pièces numériques qui serviront à l'instruction du dossier. Afin de s'assurer de l'intégrité de ces pièces, ils calculent l'empreinte numérique de chacune d'entre elles. L'évolution des pratiques internes, en particulier l'arrivée de la plateforme d'échanges sécurisés, a conduit à la réalisation de différents outils, chacun utilisant des technologies différentes. Il a dont été décidé de regrouper ces différents outils en un seul : le logiciel unique de traitement des empreintes (LOUTRE).
 
 
 ## Compilation
@@ -26,7 +26,7 @@ Une copie de cette licence est disponible dans le dossier `LICENSE`.
 
 ## Configuration
 
-La configuration du logiciel se fait depuis le panneau de configuration de l'interface graphique (recommandé) ou bien directement dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
+La configuration du logiciel se fait depuis le panneau de configuration de l'interface graphique (recommandé) ou bien directement dans un fichier `config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe par défaut dans l’un des répertoires suivants :
 
 | Système d'exploitation | Valeur                                            | Exemple pour l'utilisateur toto                      |
 | ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
@@ -34,20 +34,20 @@ La configuration du logiciel se fait depuis le panneau de configuration de l'int
 | GNU/Linux              | `${XDG_CONFIG_HOME}/cnil/loutre`                  | `/home/toto/.config/cnil/loutre`                     |
 | macOS                  | `${HOME}/Library/Application Support/cnil/loutre` | `/home/toto/Library/Application Support/cnil/loutre` |
 
-Ce fichier est automatiquement généré lors du lancement du logiciel. Les options de configuration possible sont :
+Ce fichier est automatiquement généré lors du lancement du logiciel. Les options de configuration possible sont :
 
-- `theme` : chaîne de caractères
+- `theme` : chaîne de caractères
   * `light` (défaut)
   * `dark`
-- `lang` : chaîne de caractères représentant une étiquettes d’identification de langues IETF telle que définiee par la recommandation standard BCP 47
+- `lang` : chaîne de caractères représentant une étiquettes d’identification de langues IETF telle que définiee par la recommandation standard BCP 47
   * `en-US`
   * `fr-BE`
   * `fr-FR` (défaut)
-- `content_file_name` : chaîne de caractères définissant le nom du fichier dans lequel sont contenues les empreintes des pièces (par défaut, `contenu.txt`)
-- `number_representation` : chaîne de caractères définissant la manière dont est représenté le nombre de pièces dans un dossier
-  * `letters` : en toutes lettres
-  * `western arabic numerals` (défaut) : en chiffres arabes
-- `hash_function` : chaîne de caractères définissant la fonction de hachage à utiliser
+- `content_file_name` : chaîne de caractères définissant le nom du fichier dans lequel sont contenues les empreintes des pièces (par défaut, `contenu.txt`)
+- `number_representation` : chaîne de caractères définissant la manière dont est représenté le nombre de pièces dans un dossier
+  * `letters` : en toutes lettres
+  * `western arabic numerals` (défaut) : en chiffres arabes
+- `hash_function` : chaîne de caractères définissant la fonction de hachage à utiliser
   * `sha-256`
   * `sha-384`
   * `sha-512`
@@ -58,7 +58,7 @@ Ce fichier est automatiquement généré lors du lancement du logiciel. Les opti
   * `blake2b`
   * `blake3`
 - `clipboard_threshold` : nombre entier positif représentant le nombre de fichiers à partir duquel le presse papier contient par défaut l'empreinte du fichier de contenu plutôt que les empreintes de chaque pièce
-- `clipboard_persistence` : booléen définissant si le gestionnaire de presse-papier doit persister ou non en mémoire (ne définissez ce paramètre que si vous rencontrez des problèmes avec le copier/coller)
+- `clipboard_persistence` : booléen définissant si le gestionnaire de presse-papier doit persister ou non en mémoire (ne définissez ce paramètre que si vous rencontrez des problèmes avec le copier/coller)
 
 
 ## Architecture technique
@@ -69,13 +69,13 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `checker.rs` : comparaison des empreintes préalablement calculées
 - `clipboard.rs` : gestion du presse-papier
 - `config.rs` : gestion de la configuration
-- `content_file.rs` : gestion du fichier contenant les empreintes des pièces
+- `content_file.rs` : gestion du fichier contenant les empreintes des pièces
 - `file_list.rs` : gestion de la liste des fichiers
 - `file.rs` : représentation interne d'un fichier
 - `hasher.rs` : calcul des empreintes numériques
 - `i18n.rs` : gestion de l'[internationalisation](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))
 - `main.rs` : point d'entrée du logiciel
-- `nb_repr.rs` : gère la représentation des nombres
+- `nb_repr.rs` : gère la représentation des nombres
 - `path_cmp.rs` : comparaison et classement des noms de fichiers
 - `receipt.rs` : analyse syntaxique des accusés de réception envoyés par la plateforme d'échanges via courrier électronique
 - `theme.rs` : gestion des thèmes
