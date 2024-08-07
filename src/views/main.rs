@@ -40,8 +40,8 @@ pub fn handle_dropped_files(app: &mut ChecksumApp, ctx: &egui::Context) {
 				build_file_list(app, path);
 			}
 			if let Ok(receipt) = Receipt::new(path, app.hash) {
-				app.receipt = Some(receipt);
 				app.hash = receipt.get_hash_func();
+				app.receipt = Some(receipt);
 			}
 		}
 	}
@@ -126,8 +126,8 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						.pick_file()
 					{
 						if let Ok(receipt) = Receipt::new(&path, app.hash) {
-							app.receipt = Some(receipt);
 							app.hash = receipt.get_hash_func();
+							app.receipt = Some(receipt);
 						}
 					}
 				}
