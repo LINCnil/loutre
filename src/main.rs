@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod analyse_hash;
 mod app;
 mod checker;
 mod clipboard;

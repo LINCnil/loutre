@@ -88,6 +88,8 @@ options de configuration possible sont :
 
 Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 
+- `analyse_hash.rs` : fonction tentant de deviner le type de hash en fonction
+  de sa longueur
 - `app.rs` : gestion de la base de l'application
 - `checker.rs` : comparaison des empreintes préalablement calculées
 - `clipboard.rs` : gestion du presse-papier

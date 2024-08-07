@@ -1,4 +1,6 @@
+use crate::analyse_hash::analyse_hash;
 use crate::file::File;
+use crate::hasher::HashFunc;
 use msg_parser::Outlook;
 use nom::character::complete::{alpha1, alphanumeric1, char, digit1, space0, space1};
 use nom::combinator::opt;
@@ -6,21 +8,33 @@ use nom::IResult;
 use std::path::{Path, PathBuf};
 use unicode_normalization::UnicodeNormalization;
 
+const DEFAULT_HASH: HashFunc = HashFunc::Sha256;
+
 macro_rules! ret_not_empty {
-	($lst: ident) => {
+	($lst: ident, $hash: ident) => {
 		if $lst.is_empty() {
 			Err(())
 		} else {
-			Ok($lst)
+			Ok(($lst, $hash))
 		}
 	};
 }
 
-pub fn cnil_platform_email_get_files(path: &Path) -> Result<Vec<File>, ()> {
+pub fn cnil_platform_email_get_files(
+	path: &Path,
+	_default_hash: HashFunc,
+) -> Result<(Vec<File>, HashFunc), ()> {
 	if let Ok(outlook) = Outlook::from_path(path) {
 		let body: String = outlook.body.nfkc().collect();
 		let files = parse_txt(&body);
-		return ret_not_empty!(files);
+		let hash = match files.first() {
+			Some(f) => match f.get_hash() {
+				Some(h) => analyse_hash(h, DEFAULT_HASH),
+				None => DEFAULT_HASH,
+			},
+			None => DEFAULT_HASH,
+		};
+		return ret_not_empty!(files, hash);
 	}
 	Err(())
 }
