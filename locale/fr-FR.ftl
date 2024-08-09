@@ -41,7 +41,6 @@ cancel = Annuler
 btn_select_dir = Ouvrir un dossier
 btn_select_receipt = Ouvrir un AR
 btn_trash_tip = Réinitialiser
-label_receipt = Accusé de réception
 
 
 ## Actions

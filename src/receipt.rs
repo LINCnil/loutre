@@ -1,12 +1,12 @@
 use crate::file::File;
 use crate::hasher::HashFunc;
-use crate::parsers::cnil_platform_email_get_files;
+use crate::parsers::{cksum_gnu_get_files, cnil_platform_email_get_files};
 use std::fmt;
 use std::path::{Path, PathBuf};
 use std::slice::Iter;
 
 const PARSERS: &[&dyn Fn(&Path, HashFunc) -> Result<(Vec<File>, HashFunc), ()>] =
-	&[&cnil_platform_email_get_files];
+	&[&cksum_gnu_get_files, &cnil_platform_email_get_files];
 
 pub struct Receipt {
 	path: PathBuf,

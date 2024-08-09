@@ -121,10 +121,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					.clicked()
 				{
 					crate::app::reset_messages!(app);
-					if let Some(path) = rfd::FileDialog::new()
-						.add_filter(app.i18n.msg("label_receipt"), &["msg"])
-						.pick_file()
-					{
+					if let Some(path) = rfd::FileDialog::new().pick_file() {
 						if let Ok(receipt) = Receipt::new(&path, app.hash) {
 							app.hash = receipt.get_hash_func();
 							app.receipt = Some(receipt);
