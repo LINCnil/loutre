@@ -35,6 +35,8 @@ pub enum Color {
 
 	MainFrameBackground,
 	MainText,
+
+	Title,
 }
 
 impl Color {
@@ -114,6 +116,17 @@ impl Color {
 				Theme::Light => BaseColor::C_414141,
 			}
 			.to_egui_color(),
+			Self::Title => {
+				if cfg!(feature = "nightly") {
+					BaseColor::C_2242FF.to_egui_color()
+				} else {
+					match theme {
+						Theme::Dark => BaseColor::C_BBE4FF,
+						Theme::Light => BaseColor::C_001D96,
+					}
+					.to_egui_color()
+				}
+			}
 		}
 	}
 }
@@ -127,6 +140,7 @@ impl BaseColor {
 	const C_17172F: Self = Self([0x17, 0x17, 0x2f, 0xff]);
 	const C_21AC59: Self = Self([0x21, 0xac, 0x59, 0xff]);
 	const C_21AC59_20: Self = Self([0x21, 0xac, 0x59, 0x33]);
+	const C_2242FF: Self = Self([0x22, 0x42, 0xff, 0xff]);
 	const C_348CFF: Self = Self([0x34, 0x8c, 0xff, 0xff]);
 	const C_348CFF_20: Self = Self([0x34, 0x8c, 0xff, 0x33]);
 	const C_34FF86: Self = Self([0x34, 0xff, 0x86, 0xff]);

@@ -16,6 +16,7 @@ content_file_header =
 
 config = Configuration
 config_not_available = Configuration indisponible lorsqu'un dossier est ouvert
+config_title = Configuration
 label_nb_files_start = Numéro de la première pièce
 label_content_file = Nom du fichier d’empreintes
 label_hash_function = Fonction de hachage

@@ -77,7 +77,7 @@ impl Theme {
 		style.text_styles = [
 			(
 				TextStyle::Heading,
-				FontId::new(16.0, FontFamily::Name("bold".into())),
+				FontId::new(20.0, FontFamily::Name("bold".into())),
 			),
 			(TextStyle::Body, FontId::new(16.0, FontFamily::Proportional)),
 			(
@@ -92,6 +92,12 @@ impl Theme {
 		]
 		.into();
 		ctx.set_style(style);
+	}
+
+	pub fn title(&self, text: &str) -> RichText {
+		RichText::new(text)
+			.text_style(TextStyle::Heading)
+			.color(Color::Title.get(*self))
 	}
 
 	pub fn icon(&self, icon: char) -> RichText {
@@ -139,7 +145,7 @@ impl Theme {
 
 	pub fn get_main_frame(&self) -> egui::Frame {
 		egui::Frame::default()
-			.inner_margin(8.0)
+			.inner_margin(32.0)
 			.fill(Color::MainFrameBackground.get(*self))
 	}
 

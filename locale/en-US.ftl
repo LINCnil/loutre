@@ -16,6 +16,7 @@ content_file_header =
 
 config = Configuration
 config_not_available = Configuration unavailable when a directory is opened
+config_title = Configuration
 label_nb_files_start = Number of the first evidence
 label_content_file = Name of the checksum file
 label_hash_function = Hash function
