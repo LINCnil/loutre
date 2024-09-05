@@ -5,8 +5,9 @@ use std::fmt;
 use std::path::{Path, PathBuf};
 use std::slice::Iter;
 
-const PARSERS: &[&dyn Fn(&Path, HashFunc) -> Result<(Vec<File>, HashFunc), ()>] =
-	&[&cksum_gnu_get_files, &cnil_platform_email_get_files];
+type ReceiptParser = dyn Fn(&Path, HashFunc) -> Result<(Vec<File>, HashFunc), ()>;
+
+const PARSERS: &[&ReceiptParser] = &[&cksum_gnu_get_files, &cnil_platform_email_get_files];
 
 pub struct Receipt {
 	path: PathBuf,
