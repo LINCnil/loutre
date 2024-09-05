@@ -106,7 +106,7 @@ impl InfoBox {
 					})
 					.fill(self.get_bg_color())
 					.show(ui, |ui| {
-						ui.horizontal(|ui| {
+						ui.horizontal_wrapped(|ui| {
 							ui.label(self.level.render_icon(self.theme));
 							function(ui);
 							ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
@@ -129,7 +129,7 @@ impl InfoBox {
 				self.get_border_color(),
 			))
 			.show(ui, |ui| {
-				ui.horizontal(|ui| {
+				ui.horizontal_wrapped(|ui| {
 					ui.label(self.level.render_icon(self.theme));
 					function(ui);
 					ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
