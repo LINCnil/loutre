@@ -26,10 +26,8 @@ pub(crate) use reset_messages;
 macro_rules! set_msg_info_check_ok {
 	($o: ident) => {
 		if let Some(CheckResult::Success(files)) = &$o.file_check_result {
-			let mut msg = $o.i18n.msg("msg_info_hash_done");
 			if !files.is_empty() {
-				msg += "\n";
-				msg += &$o.i18n.msg("msg_info_hash_ignored_files");
+				let mut msg = $o.i18n.msg("msg_info_hash_ignored_files");
 				msg += "\n";
 				msg += &files
 					.iter()
@@ -42,8 +40,8 @@ macro_rules! set_msg_info_check_ok {
 					.into_iter()
 					.collect::<Vec<String>>()
 					.join("\n");
+				$o.info_msg = Some(msg);
 			}
-			$o.info_msg = Some(msg);
 		}
 	};
 }
