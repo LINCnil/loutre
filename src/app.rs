@@ -8,7 +8,7 @@ use crate::i18n::I18n;
 use crate::receipt::Receipt;
 use crate::theme::Theme;
 use crate::views::AppView;
-use eframe::egui::{self, Context};
+use eframe::egui::{self, Context, Image};
 use std::collections::HashSet;
 use std::path::Path;
 
@@ -80,9 +80,28 @@ impl eframe::App for ChecksumApp {
 			.show(ctx, |ui| {
 				self.theme.set_visuals(ui.visuals_mut());
 				self.update_status(ctx);
-				let view = self.view.to_owned();
-				view.display(self, ui);
-				view.handle_dropped_files(self, ctx);
+
+				egui::Frame::none()
+					.inner_margin(crate::UI_MARGIN_LARGE)
+					.show(ui, |ui| {
+						let (logo_name, logo_bytes) = self.theme.get_logo_bytes();
+						ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
+					});
+
+				egui::ScrollArea::both().show(ui, |ui| {
+					egui::Frame::none()
+						.inner_margin(egui::Margin {
+							left: crate::UI_MARGIN_LARGE,
+							right: crate::UI_MARGIN_LARGE,
+							top: crate::UI_MARGIN_NONE,
+							bottom: crate::UI_MARGIN_LARGE,
+						})
+						.show(ui, |ui| {
+							let view = self.view.to_owned();
+							view.display(self, ui);
+							view.handle_dropped_files(self, ctx);
+						});
+				});
 			});
 	}
 }

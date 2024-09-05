@@ -13,8 +13,6 @@ use eframe::egui::{self, FontFamily, FontId, RichText, TextStyle};
 use serde::{Deserialize, Serialize};
 
 pub const AVAILABLE_THEMES: &[Theme] = &[Theme::Dark, Theme::Light];
-pub const LARGE_PADDING: f32 = 6.0;
-pub const MAIN_ROUNDING: f32 = 7.0;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -145,7 +143,7 @@ impl Theme {
 
 	pub fn get_main_frame(&self) -> egui::Frame {
 		egui::Frame::default()
-			.inner_margin(32.0)
+			.inner_margin(crate::UI_MARGIN_NONE)
 			.fill(Color::MainFrameBackground.get(*self))
 	}
 
@@ -171,7 +169,7 @@ impl Theme {
 			width: 1.0,
 			color: Color::MainText.get(*self),
 		};
-		visuals.widgets.noninteractive.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.noninteractive.rounding = crate::MAIN_ROUNDING.into();
 		visuals.widgets.noninteractive.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::MainText.get(*self),
@@ -184,7 +182,7 @@ impl Theme {
 			width: 1.0,
 			color: Color::ButtonBorder.get(*self),
 		};
-		visuals.widgets.inactive.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.inactive.rounding = crate::MAIN_ROUNDING.into();
 		visuals.widgets.inactive.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::ButtonText.get(*self),
@@ -197,7 +195,7 @@ impl Theme {
 			width: 1.0,
 			color: Color::ButtonBorderHovered.get(*self),
 		};
-		visuals.widgets.hovered.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.hovered.rounding = crate::MAIN_ROUNDING.into();
 		visuals.widgets.hovered.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::ButtonTextHovered.get(*self),
@@ -210,7 +208,7 @@ impl Theme {
 			width: 1.0,
 			color: Color::ButtonBorderHovered.get(*self),
 		};
-		visuals.widgets.active.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.active.rounding = crate::MAIN_ROUNDING.into();
 		visuals.widgets.active.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::ButtonTextHovered.get(*self),
@@ -223,7 +221,7 @@ impl Theme {
 			width: 1.0,
 			color: Color::ButtonBorderHovered.get(*self),
 		};
-		visuals.widgets.open.rounding = MAIN_ROUNDING.into();
+		visuals.widgets.open.rounding = crate::MAIN_ROUNDING.into();
 		visuals.widgets.open.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::ButtonTextHovered.get(*self),

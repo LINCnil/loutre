@@ -39,6 +39,14 @@ const NB_FILES_START: u32 = 1;
 const WIN_WIDTH: f32 = 720.0;
 const WIN_HEIGHT: f32 = 345.0;
 
+const MAIN_ROUNDING: f32 = 7.0;
+const UI_BTN_PADDING_H: f32 = 10.0;
+const UI_BTN_PADDING_V: f32 = 6.0;
+const UI_MARGIN_LARGE: f32 = 32.0;
+const UI_MARGIN_MEDIUM: f32 = 16.0;
+const UI_MARGIN_SMALL: f32 = 8.0;
+const UI_MARGIN_NONE: f32 = 0.0;
+
 fn main() {
 	let config = config::Config::init();
 	let viewport = eframe::egui::ViewportBuilder::default()

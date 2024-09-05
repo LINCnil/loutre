@@ -4,8 +4,8 @@ use eframe::egui;
 const INFOBOX_BORDER_SIZE: f32 = 1.0;
 const INFOBOX_ICON_SIZE: f32 = 20.0;
 const INFOBOX_MAIN_LEFT_BORDER_SIZE: f32 = 13.0;
-const INFOBOX_PADDING: f32 = crate::theme::LARGE_PADDING;
-const INFOBOX_ROUNDING: f32 = crate::theme::MAIN_ROUNDING;
+const INFOBOX_PADDING: f32 = crate::UI_MARGIN_SMALL;
+const INFOBOX_ROUNDING: f32 = crate::MAIN_ROUNDING;
 
 #[derive(Clone, Copy, Debug)]
 pub enum InfoBoxType {
