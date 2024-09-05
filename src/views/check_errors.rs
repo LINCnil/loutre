@@ -23,6 +23,8 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	spacing.button_padding = egui::vec2(super::UI_BTN_PADDING_H, super::UI_BTN_PADDING_V);
 
 	ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
+	ui.add_space(super::UI_LOGO_MARGIN);
+
 	if ui
 		.add(Button::new().text(app.i18n.msg("back")).render())
 		.clicked()

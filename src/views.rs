@@ -5,9 +5,10 @@ mod check_errors;
 mod config;
 mod main;
 
-const UI_EXTRA_SPACE: f32 = 6.0;
 const UI_BTN_PADDING_H: f32 = 10.0;
 const UI_BTN_PADDING_V: f32 = 6.0;
+const UI_EXTRA_SPACE: f32 = 6.0;
+const UI_LOGO_MARGIN: f32 = 16.0;
 
 #[derive(Clone)]
 pub enum AppView {

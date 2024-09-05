@@ -72,78 +72,72 @@ fn build_file_list(app: &mut ChecksumApp, path: &Path) {
 }
 
 fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
+	let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
+	ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
+	ui.add_space(super::UI_LOGO_MARGIN);
+
 	ui.horizontal(|ui| {
-		let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
-		ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
+		ui.label(app.i18n.msg("label_nb_files_start"));
+		let mut nb_str = app.nb_start.to_string();
+		let response = ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
+		if response.changed() {
+			nb_str.retain(|c| c.is_ascii_digit());
+			if let Ok(nb) = nb_str.parse::<u32>() {
+				app.nb_start = nb.max(1);
+			}
+		}
+	});
 
-		ui.vertical(|ui| {
-			ui.add_space(super::UI_EXTRA_SPACE);
-			ui.add_space(super::UI_EXTRA_SPACE);
+	ui.add_space(super::UI_EXTRA_SPACE);
 
-			ui.horizontal(|ui| {
-				ui.label(app.i18n.msg("label_nb_files_start"));
-				let mut nb_str = app.nb_start.to_string();
-				let response = ui.add(egui::TextEdit::singleline(&mut nb_str).desired_width(40.0));
-				if response.changed() {
-					nb_str.retain(|c| c.is_ascii_digit());
-					if let Ok(nb) = nb_str.parse::<u32>() {
-						app.nb_start = nb.max(1);
-					}
+	ui.horizontal(|ui| {
+		// Button: select dir
+		if ui
+			.add(
+				Button::new()
+					.icon(Icon::ButtonSelectDir)
+					.text(app.i18n.msg("btn_select_dir"))
+					.render(),
+			)
+			.clicked()
+		{
+			crate::app::reset_messages!(app);
+			if let Some(path) = rfd::FileDialog::new().pick_folder() {
+				build_file_list(app, &path);
+			}
+		}
+		// Button: open receipt
+		if ui
+			.add(
+				Button::new()
+					.icon(Icon::ButtonSelectReceipt)
+					.text(app.i18n.msg("btn_select_receipt"))
+					.render(),
+			)
+			.clicked()
+		{
+			crate::app::reset_messages!(app);
+			if let Some(path) = rfd::FileDialog::new().pick_file() {
+				if let Ok(receipt) = Receipt::new(&path, app.hash) {
+					app.hash = receipt.get_hash_func();
+					app.receipt = Some(receipt);
 				}
-			});
-
-			ui.add_space(super::UI_EXTRA_SPACE);
-
-			ui.horizontal(|ui| {
-				// Button: select dir
-				if ui
-					.add(
-						Button::new()
-							.icon(Icon::ButtonSelectDir)
-							.text(app.i18n.msg("btn_select_dir"))
-							.render(),
-					)
-					.clicked()
-				{
-					crate::app::reset_messages!(app);
-					if let Some(path) = rfd::FileDialog::new().pick_folder() {
-						build_file_list(app, &path);
-					}
-				}
-				// Button: open receipt
-				if ui
-					.add(
-						Button::new()
-							.icon(Icon::ButtonSelectReceipt)
-							.text(app.i18n.msg("btn_select_receipt"))
-							.render(),
-					)
-					.clicked()
-				{
-					crate::app::reset_messages!(app);
-					if let Some(path) = rfd::FileDialog::new().pick_file() {
-						if let Ok(receipt) = Receipt::new(&path, app.hash) {
-							app.hash = receipt.get_hash_func();
-							app.receipt = Some(receipt);
-						}
-					}
-				}
-				// Button: config
-				if ui
-					.add_enabled(
-						app.file_list.is_none(),
-						Button::new()
-							.icon(Icon::ButtonConfig)
-							.text(app.i18n.msg("config"))
-							.render(),
-					)
-					.on_disabled_hover_text(app.i18n.msg("config_not_available"))
-					.clicked()
-				{
-					app.view = AppView::Config;
-				}
-			});
-		});
+			}
+		}
+		// Button: config
+		if ui
+			.add_enabled(
+				app.file_list.is_none(),
+				Button::new()
+					.icon(Icon::ButtonConfig)
+					.text(app.i18n.msg("config"))
+					.render(),
+			)
+			.on_disabled_hover_text(app.i18n.msg("config_not_available"))
+			.clicked()
+		{
+			app.view = AppView::Config;
+		}
 	});
 }
 
