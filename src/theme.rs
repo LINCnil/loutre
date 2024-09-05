@@ -149,7 +149,23 @@ impl Theme {
 		// https://docs.rs/egui/latest/egui/style/struct.Widgets.html
 		// https://docs.rs/egui/latest/egui/style/struct.WidgetVisuals.html
 
+		visuals.selection = egui::style::Selection {
+			bg_fill: Color::ButtonBackground.get(*self),
+			stroke: egui::Stroke {
+				width: 0.0,
+				color: Color::MainText.get(*self),
+			},
+		};
+		visuals.extreme_bg_color = Color::ButtonBackground.get(*self);
+
 		// Widgets (non interactive)
+		visuals.widgets.noninteractive.bg_fill = Color::ButtonBackground.get(*self);
+		visuals.widgets.noninteractive.weak_bg_fill = visuals.widgets.noninteractive.bg_fill;
+		visuals.widgets.noninteractive.bg_stroke = egui::Stroke {
+			width: 1.0,
+			color: Color::MainText.get(*self),
+		};
+		visuals.widgets.noninteractive.rounding = MAIN_ROUNDING.into();
 		visuals.widgets.noninteractive.fg_stroke = egui::Stroke {
 			width: 12.0,
 			color: Color::MainText.get(*self),
