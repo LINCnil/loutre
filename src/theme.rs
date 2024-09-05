@@ -147,6 +147,10 @@ impl Theme {
 			.fill(Color::MainFrameBackground.get(*self))
 	}
 
+	pub fn set_interaction(&self, interaction: &mut egui::style::Interaction) {
+		interaction.tooltip_delay = 0.2;
+	}
+
 	pub fn set_visuals(&self, visuals: &mut egui::style::Visuals) {
 		// See also:
 		// https://docs.rs/egui/latest/egui/style/struct.Visuals.html

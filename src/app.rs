@@ -78,7 +78,9 @@ impl eframe::App for ChecksumApp {
 		egui::CentralPanel::default()
 			.frame(self.theme.get_main_frame())
 			.show(ctx, |ui| {
-				self.theme.set_visuals(ui.visuals_mut());
+				let style = ui.style_mut();
+				self.theme.set_visuals(&mut style.visuals);
+				self.theme.set_interaction(&mut style.interaction);
 				self.update_status(ctx);
 
 				egui::Frame::none()
