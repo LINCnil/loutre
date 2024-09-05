@@ -11,11 +11,11 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 
 	let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
 	ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
-	ui.add_space(super::UI_LOGO_MARGIN);
-	ui.add_space(super::UI_LOGO_MARGIN);
+	ui.add_space(super::UI_MARGIN_LARGE);
+	ui.add_space(super::UI_MARGIN_LARGE);
 
 	ui.label(app.theme.title(&app.i18n.msg("config_title")));
-	ui.add_space(super::UI_LOGO_MARGIN);
+	ui.add_space(super::UI_MARGIN_LARGE);
 
 	egui::Grid::new("header_grid")
 		.num_columns(2)
@@ -187,7 +187,7 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	spacing.button_padding = egui::vec2(super::UI_BTN_PADDING_H, super::UI_BTN_PADDING_V);
 
 	app.tmp_config = Some(new_config.clone());
-	ui.add_space(super::UI_LOGO_MARGIN);
+	ui.add_space(super::UI_MARGIN_LARGE);
 	ui.horizontal(|ui| {
 		if ui
 			.add(Button::new().text(app.i18n.msg("apply")).render())

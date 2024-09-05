@@ -74,7 +74,7 @@ fn build_file_list(app: &mut ChecksumApp, path: &Path) {
 fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	let (logo_name, logo_bytes) = app.theme.get_logo_bytes();
 	ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
-	ui.add_space(super::UI_LOGO_MARGIN);
+	ui.add_space(super::UI_MARGIN_LARGE);
 
 	ui.horizontal(|ui| {
 		ui.label(app.i18n.msg("label_nb_files_start"));
