@@ -144,17 +144,17 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					ui.horizontal(|ui| {
 						ui.label(Icon::ButtonSelectDir.to_string());
 						ui.label(p);
-						if ui
-							.link(Icon::ButtonTrash.to_string())
-							.on_hover_text(app.i18n.msg("btn_trash_tip"))
-							.clicked()
-						{
-							crate::app::reset_messages!(app);
-							app.file_hasher = None;
-							app.file_list = None;
-						}
 					});
 				});
+			if ui
+				.button(Icon::ButtonTrash.to_string())
+				.on_hover_text(app.i18n.msg("btn_trash_tip"))
+				.clicked()
+			{
+				crate::app::reset_messages!(app);
+				app.file_hasher = None;
+				app.file_list = None;
+			}
 		}
 	});
 	if app.file_list.is_some() && app.receipt.is_some() {
@@ -173,15 +173,15 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 					ui.horizontal(|ui| {
 						ui.label(Icon::ButtonSelectReceipt.to_string());
 						ui.label(e);
-						if ui
-							.link(Icon::ButtonTrash.to_string())
-							.on_hover_text(app.i18n.msg("btn_trash_tip"))
-							.clicked()
-						{
-							app.receipt = None;
-						}
 					});
 				});
+			if ui
+				.button(Icon::ButtonTrash.to_string())
+				.on_hover_text(app.i18n.msg("btn_trash_tip"))
+				.clicked()
+			{
+				app.receipt = None;
+			}
 		}
 	});
 }
