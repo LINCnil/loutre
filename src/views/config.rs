@@ -19,6 +19,7 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 
 	egui::Grid::new("header_grid")
 		.num_columns(2)
+		.spacing(egui::Vec2 { x: 0.0, y: 6.0 })
 		.show(ui, |ui| {
 			// Content file name
 			let default_content_file_name = app.i18n.msg("content_file_name");
@@ -186,7 +187,7 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	spacing.button_padding = egui::vec2(super::UI_BTN_PADDING_H, super::UI_BTN_PADDING_V);
 
 	app.tmp_config = Some(new_config.clone());
-	ui.add_space(super::UI_EXTRA_SPACE);
+	ui.add_space(super::UI_LOGO_MARGIN);
 	ui.horizontal(|ui| {
 		if ui
 			.add(Button::new().text(app.i18n.msg("apply")).render())
