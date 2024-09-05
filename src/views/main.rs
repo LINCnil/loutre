@@ -16,21 +16,12 @@ pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	spacing.button_padding = egui::vec2(super::UI_BTN_PADDING_H, super::UI_BTN_PADDING_V);
 
 	add_header(app, ui);
-	ui.add_space(super::UI_EXTRA_SPACE);
+	ui.add_space(super::UI_MARGIN_LARGE);
 	add_file_selection(app, ui);
-	ui.add_space(super::UI_EXTRA_SPACE);
-	if add_messages(app, ui) {
-		ui.add_space(super::UI_EXTRA_SPACE);
-	}
-	if add_loading(app, ui) {
-		ui.add_space(super::UI_EXTRA_SPACE);
-	}
-	if add_action_buttons(app, ui) {
-		ui.add_space(super::UI_EXTRA_SPACE);
-	}
-	if add_progress_bar(app, ui) {
-		ui.add_space(super::UI_EXTRA_SPACE);
-	}
+	add_messages(app, ui);
+	add_loading(app, ui);
+	add_action_buttons(app, ui);
+	add_progress_bar(app, ui);
 }
 
 pub fn handle_dropped_files(app: &mut ChecksumApp, ctx: &egui::Context) {
@@ -106,6 +97,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				build_file_list(app, &path);
 			}
 		}
+
 		// Button: open receipt
 		if ui
 			.add(
@@ -124,6 +116,7 @@ fn add_header(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				}
 			}
 		}
+
 		// Button: config
 		if ui
 			.add_enabled(
@@ -148,6 +141,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			ui.visuals_mut().override_text_color = Some(Color::FileSelection.get(app.theme));
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
+				.outer_margin(egui::Margin::from(0.0))
 				.rounding(crate::theme::MAIN_ROUNDING)
 				.fill(Color::FileSelectionBackground.get(app.theme))
 				.show(ui, |ui| {
@@ -167,12 +161,16 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				});
 		}
 	});
+	if app.file_list.is_some() && app.receipt.is_some() {
+		ui.add_space(super::UI_EXTRA_SPACE);
+	}
 	ui.horizontal(|ui| {
 		if let Some(e) = &app.receipt {
 			let e = e.to_string();
 			ui.visuals_mut().override_text_color = Some(Color::FileSelection.get(app.theme));
 			egui::Frame::none()
 				.inner_margin(egui::Margin::from(crate::theme::LARGE_PADDING))
+				.outer_margin(egui::Margin::from(0.0))
 				.rounding(crate::theme::MAIN_ROUNDING)
 				.fill(Color::FileSelectionBackground.get(app.theme))
 				.show(ui, |ui| {
@@ -192,11 +190,11 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	});
 }
 
-fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
-	let mut has_messages = false;
+fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	egui::ScrollArea::vertical().show(ui, |ui| {
 		if let Some(p) = &app.file_list {
 			if p.has_content_file() {
+				ui.add_space(super::UI_EXTRA_SPACE);
 				InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_dyn(
 					ui,
 					|ui| {
@@ -206,30 +204,29 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 						));
 					},
 				);
-				has_messages = true;
 			} else {
 				let nb_files = p.get_nb_files();
 				if nb_files >= app.clipboard_threshold {
+					ui.add_space(super::UI_EXTRA_SPACE);
 					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
 						ui,
 						app.i18n
 							.fmt("msg_info_nb_files", &[("nb", Attr::Usize(nb_files))]),
 					);
-					has_messages = true;
 				}
 			}
 		}
 		if let Some(msg) = &app.info_msg {
+			ui.add_space(super::UI_EXTRA_SPACE);
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Info).render_text(ui, msg);
-			has_messages = true;
 		}
 		if let Some(msg) = &app.success_msg {
+			ui.add_space(super::UI_EXTRA_SPACE);
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Success).render_text(ui, msg);
-			has_messages = true;
 		}
 		if let Some(msg) = &app.error_msg {
+			ui.add_space(super::UI_EXTRA_SPACE);
 			InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(ui, msg);
-			has_messages = true;
 		}
 		if let Some(p) = &app.file_list {
 			if app.enable_duplicate_file_warning {
@@ -238,12 +235,14 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 					for f in fl {
 						msg += &format!("\n - {}", f.get_path().display());
 					}
+					ui.add_space(super::UI_EXTRA_SPACE);
 					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning)
 						.render_text(ui, &msg);
 				}
 			}
 			if app.enable_empty_file_warning {
 				for f in p.iter_empty_files() {
+					ui.add_space(super::UI_EXTRA_SPACE);
 					InfoBox::new(app.theme, InfoBoxType::Full, InfoBoxLevel::Warning).render_text(
 						ui,
 						app.i18n.fmt(
@@ -258,11 +257,11 @@ fn add_messages(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			}
 		}
 	});
-	has_messages
 }
 
-fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	if let Some(flb) = &mut app.file_list_builder {
+		ui.add_space(super::UI_EXTRA_SPACE);
 		if let Some(af) = flb.ask_for() {
 			ui.horizontal(|ui| {
 				ui.add(egui::Spinner::new());
@@ -344,13 +343,11 @@ fn add_loading(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 		} else {
 			ui.add(egui::Spinner::new());
 		}
-		return true;
 	}
-	false
 }
 
-fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
-	let mut ret = false;
+fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) {
+	ui.add_space(super::UI_MARGIN_LARGE);
 	ui.horizontal(|ui| {
 		if app.file_hasher.is_none() {
 			if let Some(p) = &mut app.file_list {
@@ -426,15 +423,14 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 						}
 					}
 				}
-				ret = true;
 			}
 		}
 	});
-	ret
 }
 
-fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
+fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	if let Some(hr) = &app.file_hasher {
+		ui.add_space(super::UI_EXTRA_SPACE);
 		let progress_bar = egui::ProgressBar::new(hr.get_progress())
 			.show_percentage()
 			.animate(true);
@@ -448,7 +444,5 @@ fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) -> bool {
 			],
 		);
 		ui.label(remaining);
-		return true;
 	}
-	false
 }
