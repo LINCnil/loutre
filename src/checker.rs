@@ -176,7 +176,7 @@ fn load_errors(
 		Some(receipt_set) => receipt_set
 			.iter()
 			.filter_map(|f| {
-				if !calculated_set.iter().any(|e| e.path == f.path) {
+				if !calculated_set.iter().any(|e| loose_check_path(e, f)) {
 					Some(f.clone())
 				} else {
 					None
