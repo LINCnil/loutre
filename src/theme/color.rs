@@ -36,6 +36,10 @@ pub enum Color {
 	MainFrameBackground,
 	MainText,
 
+	ProgressBarBackgroundDone,
+	ProgressBarBackgroundTodo,
+	ProgressBarText,
+
 	Title,
 }
 
@@ -130,6 +134,21 @@ impl Color {
 			Self::MainText => match theme {
 				Theme::Dark => BaseColor::C_E5EAFF,
 				Theme::Light => BaseColor::C_414141,
+			}
+			.to_egui_color(),
+			Self::ProgressBarBackgroundDone => match theme {
+				Theme::Dark => BaseColor::C_BBE4FF,
+				Theme::Light => BaseColor::C_001D96,
+			}
+			.to_egui_color(),
+			Self::ProgressBarBackgroundTodo => match theme {
+				Theme::Dark => BaseColor::C_4F5D76,
+				Theme::Light => BaseColor::C_E5EAFF,
+			}
+			.to_egui_color(),
+			Self::ProgressBarText => match theme {
+				Theme::Dark => BaseColor::C_001D96,
+				Theme::Light => BaseColor::C_FFFFFF,
 			}
 			.to_egui_color(),
 			Self::Title => {

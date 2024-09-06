@@ -424,10 +424,16 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	if let Some(hr) = &app.file_hasher {
 		ui.add_space(crate::UI_MARGIN_SMALL);
+		let extreme_bg_color_orig = ui.visuals().extreme_bg_color;
+		ui.visuals_mut().extreme_bg_color = Color::ProgressBarBackgroundTodo.get(app.theme);
+		ui.visuals_mut().override_text_color = Some(Color::ProgressBarText.get(app.theme));
 		let progress_bar = egui::ProgressBar::new(hr.get_progress())
 			.show_percentage()
+			.fill(Color::ProgressBarBackgroundDone.get(app.theme))
 			.animate(true);
 		ui.add(progress_bar);
+		ui.visuals_mut().extreme_bg_color = extreme_bg_color_orig;
+		ui.visuals_mut().override_text_color = None;
 		let formatter = make_format(DECIMAL);
 		let remaining = app.i18n.fmt(
 			"progress",
