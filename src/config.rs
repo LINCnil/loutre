@@ -25,10 +25,7 @@ impl Config {
 	pub fn init() -> Self {
 		let path = Config::get_file_path();
 		let ctn = if path.is_file() {
-			match read_to_string(&path) {
-				Ok(ctn) => ctn,
-				Err(_) => String::new(),
-			}
+			read_to_string(&path).unwrap_or_default()
 		} else {
 			String::new()
 		};
@@ -84,10 +81,7 @@ impl Config {
 	}
 
 	fn load_config(content: &str) -> Config {
-		match toml::from_str(content) {
-			Ok(cfg) => cfg,
-			Err(_) => Config::default(),
-		}
+		toml::from_str(content).unwrap_or_default()
 	}
 }
 
