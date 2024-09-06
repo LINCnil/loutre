@@ -61,19 +61,23 @@ impl Color {
 			Self::InfoBoxErrorBackground => match theme {
 				Theme::Dark => BaseColor::C_840000,
 				Theme::Light => BaseColor::C_FFF0F0,
-			}.to_egui_color(),
+			}
+			.to_egui_color(),
 			Self::InfoBoxErrorBorder => match theme {
 				Theme::Dark => BaseColor::C_FF7575,
 				Theme::Light => BaseColor::C_AC2121,
-			}.to_egui_color(),
+			}
+			.to_egui_color(),
 			Self::InfoBoxErrorIcon => match theme {
 				Theme::Dark => BaseColor::C_FF7575,
 				Theme::Light => BaseColor::C_AC2121,
-			}.to_egui_color(),
+			}
+			.to_egui_color(),
 			Self::InfoBoxErrorText => match theme {
 				Theme::Dark => BaseColor::C_FFF0F0,
 				Theme::Light => BaseColor::C_AC2121,
-			}.to_egui_color(),
+			}
+			.to_egui_color(),
 			Self::InfoBoxInfoBackground => match theme {
 				Theme::Dark => BaseColor::C_1D2F59,
 				Theme::Light => BaseColor::C_BBE4FF,
