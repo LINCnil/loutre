@@ -146,6 +146,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						ui.label(p);
 					});
 				});
+			ui.visuals_mut().override_text_color = None;
 			if ui
 				.button(Icon::ButtonTrash.to_string())
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))
@@ -175,6 +176,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 						ui.label(e);
 					});
 				});
+			ui.visuals_mut().override_text_color = None;
 			if ui
 				.button(Icon::ButtonTrash.to_string())
 				.on_hover_text(app.i18n.msg("btn_trash_tip"))

@@ -113,6 +113,7 @@ impl InfoBox {
 						});
 					});
 			});
+		ui.visuals_mut().override_text_color = None;
 	}
 
 	fn render_simple<F>(&self, ui: &mut egui::Ui, function: F)
@@ -135,6 +136,7 @@ impl InfoBox {
 					ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |_ui| {});
 				});
 			});
+		ui.visuals_mut().override_text_color = None;
 	}
 
 	fn get_bg_color(&self) -> egui::Color32 {
