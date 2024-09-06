@@ -26,9 +26,9 @@ impl Icon {
 			Self::ButtonTrash => '\u{EC2A}',
 			Self::SignError => '\u{EB96}',
 			Self::SignHelp => '\u{F045}',
-			Self::SignInfo => '\u{F449}',
-			Self::SignSuccess => '\u{EB81}',
-			Self::SignWarning => '\u{EA21}',
+			Self::SignInfo => '\u{F448}',
+			Self::SignSuccess => '\u{EB80}',
+			Self::SignWarning => '\u{EA20}',
 		}
 	}
 }
