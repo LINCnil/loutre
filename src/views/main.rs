@@ -10,6 +10,9 @@ use eframe::egui;
 use humansize::{make_format, DECIMAL};
 use std::path::Path;
 
+const PATH_DISPLAY_MAX_LEN: usize = 65;
+const PATH_DISPLAY_BRK_LEN: usize = 50;
+
 pub fn display(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	let spacing = ui.spacing_mut();
 	app.default_padding = spacing.button_padding;
@@ -143,7 +146,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				.show(ui, |ui| {
 					ui.horizontal(|ui| {
 						ui.label(Icon::ButtonSelectDir.to_string());
-						ui.label(p);
+						ui.label(shorten_path(&p));
 					});
 				});
 			ui.visuals_mut().override_text_color = None;
@@ -173,7 +176,7 @@ fn add_file_selection(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 				.show(ui, |ui| {
 					ui.horizontal(|ui| {
 						ui.label(Icon::ButtonSelectReceipt.to_string());
-						ui.label(e);
+						ui.label(shorten_path(&e));
 					});
 				});
 			ui.visuals_mut().override_text_color = None;
@@ -421,6 +424,35 @@ fn add_action_buttons(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	});
 }
 
+fn shorten_path(path: &str) -> String {
+	let mut ret = String::with_capacity(path.len() + 3);
+	let mut buff = String::with_capacity(path.len());
+	for part in path.split_inclusive(&['\\', '/']) {
+		let buff_len = buff.len();
+		let part_len = part.len();
+		if buff_len + part_len <= PATH_DISPLAY_MAX_LEN {
+			buff.push_str(part);
+		} else if buff_len >= PATH_DISPLAY_BRK_LEN {
+			ret.push_str(&buff);
+			ret.push('\n');
+			buff.clear();
+			// TODO: split part in chunks
+			buff.push_str(part);
+		} else {
+			buff.push_str(&part[..PATH_DISPLAY_MAX_LEN - buff_len]);
+			ret.push_str(&buff);
+			ret.push('\n');
+			buff.clear();
+			// TODO: split part in chunks
+			buff.push_str(&part[PATH_DISPLAY_MAX_LEN - buff_len..]);
+		}
+	}
+	if !buff.is_empty() {
+		ret.push_str(&buff);
+	}
+	ret
+}
+
 fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 	if let Some(hr) = &app.file_hasher {
 		ui.add_space(crate::UI_MARGIN_SMALL);
@@ -443,5 +475,34 @@ fn add_progress_bar(app: &mut ChecksumApp, ui: &mut egui::Ui) {
 			],
 		);
 		ui.label(remaining);
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::shorten_path;
+
+	#[test]
+	fn shorten_path_none() {
+		let path = "this/is/a/short/path";
+		assert_eq!(shorten_path(path), path);
+	}
+
+	#[test]
+	fn shorten_path_short_once() {
+		let path =
+			"this/is/a/longer/path/that/should/wrap/only/once/because/it/is/not/that/long/either";
+		let ref_path =
+			"this/is/a/longer/path/that/should/wrap/only/once/because/it/is/\nnot/that/long/either";
+		assert_eq!(shorten_path(path), ref_path);
+	}
+
+	#[test]
+	fn shorten_path_long_once() {
+		let path =
+			"this/is/a longer/path that should wrap only once because it is not that long/either";
+		let ref_path =
+			"this/is/a longer/path that should wrap only once because it is no\nt that long/either";
+		assert_eq!(shorten_path(path), ref_path);
 	}
 }
