@@ -37,7 +37,7 @@ const CONTENT_FILE_PATH_PREFIX: &str = "";
 
 const NB_FILES_START: u32 = 1;
 const WIN_WIDTH: f32 = 820.0;
-const WIN_HEIGHT: f32 = 500.0;
+const WIN_HEIGHT: f32 = 560.0;
 
 const MAIN_ROUNDING: f32 = 7.0;
 const UI_BTN_PADDING_H: f32 = 10.0;
