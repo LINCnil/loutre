@@ -82,6 +82,10 @@ options de configuration possible sont :
 - `clipboard_persistence` : booléen définissant si le gestionnaire de
   presse-papier doit persister ou non en mémoire (ne définissez ce paramètre
   que si vous rencontrez des problèmes avec le copier/coller)
+- `enable_duplicate_file_warning` : booléen définissant s'il convient ou non
+  d'ajouter un avertissement en cas de fichiers identiques
+- `enable_empty_file_warning` : booléen définissant s'il convient ou non
+  d'ajouter un avertissement en cas de fichier vide
 
 
 ## Architecture technique
@@ -102,6 +106,8 @@ Les sources, situées dans le dossier `src/`, ont les rôles suivants :
 - `main.rs` : point d'entrée du logiciel
 - `nb_repr.rs` : gère la représentation des nombres
 - `parsers.rs` : gestion de l'analyse syntaxique
+- `parsers/cksum_gnu.rs` : analyse syntaxique des accusés de réception générés
+  à l'aide de `sha256sum` et des commandes dérivées (variante GNU)
 - `parsers/cnil_platform_email.rs` : analyse syntaxique des accusés de
   réception envoyés par la plateforme d'échanges de la CNIL via courrier
   électronique
