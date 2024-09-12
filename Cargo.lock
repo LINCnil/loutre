@@ -263,9 +263,9 @@ dependencies = [
 
 [[package]]
 name = "async-executor"
-version = "1.13.0"
+version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7ebdfa2ebdab6b1760375fa7d6f382b9f486eac35fc994625a00e89280bdbb7"
+checksum = "30ca9a001c1e8ba5149f91a74362376cc6bc5b919d92d988668657bd570bdcec"
 dependencies = [
  "async-task",
  "concurrent-queue",
@@ -330,7 +330,7 @@ dependencies = [
  "futures-lite 2.3.0",
  "parking",
  "polling 3.7.3",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "slab",
  "tracing",
  "windows-sys 0.59.0",
@@ -386,7 +386,7 @@ dependencies = [
  "cfg-if",
  "event-listener 3.1.0",
  "futures-lite 1.13.0",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "windows-sys 0.48.0",
 ]
 
@@ -405,7 +405,7 @@ dependencies = [
  "cfg-if",
  "event-listener 5.3.1",
  "futures-lite 2.3.0",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "tracing",
  "windows-sys 0.59.0",
 ]
@@ -433,7 +433,7 @@ dependencies = [
  "cfg-if",
  "futures-core",
  "futures-io",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "signal-hook-registry",
  "slab",
  "windows-sys 0.59.0",
@@ -649,9 +649,9 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 
 [[package]]
 name = "bytemuck"
-version = "1.17.1"
+version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "773d90827bc3feecfb67fab12e24de0749aad83c74b9504ecde46237b5cd24e2"
+checksum = "94bbb0ad554ad961ddc5da507a12a29b14e4ae5bda06b19f575a3e6079d2e2ae"
 dependencies = [
  "bytemuck_derive",
 ]
@@ -694,7 +694,7 @@ dependencies = [
  "bitflags 2.6.0",
  "log",
  "polling 3.7.3",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "slab",
  "thiserror",
 ]
@@ -708,7 +708,7 @@ dependencies = [
  "bitflags 2.6.0",
  "log",
  "polling 3.7.3",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "slab",
  "thiserror",
 ]
@@ -720,7 +720,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0f0ea9b9476c7fad82841a8dbb380e2eae480c21910feba80725b46931ed8f02"
 dependencies = [
  "calloop 0.12.4",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "wayland-backend",
  "wayland-client",
 ]
@@ -732,16 +732,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95a66a987056935f7efce4ab5668920b5d0dac4a7c99991a67395f13702ddd20"
 dependencies = [
  "calloop 0.13.0",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "wayland-backend",
  "wayland-client",
 ]
 
 [[package]]
 name = "cc"
-version = "1.1.16"
+version = "1.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9d013ecb737093c0e86b151a7b837993cf9ec6c502946cfb44bedc392421e0b"
+checksum = "b62ac837cdb5cb22e10a256099b4fc502b1dfe560cb282963a974d7abd80e476"
 dependencies = [
  "jobserver",
  "libc",
@@ -898,9 +898,9 @@ dependencies = [
 
 [[package]]
 name = "cpufeatures"
-version = "0.2.13"
+version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51e852e6dc9a5bed1fae92dd2375037bf2b768725bf3be87811edee3249d09ad"
+checksum = "608697df725056feaccfa42cffdaeeec3fccc4ffc38358ecd19b243e716a78e0"
 dependencies = [
  "libc",
 ]
@@ -1267,9 +1267,9 @@ dependencies = [
 
 [[package]]
 name = "error-code"
-version = "3.2.0"
+version = "3.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0474425d51df81997e2f90a21591180b38eccf27292d755f3e30750225c175b"
+checksum = "a5d9305ccc6942a704f4335694ecd3de2ea531b114ac2d51f5f843750787a92f"
 
 [[package]]
 name = "event-listener"
@@ -2485,9 +2485,9 @@ dependencies = [
 
 [[package]]
 name = "parking"
-version = "2.2.0"
+version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb813b8af86854136c6922af0598d719255ecb2179515e6e7730d468f05c9cae"
+checksum = "f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba"
 
 [[package]]
 name = "parking_lot"
@@ -2507,7 +2507,7 @@ checksum = "1e401f977ab385c9e4e3ab30627d6f26d00e2c73eef317493c4ec6d468726cf8"
 dependencies = [
  "cfg-if",
  "libc",
- "redox_syscall 0.5.3",
+ "redox_syscall 0.5.4",
  "smallvec",
  "windows-targets 0.52.6",
 ]
@@ -2602,7 +2602,7 @@ dependencies = [
  "concurrent-queue",
  "hermit-abi 0.4.0",
  "pin-project-lite",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "tracing",
  "windows-sys 0.59.0",
 ]
@@ -2752,9 +2752,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2a908a6e00f1fdd0dfd9c0eb08ce85126f6d8bbda50017e74bc4a4b7d4a926a4"
+checksum = "0884ad60e090bf1345b93da0a5de8923c93884cd03f40dfcfddd3b4bee661853"
 dependencies = [
  "bitflags 2.6.0",
 ]
@@ -2850,9 +2850,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.38.35"
+version = "0.38.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a85d50532239da68e9addb745ba38ff4612a242c1c7ceea689c4bc7c2f43c36f"
+checksum = "8acb788b847c24f28525660c4d7758620a7210875711f79e7f663cc152726811"
 dependencies = [
  "bitflags 2.6.0",
  "errno",
@@ -2905,18 +2905,18 @@ checksum = "d369a96f978623eb3dc28807c4852d6cc617fed53da5d3c400feff1ef34a714a"
 
 [[package]]
 name = "serde"
-version = "1.0.209"
+version = "1.0.210"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99fce0ffe7310761ca6bf9faf5115afbc19688edd00171d81b1bb1b116c63e09"
+checksum = "c8e3592472072e6e22e0a54d5904d9febf8508f65fb8552499a1abc7d1078c3a"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.209"
+version = "1.0.210"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5831b979fd7b5439637af1752d535ff49f4860c0f341d1baeb6faf0f4242170"
+checksum = "243902eda00fad750862fc144cea25caca5e20d615af0a81bee94ca738f1df1f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3045,7 +3045,7 @@ dependencies = [
  "libc",
  "log",
  "memmap2",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "thiserror",
  "wayland-backend",
  "wayland-client",
@@ -3070,7 +3070,7 @@ dependencies = [
  "libc",
  "log",
  "memmap2",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "thiserror",
  "wayland-backend",
  "wayland-client",
@@ -3164,7 +3164,7 @@ dependencies = [
  "cfg-if",
  "fastrand 2.1.1",
  "once_cell",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "windows-sys 0.59.0",
 ]
 
@@ -3378,9 +3378,9 @@ checksum = "08f95100a766bf4f8f28f90d77e0a5461bbdb219042e7679bebe79004fed8d75"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.12"
+version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+checksum = "e91b56cd4cadaeb79bbf1a5645f6b4f8dc5bde8834ad5894a8db35fda9efa1fe"
 
 [[package]]
 name = "unicode-normalization"
@@ -3530,7 +3530,7 @@ checksum = "056535ced7a150d45159d3a8dc30f91a2e2d588ca0b23f70e56033622b8016f6"
 dependencies = [
  "cc",
  "downcast-rs",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "scoped-tls",
  "smallvec",
  "wayland-sys",
@@ -3543,7 +3543,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3f45d1222915ef1fd2057220c1d9d9624b7654443ea35c3877f7a52bd0a5a2d"
 dependencies = [
  "bitflags 2.6.0",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "wayland-backend",
  "wayland-scanner",
 ]
@@ -3565,7 +3565,7 @@ version = "0.31.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a94697e66e76c85923b0d28a0c251e8f0666f58fc47d316c0f4da6da75d37cb"
 dependencies = [
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "wayland-client",
  "xcursor",
 ]
@@ -4131,7 +4131,7 @@ dependencies = [
  "raw-window-handle 0.5.2",
  "raw-window-handle 0.6.2",
  "redox_syscall 0.3.5",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "smithay-client-toolkit 0.18.1",
  "smol_str",
  "unicode-segmentation",
@@ -4218,7 +4218,7 @@ dependencies = [
  "libc",
  "libloading 0.8.5",
  "once_cell",
- "rustix 0.38.35",
+ "rustix 0.38.37",
  "x11rb-protocol",
 ]
 
@@ -4265,9 +4265,9 @@ checksum = "b9cc00251562a284751c9973bace760d86c0276c471b4be569fe6b068ee97a56"
 
 [[package]]
 name = "xml-rs"
-version = "0.8.21"
+version = "0.8.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "539a77ee7c0de333dcc6da69b177380a0b81e0dacfa4f7344c465a36871ee601"
+checksum = "af4e2e2f7cba5a093896c1e150fbfe177d1883e7448200efb81d40b9d339ef26"
 
 [[package]]
 name = "zbus"
