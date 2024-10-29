@@ -14,15 +14,15 @@ différents outils en un seul : le logiciel unique de traitement des empreintes
 
 ## Compilation
 
-Afin de compiler le logiciel, il est nécessaire de disposer d'une version
-récente du [compilateur Rust](https://www.rust-lang.org/tools/install). Une
-fois Rust et ses outils installés, lancez la commande suivante :
+Les dépendances sont listées dans la documentation de
+[Dioxus](https://dioxuslabs.com/learn/0.5/getting_started).
+
+La compilation d'une version de production s'effectue à l'aide de la commande
+suivante :
 
 ```
 cargo build --release
 ```
-
-L'exécutable se trouve alors dans le dossier `target/release/`.
 
 
 ## Droit d'auteur
@@ -91,66 +91,6 @@ options de configuration possible sont :
 ## Architecture technique
 
 Les sources, situées dans le dossier `src/`, ont les rôles suivants :
-
-- `analyse_hash.rs` : fonction tentant de deviner le type de hash en fonction
-  de sa longueur
-- `app.rs` : gestion de la base de l'application
-- `checker.rs` : comparaison des empreintes préalablement calculées
-- `clipboard.rs` : gestion du presse-papier
-- `config.rs` : gestion de la configuration
-- `content_file.rs` : gestion du fichier contenant les empreintes des pièces
-- `file_list.rs` : gestion de la liste des fichiers
-- `file.rs` : représentation interne d'un fichier
-- `hasher.rs` : calcul des empreintes numériques
-- `i18n.rs` : gestion de l'[internationalisation](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))
-- `main.rs` : point d'entrée du logiciel
-- `nb_repr.rs` : gère la représentation des nombres
-- `parsers.rs` : gestion de l'analyse syntaxique
-- `parsers/cksum_gnu.rs` : analyse syntaxique des accusés de réception générés
-  à l'aide de `sha256sum` et des commandes dérivées (variante GNU)
-- `parsers/cnil_platform_email.rs` : analyse syntaxique des accusés de
-  réception envoyés par la plateforme d'échanges de la CNIL via courrier
-  électronique
-- `path_cmp.rs` : comparaison et classement des noms de fichiers
-- `receipt.rs` : gestion des accusés de réception
-- `theme.rs` : gestion des thèmes
-- `theme/button.rs` : gestion des boutons
-- `theme/color.rs` : gestion des couleurs
-- `theme/icon.rs` : gestion des icônes
-- `theme/infobox.rs` : gestion des infobulles
-- `views.rs`: interface des différentes vues
-- `views/check_errors.rs`: gestion de l'interface de visualisation des erreurs
-  de vérification des empreintes
-- `views/config.rs`: gestion de l'interface de configuration
-- `views/main.rs`: gestion de la vue principale
-
-### Interface graphique en mode immédiat
-
-Contrairement à la plupart des bibliothèques d'interface graphique qui
-utilisent un mode retenu, la bibliothèque utilisée ici utilise le mode
-immédiat. Le paradigme n'étant pas le même, les développeurs n'ayant pas encore
-d'expérience avec ce mode peuvent avoir besoin de se renseigner sur le sujet.
-
-- [immediate mode GUI](https://en.wikipedia.org/wiki/Immediate_mode_GUI)
-- [why immediate mode](https://github.com/emilk/egui#why-immediate-mode)
-- [understanding immediate mode](https://docs.rs/egui/latest/egui/#understanding-immediate-mode)
-- [documentation d'egui](https://docs.rs/egui/latest/egui/)
-- [documentation d'eframe](https://docs.rs/eframe/latest/eframe/)
-
-### Chargement des fichiers
-
-Lorsqu'un dossier est sélectionné, le programme liste les fichiers et récupère
-leur taille. Afin de ne pas bloquer l'interface graphique, cette opération est
-réalisée dans nouveau fil d'exécution et une icône de chargement est affichée.
-De plus, afin de savoir s'il faut inclure ou non les fichiers cachés et les
-fichiers système, ce fil doit communiquer avec l'interface graphique.
-
-Le lancement du nouveau fil d'exécution ainsi que la communication avec
-l'interface graphique sont gérés par `file_list::FileListBuilder`. La
-communication entre les fils d'exécution s'effectue grâce à [un
-canal](https://jimskapt.github.io/rust-book-fr/ch16-02-message-passing.html)
-(voir également
-[std::sync::mpsc](https://doc.rust-lang.org/std/sync/mpsc/index.html)).
 
 ### Calcul des empreintes
 

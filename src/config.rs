@@ -1,5 +1,4 @@
-use crate::hasher::HashFunc;
-use crate::i18n::I18n;
+use crate::hash::HashFunc;
 use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
 use serde_derive::{Deserialize, Serialize};
@@ -10,10 +9,9 @@ use std::path::PathBuf;
 #[derive(Clone, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Config {
-	pub theme: Theme,
+	pub theme: Option<Theme>,
 	pub lang: String,
 	pub number_representation: NbRepr,
-	pub content_file_name: Option<String>,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
 	pub clipboard_threshold: Option<usize>,
@@ -59,19 +57,6 @@ impl Config {
 			.unwrap_or(crate::DEFAULT_CLIPBOARD_THRESHOLD)
 	}
 
-	pub fn content_file_name(&self, i18n: &I18n) -> String {
-		match &self.content_file_name {
-			Some(name) => {
-				if name.is_empty() {
-					i18n.msg("content_file_name")
-				} else {
-					name.to_owned()
-				}
-			}
-			None => i18n.msg("content_file_name"),
-		}
-	}
-
 	pub fn is_duplicate_file_warning_enabled(&self) -> bool {
 		self.enable_duplicate_file_warning.unwrap_or(true)
 	}
@@ -97,13 +82,11 @@ mod tests {
 theme = "dark"
 lang = "fr"
 number_representation = "letters"
-content_file_name = "test"
 "#;
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Theme::Dark);
 		assert_eq!(&cfg.lang, "fr");
 		assert_eq!(cfg.number_representation, NbRepr::Letters);
-		assert_eq!(cfg.content_file_name, Some("test".to_string()));
 	}
 
 	#[test]

@@ -1,0 +1,428 @@
+/* LOgiciel Unique de TRaitement des Empreintes (LOUTRE) */
+
+:root {
+	--main-bg-color: #F8F8F8;
+	--main-color: #414141;
+	--config-menu-tab-color: #414141;
+
+	--button-bg-color: #E5EAFF;
+	--button-border-color: #001D96;
+	--button-text-color: #001D96;
+	--button-hover-bg-color: #6045FF;
+	--button-hover-border-color: #001D96;
+	--button-hover-text-color: #FFFFFF;
+
+	--file-list-bg-color: #F0F2FB;
+	--file-list-border-color: #001D96;
+	--file-list-icon-color: #001D96;
+	--file-list-text-color: #001D96;
+
+	--label-info-bg-color: #BBE4FF;
+	--label-info-border-color: #348CFF;
+	--label-info-icon-color: #348CFF;
+	--label-info-text-color: #414141;
+
+	--label-warning-bg-color: #FFF8E5;
+	--label-warning-border-color: #FFD151;
+	--label-warning-icon-color: #FFD151;
+	--label-warning-text-color: #414141;
+
+	--label-error-bg-color: #FFF0F0;
+	--label-error-border-color: #AC2121;
+	--label-error-icon-color: #AC2121;
+	--label-error-text-color: #AC2121;
+
+	--label-success-bg-color: #E5FFF0;
+	--label-success-border-color: #21AC59;
+	--label-success-icon-color: #21AC59;
+	--label-success-text-color: #21AC59;
+
+	--progress-bar-bg-color: #E5EAFF;
+	--progress-bar-value-color: #001D96;
+}
+
+[data-theme="dark"] {
+	--main-bg-color: #17172F;
+	--main-color: #E5EAFF;
+	--config-menu-tab-color: #E5EAFF;
+
+	--button-bg-color: #E5EAFF;
+	--button-border-color: #001D96;
+	--button-text-color: #001D96;
+	--button-hover-bg-color: #6045FF;
+	--button-hover-border-color: #001D96;
+	--button-hover-text-color: #FFFFFF;
+
+	--file-list-bg-color: #4F5D76;
+	--file-list-border-color: #FFF8E6;
+	--file-list-icon-color: #FFF8E6;
+	--file-list-text-color: #FFF8E6;
+
+	--label-info-bg-color: #1D2F59;
+	--label-info-border-color: #348CFF;
+	--label-info-icon-color: #348CFF;
+	--label-info-text-color: #E6F1FF;
+
+	--label-warning-bg-color: #4C3F2B;
+	--label-warning-border-color: #FFD151;
+	--label-warning-icon-color: #FFD151;
+	--label-warning-text-color: #FFF8E6;
+
+	--label-error-bg-color: #840000;
+	--label-error-border-color: #FF7575;
+	--label-error-icon-color: #FF7575;
+	--label-error-text-color: #FFF0F0;
+
+	--label-success-bg-color: #144132;
+	--label-success-border-color: #34FF86;
+	--label-success-icon-color: #34FF86;
+	--label-success-text-color: #DEFFEB;
+
+	--progress-bar-bg-color: #4F5D76;
+	--progress-bar-value-color: #BBE4FF;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html, body {
+	height: 100%;
+	background-color: var(--main-bg-color);
+	color: var(--main-color);
+	font-family: "Open Sans", sans-serif;
+	font-size: 1rem;
+	/* https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html */
+	line-height: 1.5;
+}
+
+#main {
+	height: 100vh;
+}
+
+h1, h2, h3, h4, h5 {
+	line-height: 1.2;
+	overflow-wrap: break-word;
+}
+
+p {
+	overflow-wrap: break-word;
+	hyphens: auto;
+}
+
+fieldset {
+	padding: 8px;
+}
+
+input, button, textarea, select {
+	font: inherit;
+}
+
+progress[value] {
+	-webkit-appearance: none;
+	appearance: none;
+	border: none;
+	width: 100%;
+	height: 20px;
+}
+
+progress[value]::-webkit-progress-bar {
+	border-radius: 16px;
+	background-color: var(--progress-bar-bg-color);
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: var(--progress-bar-value-color);
+	border-radius: 16px;
+}
+
+/* Rotation effect */
+
+.effect-rotate-click-wrapper {
+	padding-left: 8px;
+}
+
+.effect-rotate-click:hover {
+	cursor: pointer;
+	display: inline-block;
+	transition-duration: 500ms;
+	transition-property: transform;
+	transform: rotate(25deg);
+	-webkit-transform: rotate(25deg);
+}
+
+.effect-rotate-click:link,
+.effect-rotate-click:visited,
+.effect-rotate-click:hover,
+.effect-rotate-click:active {
+	color: var(--main-color);
+	text-decoration: none;
+}
+
+/* Button component */
+
+.component-button {
+	margin: 8px 8px 8px 0;
+	padding: 8px;
+	color: var(--button-text-color);
+	background-color: var(--button-bg-color);
+	border: 1px solid var(--button-border-color);
+	border-radius: 8px;
+	cursor: pointer;
+	display: flex;
+}
+
+.component-button-wrapper {
+	display: inline-block;
+}
+
+.component-button:hover {
+	color: var(--button-hover-text-color);
+	background-color: var(--button-hover-bg-color);
+	border: 1px solid var(--button-hover-border-color);
+}
+
+.component-button-icon {}
+
+.component-button-sep {
+	margin: 0 0 0 8px;
+}
+
+.component-button-text {
+	flex-grow: 1;
+}
+
+.component-button-file-label {
+	margin: 8px 8px 8px 0;
+	padding: 8px;
+	color: var(--button-text-color);
+	background-color: var(--button-bg-color);
+	border: 1px solid var(--button-border-color);
+	border-radius: 8px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.component-button-file-input {
+	display: none;
+}
+
+/* Configuration menu component */
+
+.component-config-menu {
+	margin: 8px 0 16px 0;
+}
+
+.component-config-menu-elem {
+	display: inline-block;
+	padding: 5px;
+}
+
+.component-config-menu-elem-hl {
+	border-bottom: 2px solid var(--config-menu-tab-color);
+}
+
+.component-config-menu-elem a,
+.component-config-menu-elem a:link,
+.component-config-menu-elem a:visited,
+.component-config-menu-elem a:hover,
+.component-config-menu-elem a:active {
+	color: var(--main-color);
+	text-decoration: none;
+}
+
+.component-config-menu-elem a:hover {
+	cursor: pointer;
+}
+
+/* Drop zone component */
+
+.component-dropzone {
+	height: 100vh;
+	box-sizing: border-box;
+	padding: 32px;
+}
+
+/* File list component */
+
+.component-file-list {
+	display: flex;
+	margin: 8px 0 8px 0;
+	padding: 8px;
+	background-color: var(--file-list-bg-color);
+	border: 1px solid var(--file-list-border-color);
+	border-radius: 8px;
+}
+
+.component-file-list > span {
+	display: inline-block;
+}
+
+.component-file-list-icon, .component-file-list-delete {
+	color: var(--file-list-icon-color);
+}
+
+.component-file-list-delete {
+	cursor: pointer;
+}
+
+.component-file-list-content {
+	color: var(--file-list-text-color);
+	padding: 0 8px 0 8px;
+	flex-grow: 1;
+	word-break: break-all;
+}
+
+/* Header component */
+
+.component-header {
+	display: flex;
+}
+
+.component-header-right {
+	flex-grow: 1;
+}
+
+.component-header-right-content {
+	padding: 16px 0 0 32px;
+}
+
+.component-header-menu {
+	text-align: right;
+}
+
+.component-header-menu > li {
+	display: inline-block;
+}
+
+/* Language switch component */
+
+.component-lang-switch {
+	display: inline-block;
+	padding-left: 8px;
+}
+
+.component-lang-switch:hover > .component-lang-switch-list, .component-lang-switch-list:hover {
+	display: block;
+	position: fixed;
+	right: 0;
+	margin-right: 10px;
+	text-align: left;
+	background-color: var(--main-bg-color);
+	border: 1px solid var(--main-color);
+	border-radius: 10px;
+	padding: 10px 0 10px 0;
+	list-style-type: none;
+}
+
+.component-lang-switch-list {
+	display: none;
+}
+
+.component-lang-switch-list > li {
+	padding: 4px 16px 4px 18px;
+}
+
+.component-lang-switch-list > li:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Logo component */
+
+.component-logo {}
+
+/* Notification component */
+
+.component-notification {
+	display: flex;
+	margin: 8px 0 8px 0;
+	border-radius: 8px;
+	border-width: 1px 1px 1px 16px;
+	border-style: solid;
+}
+
+.component-notification h3 {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.component-notification-level-info {
+	border-color: var(--label-info-border-color);
+	background-color: var(--label-info-bg-color);
+}
+
+.component-notification-level-info > .component-notification-icon {
+	color: var(--label-info-icon-color);
+}
+
+.component-notification-level-info > .component-notification-content {
+	color: var(--label-info-text-color);
+}
+
+.component-notification-level-warning {
+	border-color: var(--label-warning-border-color);
+	background-color: var(--label-warning-bg-color);
+}
+
+.component-notification-level-warning > .component-notification-icon {
+	color: var(--label-warning-icon-color);
+}
+
+.component-notification-level-warning > .component-notification-content {
+	color: var(--label-warning-text-color);
+}
+
+.component-notification-level-error {
+	border-color: var(--label-error-border-color);
+	background-color: var(--label-error-bg-color);
+}
+
+.component-notification-level-error > .component-notification-icon {
+	color: var(--label-error-icon-color);
+}
+
+.component-notification-level-error > .component-notification-content {
+	color: var(--label-error-text-color);
+}
+
+.component-notification-level-success {
+	border-color: var(--label-success-border-color);
+	background-color: var(--label-success-bg-color);
+}
+
+.component-notification-level-success > .component-notification-icon {
+	color: var(--label-success-icon-color);
+}
+
+.component-notification-level-success > .component-notification-content {
+	color: var(--label-success-text-color);
+}
+
+.component-notification-icon {
+	padding: 8px;
+	font-size: 1.5rem;
+}
+
+.component-notification-content {
+	padding: 8px 8px 8px 0;
+	flex-grow: 1;
+}
+
+.component-notification-content p, .component-notification-content h3 {
+	margin: 8px 0 8px 0;
+}
+
+.component-notification-close {
+	padding: 8px;
+}
+
+.component-notification-close > span {
+	cursor: pointer;
+}
+
+/* Progress bar component */
+
+.component-progress-bar {
+	padding: 8px 0 8px 0;
+}

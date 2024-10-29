@@ -1,222 +1,117 @@
-use crate::checker::{check_files, CheckResult};
-use crate::clipboard::Clipboard;
+#![allow(non_snake_case)]
+
 use crate::config::Config;
-use crate::file_list::{FileList, FileListBuilder};
-use crate::hasher::HashFunc;
-use crate::hasher::{FileHasher, HashStatus};
-use crate::i18n::I18n;
-use crate::receipt::Receipt;
-use crate::theme::Theme;
-use crate::views::AppView;
-use eframe::egui::{self, Context, Image};
-use std::collections::HashSet;
-use std::path::Path;
+use crate::events::{ExternalEvent, ExternalEventReceiver, ExternalEventSender};
+use crate::files::FileList;
+use crate::notifications::NotificationList;
+use crate::progress::{LoadingBarStatus, ProgressBarStatus};
+use crate::theme::{get_default_theme, set_theme, Theme};
+use crate::views::*;
+use dioxus::prelude::*;
+use dioxus_logger::tracing::{error, info};
+use tokio::sync::mpsc::channel;
 
-macro_rules! reset_messages {
-	($o: ident) => {
-		$o.info_msg = None;
-		$o.success_msg = None;
-		$o.error_msg = None;
-		$o.file_check_result = None;
-	};
+#[derive(Clone, Routable, Debug, PartialEq)]
+pub enum Route {
+	#[route("/")]
+	Main {},
+	#[route("/config/main")]
+	MainConfig {},
+	#[route("/config/clipboard")]
+	ClipboardConfig {},
+	#[cfg(feature = "nightly")]
+	#[route("/debug")]
+	Debug {},
 }
 
-pub(crate) use reset_messages;
+#[component]
+pub fn App() -> Element {
+	let config = Config::init();
+	let (progress_tx, progress_rx) = channel(crate::PROGRESS_BAR_CHANNEL_CAPACITY);
 
-macro_rules! set_msg_info_check_ok {
-	($o: ident) => {
-		if let Some(CheckResult::Success(files)) = &$o.file_check_result {
-			if !files.is_empty() {
-				let mut msg = $o.i18n.msg("msg_info_hash_ignored_files");
-				msg += "\n";
-				msg += &files
-					.iter()
-					.map(|f| {
-						let f = f.components().next().unwrap().as_os_str();
-						let f = Path::new(f);
-						format!(" - {}", f.display())
-					})
-					.collect::<HashSet<String>>()
-					.into_iter()
-					.collect::<Vec<String>>()
-					.join("\n");
-				$o.info_msg = Some(msg);
-			}
-		}
-	};
-}
+	crate::i18n::init(&config);
+	initialize_global_context(config, progress_tx);
+	initialize_theme();
+	listen_to_progress_bar_changes(progress_rx);
 
-pub struct ChecksumApp {
-	pub i18n: I18n,
-	pub clipboard: Clipboard,
-	pub clipboard_threshold: usize,
-	pub content_file_name: String,
-	pub nb_start: u32,
-	pub file_check_result: Option<CheckResult>,
-	pub file_hasher: Option<FileHasher>,
-	pub file_list: Option<FileList>,
-	pub file_list_builder: Option<FileListBuilder>,
-	pub error_msg: Option<String>,
-	pub success_msg: Option<String>,
-	pub info_msg: Option<String>,
-	pub receipt: Option<Receipt>,
-	pub cfg_hash: HashFunc,
-	pub hash: HashFunc,
-	pub default_padding: egui::Vec2,
-	pub theme: Theme,
-	pub view: AppView,
-	pub enable_duplicate_file_warning: bool,
-	pub enable_empty_file_warning: bool,
-	pub tmp_config: Option<Config>,
-}
-
-impl eframe::App for ChecksumApp {
-	fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-		egui_extras::install_image_loaders(ctx);
-		egui::CentralPanel::default()
-			.frame(self.theme.get_main_frame())
-			.show(ctx, |ui| {
-				let style = ui.style_mut();
-				self.theme.set_visuals(&mut style.visuals);
-				self.theme.set_interaction(&mut style.interaction);
-				self.update_status(ctx);
-
-				egui::Frame::none()
-					.inner_margin(crate::UI_MARGIN_LARGE)
-					.show(ui, |ui| {
-						let (logo_name, logo_bytes) = self.theme.get_logo_bytes();
-						ui.add(Image::from_bytes(logo_name, logo_bytes).fit_to_original_size(1.0));
-					});
-
-				egui::ScrollArea::both().show(ui, |ui| {
-					egui::Frame::none()
-						.inner_margin(egui::Margin {
-							left: crate::UI_MARGIN_LARGE,
-							right: crate::UI_MARGIN_LARGE,
-							top: crate::UI_MARGIN_NONE,
-							bottom: crate::UI_MARGIN_LARGE,
-						})
-						.show(ui, |ui| {
-							let view = self.view.to_owned();
-							view.display(self, ui);
-							view.handle_dropped_files(self, ctx);
-						});
-				});
-			});
+	rsx! {
+		Router::<Route> {}
 	}
 }
 
-impl ChecksumApp {
-	pub fn new(config: &Config) -> Self {
-		let i18n = I18n::from_language_tag(&config.lang);
-		let content_file_name = config.content_file_name(&i18n);
-		let clipboard = Clipboard::new(config.number_representation, config.clipboard_persistence);
-		Self {
-			i18n,
-			clipboard,
-			clipboard_threshold: config.get_clipboard_threshold(),
-			content_file_name,
-			nb_start: crate::NB_FILES_START,
-			file_check_result: None,
-			file_hasher: None,
-			file_list: None,
-			file_list_builder: None,
-			error_msg: None,
-			success_msg: None,
-			info_msg: None,
-			receipt: None,
-			cfg_hash: config.hash_function,
-			hash: config.hash_function,
-			default_padding: egui::Vec2::default(),
-			theme: config.theme,
-			view: AppView::default(),
-			enable_duplicate_file_warning: config.is_duplicate_file_warning_enabled(),
-			enable_empty_file_warning: config.is_empty_file_warning_enabled(),
-			tmp_config: None,
-		}
-	}
-
-	pub fn init_theme(self, cc: &eframe::CreationContext<'_>) -> Self {
-		self.theme.set_fonts(&cc.egui_ctx);
-		self
-	}
-
-	fn update_status(&mut self, ctx: &Context) {
-		if let Some(flb) = &mut self.file_list_builder {
-			flb.update_state(&self.i18n);
-			if flb.is_ready() {
-				match flb.get_file_list(&self.i18n) {
-					Ok(fl) => {
-						self.hash = fl.get_session_hash_func(&self.i18n, self.cfg_hash);
-						self.file_list = Some(fl);
-						self.file_list_builder = None;
-					}
-					Err(e) => {
-						self.error_msg = Some(e);
-					}
-				};
-			} else {
-				ctx.request_repaint();
-			}
-		}
-		if let Some(hr) = &mut self.file_hasher {
-			match hr.update_status() {
-				HashStatus::NewFiles(f_lst) => {
-					for f in f_lst {
-						match &mut self.file_list {
-							Some(fl) => fl.replace_file(f),
-							None => {
-								self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
-							}
-						};
-					}
-					ctx.request_repaint();
-				}
-				HashStatus::Error(e) => {
-					self.error_msg = Some(e);
-					ctx.request_repaint();
-				}
-				HashStatus::Finished => {
-					match &mut self.file_list {
-						Some(fl) => {
-							if fl.has_content_file() {
-								self.file_check_result = Some(check_files(
-									&self.i18n,
-									fl,
-									&self.content_file_name,
-									&self.receipt,
-								));
-							} else if let Err(e) = fl.write_content_file(&self.i18n, self.hash) {
-								self.error_msg = Some(e.to_string());
-							} else if self.receipt.is_some() {
-								self.file_check_result = Some(check_files(
-									&self.i18n,
-									fl,
-									&self.content_file_name,
-									&self.receipt,
-								));
-							}
-							set_msg_info_check_ok!(self);
-							self.file_hasher = None;
-							fl.set_clipboard_auto(
-								&self.i18n,
-								&mut self.clipboard,
-								self.nb_start,
-								self.hash,
-								self.clipboard_threshold,
-							);
-							fl.build_duplicate_hashes();
+fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
+	use_coroutine(|_| async move {
+		info!("Waiting for an external event…");
+		while let Some(msg) = progress_rx.recv().await {
+			info!("External event received: {msg:?}");
+			match msg {
+				ExternalEvent::ProgressBarAdd(nb) => {
+					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
+					match pg_sig() {
+						Some(mut status) => {
+							status.add_progress(nb);
+							pg_sig.set(Some(status));
 						}
 						None => {
-							self.error_msg = Some(self.i18n.msg("msg_err_fl_not_found"));
+							error!("No active progress bar for ProgressBarAdd({nb})");
 						}
-					};
-					ctx.request_repaint();
+					}
 				}
-				HashStatus::None => {
-					ctx.request_repaint();
+				ExternalEvent::ProgressBarCreate(nb) => {
+					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
+					pg_sig.set(Some(ProgressBarStatus::new(nb)));
+				}
+				ExternalEvent::ProgressBarDelete => {
+					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
+					pg_sig.set(None);
+				}
+				ExternalEvent::ProgressBarSet((max, value)) => {
+					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
+					let mut pg = ProgressBarStatus::new(max);
+					pg.add_progress(value);
+					pg_sig.set(Some(pg));
 				}
 			}
 		}
-	}
+	})
+}
+
+fn initialize_theme() {
+	use_effect(move || {
+		spawn(async {
+			let config = use_context::<Signal<Config>>()();
+			let default_theme = match config.theme {
+				Some(t) => {
+					info!("loading theme from configuration: {t}");
+					t
+				}
+				None => {
+					let t = get_default_theme().await;
+					info!("no theme configured, loading default one: {t}");
+					t
+				}
+			};
+			set_theme(default_theme).await;
+		});
+	});
+}
+
+fn initialize_global_context(config: Config, progress_tx: ExternalEventSender) {
+	// Configuration
+	use_context_provider(|| Signal::new(config));
+
+	// Theme
+	use_context_provider(|| Signal::new(Theme::default()));
+
+	// Files
+	use_context_provider(|| Signal::new(FileList::default()));
+
+	// Notification list
+	use_context_provider(|| Signal::new(NotificationList::new()));
+
+	// Progress bar
+	let pg_status: Option<ProgressBarStatus> = None;
+	use_context_provider(|| Signal::new(pg_status));
+	use_context_provider(|| Signal::new(progress_tx));
+	use_context_provider(|| Signal::new(LoadingBarStatus::Hidden));
 }

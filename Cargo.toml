@@ -1,6 +1,6 @@
 [package]
 name = "loutre"
-version = "2.0.0"
+version = "2.1.0"
 authors = ["Rodolphe Bréard <rbreard@cnil.fr>"]
 edition = "2021"
 description = "Outil de calcul des empreintes des pièces."
@@ -16,47 +16,32 @@ default = []
 nightly = []
 
 [dependencies]
+blake2 = { version = "0.10.6", default-features = false, features = ["std"] }
+blake3 = { version = "1.5.4", default-features = false, features = ["std", "rayon"] }
+dioxus = { version = "0.5", features = ["desktop", "router"] }
+dioxus-i18n = "0.2.5"
+dioxus-logger = "0.5.1"
 dirs = { version = "5.0.1", default-features = false }
-eframe = { version = "0.28.1", default-features = false, features = ["accesskit", "glow", "wayland", "x11"] }
-egui_extras = { version = "0.28.1", default-features = false, features = ["image"] }
-fluent = { version = "0.16.0", default-features = false }
 humansize = { version = "2.1.3", default-features = false }
-image = { version = "0.25.1", default-features = false, features = ["png", "ico"] }
-msg_parser = { version = "0.1.1", default-features = false }
-nom = { version = "7.1.3", default-features = false, features = ["std"] }
-rfd = "0.14.1"
-serde = { version = "1.0.197", default-features = false, features = ["std"] }
-serde_derive = { version = "1.0.197", default-features = false }
-toml = { version = "0.8.12", default-features = false, features = ["display", "parse"] }
-unic-langid = { version = "0.9.4", default-features = false }
-unicode-normalization = { version = "0.1.23", default-features = false, features = ["std"] }
-
+nom = { version = "7.1.3", default-features = false }
+serde = { version = "1.0.213", default-features = false, features = ["std"] }
+serde_derive = { version = "1.0.213", default-features = false }
 sha2 = { version = "0.10.8", default-features = false, features = ["std"] }
 sha3 = { version = "0.10.8", default-features = false, features = ["std"] }
-blake2 = { version = "0.10.6", default-features = false, features = ["std"] }
-blake3 = { version = "1.5.1", default-features = false, features = ["std", "rayon"] }
+tokio = { version = "1.41.0", default-features = false, features = ["sync"] }
+toml = { version = "0.8.19", default-features = false, features = ["display", "parse"] }
+unic-langid = { version = "0.9.5", default-features = false }
+uuid = { version = "1.11.0", default-features = false, features = ["std", "fast-rng", "v4"] }
 walkdir = { version = "2.5.0", default-features = false }
 
-[target.'cfg(target_env = "msvc")'.dependencies]
-arboard = { version = "3.3.2", default-features = false, features = ["windows-sys"] }
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-arboard = { version = "3.3.2", default-features = false, features = ["wayland-data-control", "wl-clipboard-rs"] }
-
-[target.'cfg(windows)'.build-dependencies]
-winres = { version = "0.1", default-features = false }
+[build-dependencies]
+base64 = "0.22.1"
 
 [profile.release]
-strip = "symbols"
+opt-level = "z"
+debug = false
+lto = true
 codegen-units = 1
 panic = "abort"
-# It is far better to use the "thin" LTO instead of the "fat" one,
-# however Thin-LTO is broken on windows-MSVC. This setting should
-# be switched to "thin" as soon as this bug is fixed.
-#
-# ThinLTO:
-#  - https://blog.llvm.org/2016/06/thinlto-scalable-and-incremental-lto.html
-# Bug:
-#  - https://github.com/rust-lang/rust/issues/109114
-#  - https://github.com/rust-lang/rust/issues/109067
-#  - https://github.com/rust-lang/rust/pull/109094
-lto = "fat"
+strip = true
+incremental = false

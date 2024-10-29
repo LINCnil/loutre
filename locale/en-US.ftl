@@ -1,238 +1,134 @@
+## Main view
+
+view_main_open_dir = Open a directory
+view_main_open_receipt = Open a notice of receipt
+
+cpn_file_list_delete = Reset
+
+## Configuration
+
+view_config_title = Configuration
+
+cpn_config_menu_main_title = General
+cpn_config_menu_clipboard_title = Clipboard
+
+## Header
+
+cpn_header_config = Configuration
+
 ## Theme
 
-theme = Theme
-theme_dark = dark
-theme_light = light
-
-## Content file
-
-content_file_name = content.txt
-content_file_header =
-    .name = Document name
-    .size = Size (octets)
-
-
-## Configuration options
-
-config = Configuration
-config_not_available = Configuration unavailable when a directory is opened
-config_title = Configuration
-label_nb_files_start = Number of the first evidence
-label_content_file = Name of the checksum file
-label_hash_function = Hash function
-language = Language
-number_representation = Number representation
-letters = letters
-western_arabic_numerals = western Arabic numerals
-duplicate_file_warning = Show duplicated files
-empty_file_warning = Show empty files
-clipboard_threshold = Clipboard threshold
-clipboard_threshold_help = Number of files from which the clipboard contains, by default, the checksum of the checksum file instead of the checksum of each individual files.
-clipboard_persistence = Clipboard persistence
-clipboard_persistence_help = Defines whether or not the internal clipboard management object should be kept into memory. This parameter depends on your operating system. It is recommended to keep the default value unless you encounter troubles with the clipboard.
-default = default
-activated = activated
-deactivated = deactivated
-apply = Apply
-cancel = Cancel
-
-
-## Selection buttons
-
-btn_select_dir = Open a directory
-btn_select_receipt = Open a notice of receipt
-btn_trash_tip = Reset
-
-
-## Actions
-
-btn_calc_fingerprints = Checksum calculation
-btn_check_fingerprints = Data integrity check
-
-
-## Progress
-
-progress = Progress: { $done } / { $total }
-
-
-## Clipboard buttons
-
-btn_clipboard_tip = Copy the checksum of each evidence
-btn_clipboard_ctn_file_tip = Copy the checksum of the checksum file
-
-
-## File inclusion choices
-
-btn_file_choice =
-    .yes = Yes
-    .yes_all = Yes for all
-    .no = No
-    .no_all = No for all
-msg_file_choice_dir_hidden = { $file_name } is a hidden directory.
-msg_file_choice_dir_system = { $file_name } is a system directory.
-msg_file_choice_file_hidden = { $file_name } is a hidden file.
-msg_file_choice_file_system = { $file_name } is a system file.
-msg_file_choice_include = { $file_desc } Do you want to include it?
-
-
-## Clipboard
-
-msg_exhibit = EVIDENCE #{ $nb }:
-msg_ctn_file =
-    { $nb ->
-        [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{ $file_name }” containing name, size and checksum ({ $hash_func }) of the digital evidence collected during the on-site investigation.
-        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{ $file_name }” containing name, size and checksum ({ $hash_func }) of the digital { $nb } evidences collected during the on-site investigation.
-    }
-msg_directory =
-    { $nb ->
-        [one] copy on a digital media of a directory named “{ $dir_name }” containing { $nb } document:
-        *[other] copy on a digital media of a directory named “{ $dir_name }” containing { $nb } documents:
-    }
-msg_file = copy on a digital media of a file named “{ $file_name }”
-msg_file_unit =
-    { $nb ->
-        [zero] octet
-        [one] octet
-        *[other] octets
-    }
-
-
-## Check errors
-
-msg_info_check_error = Data integrity check failed
-view_errors = View errors
-title_invalid_ctn_file = Checksum different from the one in the content file
-title_invalid_receipt = Checksum different from the one in the receipt
-title_missing_ctn_file = File not found locally but present in the content file
-title_missing_receipt = File not found locally but present in the receipt
-back = Back
-
-
-## Messages
-
-msg_info_check_ok = Data integrity check passed.
-msg_info_duplicate_hash = Identical files:
-msg_info_empty_file = Empty file: { $file_name }
-msg_info_has_ctn_file = The directory contains a { $file_name } file
-msg_info_hash_ignored_files = The following files were not found in the content file and therefore ignored:
-msg_info_nb_files = The directory contains { $nb } files.
-error_desc = { $error }: { $description }
-msg_err_fl_not_found = Internal error: file list not found.
-msg_err_load_dir = Error while loading the directory.
-msg_check_invalid_format = invalid file format
-msg_err_fl = error during the file list creation
-msg_err_fl_interrupted = the file list creation has been unexpectedly interupted.
-msg_err_fl_not_ready = the file list has not be created yet.
-msg_err_diff_calc_ar = The following items do not match with the ones of the notice of receipt:
-msg_err_diff_calc_ctn = The following items do not match with the ones of the { $file_name }:
-
+cpn_theme_change = Change the theme
 
 ## Numbers
 
-nb_main_sep = { $space }
-nb_last_sep = { $space }and{ $space }
+cpn_nb_letters = letters
+cpn_nb_western_arabic_numerals = western Arabic numerals
 
-zero = zero
-one = one
-two = two
-three = three
-four = four
-five = five
-six = six
-seven = seven
-eight = eight
-nine = nine
-ten = ten
-eleven = eleven
-twelve = twelve
-thirteen = thirteen
-fourteen = fourteen
-fifteen = fifteen
-sixteen = sixteen
-seventeen = seventeen
-eighteen = eighteen
-nineteen = nineteen
-twenty = twenty
-twenty-one = twenty-one
-twenty-two = twenty-two
-twenty-three = twenty-three
-twenty-four = twenty-four
-twenty-five = twenty-five
-twenty-six = twenty-six
-twenty-seven = twenty-seven
-twenty-eight = twenty-eight
-twenty-nine = twenty-nine
-thirty = thirty
-thirty-one = thirty-one
-thirty-two = thirty-two
-thirty-three = thirty-three
-thirty-four = thirty-four
-thirty-five = thirty-five
-thirty-six = thirty-six
-thirty-seven = thirty-seven
-thirty-eight = thirty-eight
-thirty-nine = thirty-nine
-forty = forty
-forty-one = forty-one
-forty-two = forty-two
-forty-three = forty-three
-forty-four = forty-four
-forty-five = forty-five
-forty-six = forty-six
-forty-seven = forty-seven
-forty-eight = forty-eight
-forty-nine = forty-nine
-fifty = fifty
-fifty-one = fifty-one
-fifty-two = fifty-two
-fifty-three = fifty-three
-fifty-four = fifty-four
-fifty-five = fifty-five
-fifty-six = fifty-six
-fifty-seven = fifty-seven
-fifty-eight = fifty-eight
-fifty-nine = fifty-nine
-sixty = sixty
-sixty-one = sixty-one
-sixty-two = sixty-two
-sixty-three = sixty-three
-sixty-four = sixty-four
-sixty-five = sixty-five
-sixty-six = sixty-six
-sixty-seven = sixty-seven
-sixty-eight = sixty-eight
-sixty-nine = sixty-nine
-seventy = seventy
-seventy-one = seventy-one
-seventy-two = seventy-two
-seventy-three = seventy-three
-seventy-four = seventy-four
-seventy-five = seventy-five
-seventy-six = seventy-six
-seventy-seven = seventy-seven
-seventy-eight = seventy-eight
-seventy-nine = seventy-nine
-eighty = eighty
-eighty-one = eighty-one
-eighty-two = eighty-two
-eighty-three = eighty-three
-eighty-four = eighty-four
-eighty-five = eighty-five
-eighty-six = eighty-six
-eighty-seven = eighty-seven
-eighty-eight = eighty-eight
-eighty-nine = eighty-nine
-ninety = ninety
-ninety-one = ninety-one
-ninety-two = ninety-two
-ninety-three = ninety-three
-ninety-four = ninety-four
-ninety-five = ninety-five
-ninety-six = ninety-six
-ninety-seven = ninety-seven
-ninety-eight = ninety-eight
-ninety-nine = ninety-nine
-hundred = { $nb_str }{ nb_main_sep }hundred
-thousand = { $nb_str }{ nb_main_sep }thousand
-million = { $nb_str }{ nb_main_sep }million
-billion = { $nb_str }{ nb_main_sep }billion
+cpn_nb_main_sep = { $space }
+cpn_nb_last_sep = { $space }and{ $space }
+
+cpn_nb_zero = zero
+cpn_nb_one = one
+cpn_nb_two = two
+cpn_nb_three = three
+cpn_nb_four = four
+cpn_nb_five = five
+cpn_nb_six = six
+cpn_nb_seven = seven
+cpn_nb_eight = eight
+cpn_nb_nine = nine
+cpn_nb_ten = ten
+cpn_nb_eleven = eleven
+cpn_nb_twelve = twelve
+cpn_nb_thirteen = thirteen
+cpn_nb_fourteen = fourteen
+cpn_nb_fifteen = fifteen
+cpn_nb_sixteen = sixteen
+cpn_nb_seventeen = seventeen
+cpn_nb_eighteen = eighteen
+cpn_nb_nineteen = nineteen
+cpn_nb_twenty = twenty
+cpn_nb_twenty-one = twenty-one
+cpn_nb_twenty-two = twenty-two
+cpn_nb_twenty-three = twenty-three
+cpn_nb_twenty-four = twenty-four
+cpn_nb_twenty-five = twenty-five
+cpn_nb_twenty-six = twenty-six
+cpn_nb_twenty-seven = twenty-seven
+cpn_nb_twenty-eight = twenty-eight
+cpn_nb_twenty-nine = twenty-nine
+cpn_nb_thirty = thirty
+cpn_nb_thirty-one = thirty-one
+cpn_nb_thirty-two = thirty-two
+cpn_nb_thirty-three = thirty-three
+cpn_nb_thirty-four = thirty-four
+cpn_nb_thirty-five = thirty-five
+cpn_nb_thirty-six = thirty-six
+cpn_nb_thirty-seven = thirty-seven
+cpn_nb_thirty-eight = thirty-eight
+cpn_nb_thirty-nine = thirty-nine
+cpn_nb_forty = forty
+cpn_nb_forty-one = forty-one
+cpn_nb_forty-two = forty-two
+cpn_nb_forty-three = forty-three
+cpn_nb_forty-four = forty-four
+cpn_nb_forty-five = forty-five
+cpn_nb_forty-six = forty-six
+cpn_nb_forty-seven = forty-seven
+cpn_nb_forty-eight = forty-eight
+cpn_nb_forty-nine = forty-nine
+cpn_nb_fifty = fifty
+cpn_nb_fifty-one = fifty-one
+cpn_nb_fifty-two = fifty-two
+cpn_nb_fifty-three = fifty-three
+cpn_nb_fifty-four = fifty-four
+cpn_nb_fifty-five = fifty-five
+cpn_nb_fifty-six = fifty-six
+cpn_nb_fifty-seven = fifty-seven
+cpn_nb_fifty-eight = fifty-eight
+cpn_nb_fifty-nine = fifty-nine
+cpn_nb_sixty = sixty
+cpn_nb_sixty-one = sixty-one
+cpn_nb_sixty-two = sixty-two
+cpn_nb_sixty-three = sixty-three
+cpn_nb_sixty-four = sixty-four
+cpn_nb_sixty-five = sixty-five
+cpn_nb_sixty-six = sixty-six
+cpn_nb_sixty-seven = sixty-seven
+cpn_nb_sixty-eight = sixty-eight
+cpn_nb_sixty-nine = sixty-nine
+cpn_nb_seventy = seventy
+cpn_nb_seventy-one = seventy-one
+cpn_nb_seventy-two = seventy-two
+cpn_nb_seventy-three = seventy-three
+cpn_nb_seventy-four = seventy-four
+cpn_nb_seventy-five = seventy-five
+cpn_nb_seventy-six = seventy-six
+cpn_nb_seventy-seven = seventy-seven
+cpn_nb_seventy-eight = seventy-eight
+cpn_nb_seventy-nine = seventy-nine
+cpn_nb_eighty = eighty
+cpn_nb_eighty-one = eighty-one
+cpn_nb_eighty-two = eighty-two
+cpn_nb_eighty-three = eighty-three
+cpn_nb_eighty-four = eighty-four
+cpn_nb_eighty-five = eighty-five
+cpn_nb_eighty-six = eighty-six
+cpn_nb_eighty-seven = eighty-seven
+cpn_nb_eighty-eight = eighty-eight
+cpn_nb_eighty-nine = eighty-nine
+cpn_nb_ninety = ninety
+cpn_nb_ninety-one = ninety-one
+cpn_nb_ninety-two = ninety-two
+cpn_nb_ninety-three = ninety-three
+cpn_nb_ninety-four = ninety-four
+cpn_nb_ninety-five = ninety-five
+cpn_nb_ninety-six = ninety-six
+cpn_nb_ninety-seven = ninety-seven
+cpn_nb_ninety-eight = ninety-eight
+cpn_nb_ninety-nine = ninety-nine
+cpn_nb_hundred = { $nb_str }{ cpn_nb_main_sep }hundred
+cpn_nb_thousand = { $nb_str }{ cpn_nb_main_sep }thousand
+cpn_nb_million = { $nb_str }{ cpn_nb_main_sep }million
+cpn_nb_billion = { $nb_str }{ cpn_nb_main_sep }billion

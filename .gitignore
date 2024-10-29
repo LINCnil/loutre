@@ -3,6 +3,9 @@
 /target
 **/*.rs.bk
 
+# Dioxus files
+/dist
+
 # Backup files
 *~
 \#*
