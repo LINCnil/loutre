@@ -1,7 +1,7 @@
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
 use dioxus_logger::tracing::{error, info};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io;
 use std::path::{Path, PathBuf};
 use tokio::task::JoinSet;
@@ -12,6 +12,31 @@ pub enum FileList {
 	Hashed(HashedFileList),
 	#[default]
 	None,
+}
+
+impl FileList {
+	pub fn has_empty_files(&self) -> bool {
+		match self {
+			Self::NonHashed(lst) => !lst.empty_files.is_empty(),
+			Self::Hashed(_) | Self::None => false,
+		}
+	}
+
+	pub fn empty_files(&self) -> Vec<NonHashedFile> {
+		match self {
+			Self::NonHashed(lst) => lst
+				.files
+				.iter()
+				.filter_map(|(k, v)| {
+					if lst.empty_files.contains(k) {
+						return Some(v.clone());
+					}
+					None
+				})
+				.collect(),
+			Self::Hashed(_) | Self::None => Vec::new(),
+		}
+	}
 }
 
 macro_rules! common_lst_impl {
@@ -28,6 +53,7 @@ macro_rules! common_lst_impl {
 pub struct NonHashedFileList {
 	base_dir: PathBuf,
 	files: HashMap<FileId, NonHashedFile>,
+	empty_files: HashSet<FileId>,
 }
 
 common_lst_impl!(NonHashedFileList);
@@ -39,6 +65,7 @@ impl NonHashedFileList {
 
 	pub async fn from_dir<P: AsRef<Path>>(dir_path: P) -> io::Result<Self> {
 		let dir_path = dir_path.as_ref().to_path_buf();
+		let mut empty_files = HashSet::new();
 		let files = walkdir::WalkDir::new(&dir_path)
 			.follow_links(false)
 			.into_iter()
@@ -49,6 +76,9 @@ impl NonHashedFileList {
 							Ok(file) => {
 								let id = file.get_id();
 								info!("File loaded: {}", file.relative_path.display());
+								if file.is_empty() {
+									empty_files.insert(id.clone());
+								}
 								return Some((id, file));
 							}
 							Err(e) => {
@@ -68,6 +98,7 @@ impl NonHashedFileList {
 		Ok(Self {
 			base_dir: dir_path,
 			files,
+			empty_files,
 		})
 	}
 
@@ -139,6 +170,10 @@ macro_rules! common_file_impl {
 				let mut path = self.base_dir.clone();
 				path.push(self.relative_path.clone());
 				path.canonicalize()
+			}
+
+			pub fn is_empty(&self) -> bool {
+				self.size == 0
 			}
 		}
 	};
