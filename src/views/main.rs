@@ -4,8 +4,8 @@ use crate::components::{
 	DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar, NotificationList,
 	ProgressBar,
 };
+use crate::events::{ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
-use crate::progress::LoadingBarStatus;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -83,15 +83,19 @@ async fn load_directory(path: &Path) {
 	info!("Loading directory: {}", path.display());
 	let mut fl_sig = use_context::<Signal<FileList>>();
 	fl_sig.set(FileList::None);
-	let mut loading_sig = use_context::<Signal<LoadingBarStatus>>();
-	loading_sig.set(LoadingBarStatus::Displayed);
+	let pg_tx = use_context::<Signal<ExternalEventSender>>()();
+	if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarAdd).await {
+		error!("Error sending loading bar message: {e}");
+	}
 	match NonHashedFileList::from_dir(path).await {
 		Ok(lst) => {
 			fl_sig.set(FileList::NonHashed(lst));
 		}
 		Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
 	};
-	loading_sig.set(LoadingBarStatus::Hidden);
+	if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarDelete).await {
+		error!("Error sending loading bar message: {e}");
+	}
 }
 
 async fn load_receipt(path: &Path) {

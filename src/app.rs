@@ -45,6 +45,14 @@ fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Cor
 		while let Some(msg) = progress_rx.recv().await {
 			info!("External event received: {msg:?}");
 			match msg {
+				ExternalEvent::LoadingBarAdd => {
+					let mut lb_sig = use_context::<Signal<LoadingBarStatus>>();
+					lb_sig.set(LoadingBarStatus::Displayed);
+				}
+				ExternalEvent::LoadingBarDelete => {
+					let mut lb_sig = use_context::<Signal<LoadingBarStatus>>();
+					lb_sig.set(LoadingBarStatus::Hidden);
+				}
 				ExternalEvent::ProgressBarAdd(nb) => {
 					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
 					match pg_sig() {

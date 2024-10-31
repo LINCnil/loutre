@@ -117,12 +117,15 @@ pub fn Debug() -> Element {
 					onclick: |_event| {
 						info!("Debug: Loading bar button onclick");
 						spawn(async move {
-							let mut loading_sig = use_context::<Signal<LoadingBarStatus>>();
-							let new_status = match loading_sig() {
-								LoadingBarStatus::Displayed => LoadingBarStatus::Hidden,
-								LoadingBarStatus::Hidden => LoadingBarStatus::Displayed,
+							let mut loading_bar = use_context::<Signal<LoadingBarStatus>>()();
+							let new_status = match loading_bar {
+								LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
+								LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
 							};
-							loading_sig.set(new_status);
+							let pg_tx = use_context::<Signal<ExternalEventSender>>()();
+							if let Err(e) = pg_tx.send(new_status).await {
+								error!("Error sending loading bar message: {e}");
+							}
 						});
 					},
 					"Toogle"

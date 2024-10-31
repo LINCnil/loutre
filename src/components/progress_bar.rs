@@ -21,9 +21,9 @@ pub fn ProgressBar() -> Element {
 
 #[component]
 pub fn LoadingBar() -> Element {
-	let loading_bar_sig = use_context::<Signal<LoadingBarStatus>>();
+	let loading_bar = use_context::<Signal<LoadingBarStatus>>()();
 	rsx! {
-		if loading_bar_sig().is_displayed() {
+		if loading_bar.is_displayed() {
 			div {
 				class: "component-progress-bar",
 				progress {}
