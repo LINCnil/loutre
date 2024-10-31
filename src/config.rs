@@ -17,6 +17,7 @@ pub struct Config {
 	pub clipboard_threshold: Option<usize>,
 	pub enable_duplicate_file_warning: Option<bool>,
 	pub enable_empty_file_warning: Option<bool>,
+	pub include_hidden_files: Option<bool>,
 }
 
 impl Config {
@@ -63,6 +64,10 @@ impl Config {
 
 	pub fn is_empty_file_warning_enabled(&self) -> bool {
 		self.enable_empty_file_warning.unwrap_or(true)
+	}
+
+	pub fn include_hidden_files(&self) -> bool {
+		self.include_hidden_files.unwrap_or(false)
 	}
 
 	fn load_config(content: &str) -> Config {

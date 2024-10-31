@@ -12,10 +12,19 @@ pub fn NotificationList() -> Element {
 	rsx! {
 		if fl.has_empty_files() {
 			Notification {
-				id: "{fl.get_id()}",
+				id: "empty_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
 				title: t!("cpn_notif_empty_files_title"),
 				p { { t!("cpn_notif_empty_files_text") } }
+			}
+		}
+
+		if fl.has_excluded_files() {
+			Notification {
+				id: "excluded_files_{fl.get_id()}",
+				level: NotificationLevel::Warning,
+				title: t!("cpn_notif_excluded_files_title"),
+				p { { t!("cpn_notif_excluded_files_text") } }
 			}
 		}
 	}

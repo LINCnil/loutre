@@ -8,6 +8,9 @@ cpn_file_list_delete = Réinitialiser
 cpn_notif_empty_files_title = Fichiers vides détectés
 cpn_notif_empty_files_text = Un ou plusieurs fichiers contenus dans le dossier sélectionné sont vides.
 
+cpn_notif_excluded_files_title = Fichiers ignoré
+cpn_notif_excluded_files_text = Des fichiers cachés ou des fichiers système ont été automatiquement ignorés.
+
 ## Configuration
 
 view_config_title = Configuration
@@ -16,6 +19,7 @@ cpn_config_menu_main_title = Général
 cpn_config_menu_clipboard_title = Presse-papier
 
 view_config_main_msg_empty_files_warning = Afficher un avertissement en cas de chargement d'un dossier comprenant des fichiers vides.
+view_config_main_msg_include_hidden_files = Inclure les fichiers cachés
 
 ## Header
 

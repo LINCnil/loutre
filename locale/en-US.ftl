@@ -8,6 +8,9 @@ cpn_file_list_delete = Reset
 cpn_notif_empty_files_title = Empty files detected
 cpn_notif_empty_files_text = One or more files located in the selected directory are empty.
 
+cpn_notif_excluded_files_title = Ignored files
+cpn_notif_excluded_files_text = Hidden or system files has automatically been ignored.
+
 ## Configuration
 
 view_config_title = Configuration
@@ -16,6 +19,7 @@ cpn_config_menu_main_title = General
 cpn_config_menu_clipboard_title = Clipboard
 
 view_config_main_msg_empty_files_warning = Display a warning when loading a directory that contains empty files.
+view_config_main_msg_include_hidden_files = Include hidden files
 
 ## Header
 

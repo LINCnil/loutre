@@ -31,6 +31,13 @@ impl FileList {
 		}
 	}
 
+	pub fn has_excluded_files(&self) -> bool {
+		match self {
+			Self::NonHashed(lst) => !lst.excluded_files.is_empty(),
+			Self::Hashed(_) | Self::None => false,
+		}
+	}
+
 	pub fn empty_files(&self) -> Vec<NonHashedFile> {
 		match self {
 			Self::NonHashed(lst) => lst
@@ -68,6 +75,7 @@ pub struct NonHashedFileList {
 	base_dir: PathBuf,
 	files: HashMap<FileId, NonHashedFile>,
 	empty_files: HashSet<FileId>,
+	excluded_files: HashSet<NonHashedFile>,
 }
 
 common_lst_impl!(NonHashedFileList);
@@ -77,17 +85,38 @@ impl NonHashedFileList {
 		self.files.len()
 	}
 
-	pub async fn from_dir<P: AsRef<Path>>(dir_path: P) -> io::Result<Self> {
+	pub async fn from_dir<P: AsRef<Path>>(
+		dir_path: P,
+		include_hidden_files: bool,
+	) -> io::Result<Self> {
 		let dir_path = dir_path.as_ref().to_path_buf();
 		let mut empty_files = HashSet::new();
+		let mut excluded_files = HashSet::new();
+		let mut excluded_prefixes = HashSet::new();
 		let files = walkdir::WalkDir::new(&dir_path)
 			.follow_links(false)
 			.into_iter()
 			.filter_map(|entry| match entry {
 				Ok(entry) => {
-					if entry.file_type().is_file() {
+					let path = entry.clone().into_path();
+					if path.is_file() {
 						match NonHashedFile::new(&dir_path, &entry.clone().into_path()) {
 							Ok(file) => {
+								if !include_hidden_files && file.is_hidden {
+									info!("Hidden file excluded: {}", file.relative_path.display());
+									excluded_files.insert(file);
+									return None;
+								}
+								for exl_p in &excluded_prefixes {
+									if path.starts_with(exl_p) {
+										info!(
+											"File in hidden directory excluded: {}",
+											file.relative_path.display()
+										);
+										excluded_files.insert(file);
+										return None;
+									}
+								}
 								let id = file.get_id();
 								info!("File loaded: {}", file.relative_path.display());
 								if file.is_empty() {
@@ -99,6 +128,12 @@ impl NonHashedFileList {
 								error!("{}: unable to read file: {e}", entry.into_path().display());
 								return None;
 							}
+						}
+					}
+					if path.is_dir() {
+						if let Ok(true) = is_hidden_file(&path) {
+							info!("Hidden directory excluded: {}", path.display());
+							excluded_prefixes.insert(path.clone());
 						}
 					}
 					None
@@ -114,6 +149,7 @@ impl NonHashedFileList {
 			base_dir: dir_path,
 			files,
 			empty_files,
+			excluded_files,
 		})
 	}
 
@@ -196,11 +232,12 @@ macro_rules! common_file_impl {
 	};
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct NonHashedFile {
 	base_dir: PathBuf,
 	relative_path: PathBuf,
 	size: u64,
+	is_hidden: bool,
 }
 
 common_file_impl!(NonHashedFile);
@@ -214,6 +251,7 @@ impl NonHashedFile {
 			base_dir: base_dir.to_path_buf(),
 			relative_path: relative_path.to_path_buf(),
 			size: 0,
+			is_hidden: is_hidden_file(path)?,
 		};
 		file.size = file.get_absolute_path()?.metadata()?.len();
 		Ok(file)
@@ -259,4 +297,27 @@ impl HashedFile {
 			hash_func,
 		}
 	}
+}
+
+#[cfg(unix)]
+#[inline]
+fn is_hidden_file<P: AsRef<Path>>(path: P) -> io::Result<bool> {
+	match path.as_ref().file_name() {
+		Some(name) => Ok(name.to_string_lossy().starts_with('.')),
+		None => Ok(false),
+	}
+}
+
+#[cfg(windows)]
+#[inline]
+fn is_hidden_file<P: AsRef<Path>>(path: P) -> io::Result<bool> {
+	file_has_attr(path, FILE_ATTRIBUTE_HIDDEN)
+}
+
+#[cfg(windows)]
+#[inline]
+fn file_has_attr<P: AsRef<Path>>(path: P, attr: u32) -> io::Result<bool> {
+	let metadata = std::fs::metadata(path.as_ref())?;
+	let attributes = metadata.file_attributes();
+	Ok((attributes & attr) > 0)
 }

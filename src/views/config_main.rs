@@ -42,6 +42,29 @@ pub fn MainConfig() -> Element {
 						},
 					}
 				}
+
+				p {
+					label {
+						r#for: "cfg_main_include_hidden_files",
+						{ t!("view_config_main_msg_include_hidden_files") }
+					}
+				}
+				div {
+					input {
+						id: "cfg_main_include_hidden_files",
+						r#type: "checkbox",
+						checked: cfg_sig().include_hidden_files(),
+						onchange: move |event| {
+							let new_value = parse_bool(&event.data.value());
+							spawn(async move {
+								let mut cfg = cfg_sig();
+								cfg.include_hidden_files = Some(new_value);
+								cfg.write_to_file();
+								cfg_sig.set(cfg);
+							});
+						},
+					}
+				}
 			}
 		}
 	}
