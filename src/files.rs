@@ -7,6 +7,13 @@ use std::path::{Path, PathBuf};
 use tokio::task::JoinSet;
 use uuid::Uuid;
 
+// Microsoft Windows File Attribute Constants
+// https://docs.microsoft.com/en-us/windows/win32/fileio/file-attribute-constants
+#[cfg(windows)]
+const FILE_ATTRIBUTE_HIDDEN: u32 = 0x2;
+#[cfg(windows)]
+const FILE_ATTRIBUTE_SYSTEM: u32 = 0x4;
+
 #[derive(Clone, Debug, Default)]
 pub enum FileList {
 	NonHashed(NonHashedFileList),
