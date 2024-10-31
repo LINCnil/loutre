@@ -3,6 +3,8 @@ use crate::hash::HashFunc;
 use dioxus_logger::tracing::{error, info};
 use std::collections::{HashMap, HashSet};
 use std::io;
+#[cfg(windows)]
+use std::os::windows::prelude::*;
 use std::path::{Path, PathBuf};
 use tokio::task::JoinSet;
 use uuid::Uuid;
