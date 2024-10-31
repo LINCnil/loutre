@@ -5,7 +5,7 @@ use crate::components::{
 	ProgressBar,
 };
 use crate::events::{ExternalEvent, ExternalEventSender};
-use crate::files::{FileList, NonHashedFileList};
+use crate::files::NonHashedFileList;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -83,9 +83,10 @@ async fn load_file(file_engine: Arc<dyn FileEngine>) {
 
 async fn load_directory(path: &Path) {
 	info!("Loading directory: {}", path.display());
-	let mut fl_sig = use_context::<Signal<FileList>>();
-	fl_sig.set(FileList::None);
 	let pg_tx = use_context::<Signal<ExternalEventSender>>()();
+	if let Err(e) = pg_tx.send(ExternalEvent::FileListReset).await {
+		error!("Error sending file list reset message: {e}");
+	}
 	let handle = Handle::current();
 	let path = path.to_path_buf();
 

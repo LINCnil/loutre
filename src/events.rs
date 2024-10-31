@@ -9,6 +9,7 @@ pub type ExternalEventSender = Sender<ExternalEvent>;
 
 #[derive(Clone, Debug)]
 pub enum ExternalEvent {
+	FileListReset,
 	NonHashedFileListSet(NonHashedFileList),
 	LoadingBarAdd,
 	LoadingBarDelete,
@@ -21,6 +22,10 @@ pub enum ExternalEvent {
 impl ExternalEvent {
 	pub fn handle(self) {
 		match self {
+			Self::FileListReset => {
+				let mut fl_sig = use_context::<Signal<FileList>>();
+				fl_sig.set(FileList::None);
+			}
 			Self::NonHashedFileListSet(new_fl) => {
 				let mut fl_sig = use_context::<Signal<FileList>>();
 				fl_sig.set(FileList::NonHashed(new_fl));
