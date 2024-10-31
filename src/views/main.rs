@@ -12,6 +12,8 @@ use dioxus_i18n::t;
 use dioxus_logger::tracing::{error, info};
 use std::path::Path;
 use std::sync::Arc;
+use std::thread;
+use tokio::runtime::Handle;
 
 #[component]
 pub fn Main() -> Element {
@@ -84,18 +86,33 @@ async fn load_directory(path: &Path) {
 	let mut fl_sig = use_context::<Signal<FileList>>();
 	fl_sig.set(FileList::None);
 	let pg_tx = use_context::<Signal<ExternalEventSender>>()();
-	if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarAdd).await {
-		error!("Error sending loading bar message: {e}");
-	}
-	match NonHashedFileList::from_dir(path).await {
-		Ok(lst) => {
-			fl_sig.set(FileList::NonHashed(lst));
-		}
-		Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
-	};
-	if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarDelete).await {
-		error!("Error sending loading bar message: {e}");
-	}
+	let handle = Handle::current();
+	let path = path.to_path_buf();
+
+	thread::spawn(move || {
+		handle.spawn(async move {
+			info!("Directory loading thread started");
+			if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarAdd).await {
+				error!("Error sending loading bar message: {e}");
+			}
+			match NonHashedFileList::from_dir(&path).await {
+				Ok(new_lst) => {
+					if let Err(e) = pg_tx
+						.send(ExternalEvent::NonHashedFileListSet(new_lst))
+						.await
+					{
+						error!("Error sending non-hashed file list set message: {e}");
+					}
+				}
+				Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
+			};
+			if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarDelete).await {
+				error!("Error sending loading bar message: {e}");
+			}
+			info!("Directory loading thread done");
+		});
+	});
+	info!("Directory loading async function done");
 }
 
 async fn load_receipt(path: &Path) {

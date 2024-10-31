@@ -45,6 +45,10 @@ fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Cor
 		while let Some(msg) = progress_rx.recv().await {
 			info!("External event received: {msg:?}");
 			match msg {
+				ExternalEvent::NonHashedFileListSet(new_fl) => {
+					let mut fl_sig = use_context::<Signal<FileList>>();
+					fl_sig.set(FileList::NonHashed(new_fl));
+				}
 				ExternalEvent::LoadingBarAdd => {
 					let mut lb_sig = use_context::<Signal<LoadingBarStatus>>();
 					lb_sig.set(LoadingBarStatus::Displayed);
