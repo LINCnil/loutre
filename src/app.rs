@@ -1,14 +1,14 @@
 #![allow(non_snake_case)]
 
 use crate::config::Config;
-use crate::events::{ExternalEvent, ExternalEventReceiver, ExternalEventSender};
+use crate::events::{ExternalEventReceiver, ExternalEventSender};
 use crate::files::FileList;
 use crate::notifications::NotificationList;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::theme::{get_default_theme, set_theme, Theme};
 use crate::views::*;
 use dioxus::prelude::*;
-use dioxus_logger::tracing::{error, info};
+use dioxus_logger::tracing::info;
 use tokio::sync::mpsc::channel;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -42,48 +42,9 @@ pub fn App() -> Element {
 fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
 	use_coroutine(|_| async move {
 		info!("Waiting for an external event…");
-		while let Some(msg) = progress_rx.recv().await {
-			info!("External event received: {msg}");
-			match msg {
-				ExternalEvent::NonHashedFileListSet(new_fl) => {
-					let mut fl_sig = use_context::<Signal<FileList>>();
-					fl_sig.set(FileList::NonHashed(new_fl));
-				}
-				ExternalEvent::LoadingBarAdd => {
-					let mut lb_sig = use_context::<Signal<LoadingBarStatus>>();
-					lb_sig.set(LoadingBarStatus::Displayed);
-				}
-				ExternalEvent::LoadingBarDelete => {
-					let mut lb_sig = use_context::<Signal<LoadingBarStatus>>();
-					lb_sig.set(LoadingBarStatus::Hidden);
-				}
-				ExternalEvent::ProgressBarAdd(nb) => {
-					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-					match pg_sig() {
-						Some(mut status) => {
-							status.add_progress(nb);
-							pg_sig.set(Some(status));
-						}
-						None => {
-							error!("No active progress bar for ProgressBarAdd({nb})");
-						}
-					}
-				}
-				ExternalEvent::ProgressBarCreate(nb) => {
-					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-					pg_sig.set(Some(ProgressBarStatus::new(nb)));
-				}
-				ExternalEvent::ProgressBarDelete => {
-					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-					pg_sig.set(None);
-				}
-				ExternalEvent::ProgressBarSet((max, value)) => {
-					let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-					let mut pg = ProgressBarStatus::new(max);
-					pg.add_progress(value);
-					pg_sig.set(Some(pg));
-				}
-			}
+		while let Some(event) = progress_rx.recv().await {
+			info!("External event received: {event}");
+			event.handle();
 		}
 	})
 }
