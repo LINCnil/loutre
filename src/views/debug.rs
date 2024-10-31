@@ -117,7 +117,7 @@ pub fn Debug() -> Element {
 					onclick: |_event| {
 						info!("Debug: Loading bar button onclick");
 						spawn(async move {
-							let mut loading_bar = use_context::<Signal<LoadingBarStatus>>()();
+							let loading_bar = use_context::<Signal<LoadingBarStatus>>()();
 							let new_status = match loading_bar {
 								LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
 								LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
