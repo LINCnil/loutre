@@ -1,4 +1,5 @@
 use crate::files::{FileList, NonHashedFileList};
+use crate::notifications::{NotificationContext, NotificationList};
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use dioxus::prelude::*;
 use dioxus_logger::tracing::error;
@@ -23,6 +24,7 @@ impl ExternalEvent {
 	pub fn handle(self) {
 		match self {
 			Self::FileListReset => {
+				clear_notif_ctx(NotificationContext::FileList);
 				let mut fl_sig = use_context::<Signal<FileList>>();
 				fl_sig.set(FileList::None);
 			}
@@ -79,4 +81,11 @@ impl std::fmt::Display for ExternalEvent {
 			_ => write!(f, "{:?}", self),
 		}
 	}
+}
+
+fn clear_notif_ctx(ctx: NotificationContext) {
+	let mut notif_sig = use_context::<Signal<NotificationList>>();
+	let mut notif_lst = notif_sig();
+	notif_lst.clear_context(ctx);
+	notif_sig.set(notif_lst);
 }
