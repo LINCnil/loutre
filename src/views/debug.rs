@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
-use crate::components::{DropZone, Header, LoadingBar, NotificationList, ProgressBar};
+use crate::components::{DropZone, Header, LoadingBar, Notification, ProgressBar};
 use crate::events::{ExternalEvent, ExternalEventSender};
-use crate::notifications::*;
+use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::{error, info};
@@ -17,7 +17,7 @@ macro_rules! form_value_str {
 
 #[component]
 pub fn Debug() -> Element {
-	let mut notif_lst_sig = use_context::<Signal<NotificationList>>();
+	let mut notifs = use_signal(|| Vec::<(NotificationLevel, usize)>::new());
 
 	rsx! {
 		DropZone {
@@ -31,36 +31,18 @@ pub fn Debug() -> Element {
 					info!("Notification form event: {event:?}");
 					let data = event.data.values();
 					info!("Notification form event data: {data:?}");
-					let mut notif_lst = notif_lst_sig();
+					let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
 					let nb: usize = form_value_str!(data, "nb").parse().unwrap();
-					let mut txt = String::new();
-					for _ in 0..nb {
-						txt += &format!("<p>{LOREM_LIPSUM}</p>");
-					}
-					let mut notif = Notification::new(
-						get_notification_level(form_value_str!(data, "notif_type")),
-						get_notification_context(form_value_str!(data, "notif_ctx")),
-						format!("Debug notification (context: {})", form_value_str!(data, "notif_ctx")),
-						"",
-					);
-					notif.set_html(txt);
-					notif_lst.insert(notif);
-					notif_lst_sig.set(notif_lst);
+					notifs.push((level, nb));
 				},
 				fieldset {
 					legend { "Notifications" }
 					select {
-						name: "notif_type",
+						name: "notif_level",
 						option { "error" }
 						option { "warning" }
 						option { "success" }
 						option { "info" }
-					}
-					select {
-						name: "notif_ctx",
-						option { "file list" }
-						option { "receipt" }
-						option { "computed hash" }
 					}
 					input {
 						name: "nb",
@@ -132,28 +114,19 @@ pub fn Debug() -> Element {
 				}
 			}
 
-			NotificationList {}
 			ProgressBar {}
 			LoadingBar {}
+
+			for (i, (level, nb)) in notifs().iter().enumerate() {
+				Notification {
+					id: "debug_{i}",
+					level: *level,
+					title: "Debug notification ({level})",
+					for _ in 0..*nb {
+						p { "{LOREM_LIPSUM}" }
+					}
+				}
+			}
 		}
-	}
-}
-
-fn get_notification_level(s: &str) -> NotificationLevel {
-	match s.to_lowercase().as_str() {
-		"error" => NotificationLevel::Error,
-		"warning" => NotificationLevel::Warning,
-		"success" => NotificationLevel::Success,
-		"info" => NotificationLevel::Info,
-		_ => NotificationLevel::Info,
-	}
-}
-
-fn get_notification_context(s: &str) -> NotificationContext {
-	match s.to_lowercase().as_str() {
-		"file list" => NotificationContext::FileList,
-		"receipt" => NotificationContext::Receipt,
-		"computed hash" => NotificationContext::ComputedHash,
-		_ => NotificationContext::FileList,
 	}
 }

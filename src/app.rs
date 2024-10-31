@@ -3,7 +3,7 @@
 use crate::config::Config;
 use crate::events::{ExternalEventReceiver, ExternalEventSender};
 use crate::files::FileList;
-use crate::notifications::NotificationList;
+use crate::notifications::NotificationBlackList;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::theme::{get_default_theme, set_theme, Theme};
 use crate::views::*;
@@ -79,8 +79,8 @@ fn initialize_global_context(config: Config, progress_tx: ExternalEventSender) {
 	// Files
 	use_context_provider(|| Signal::new(FileList::default()));
 
-	// Notification list
-	use_context_provider(|| Signal::new(NotificationList::new()));
+	// Notification blacklist
+	use_context_provider(|| Signal::new(NotificationBlackList::new()));
 
 	// Progress bar
 	let pg_status: Option<ProgressBarStatus> = None;

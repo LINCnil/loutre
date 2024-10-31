@@ -5,7 +5,7 @@ mod file_list;
 mod header;
 mod lang_switch;
 mod logo;
-mod notification_list;
+mod notification;
 mod progress_bar;
 mod theme_switch;
 
@@ -16,6 +16,6 @@ pub use file_list::{FileListIndicator, FileListReceipt};
 pub use header::Header;
 pub use lang_switch::LangSwitch;
 pub use logo::Logo;
-pub use notification_list::NotificationList;
+pub use notification::{Notification, NotificationList};
 pub use progress_bar::{LoadingBar, ProgressBar};
 pub use theme_switch::ThemeSwitch;
