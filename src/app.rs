@@ -43,7 +43,7 @@ fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Cor
 	use_coroutine(|_| async move {
 		info!("Waiting for an external event…");
 		while let Some(msg) = progress_rx.recv().await {
-			info!("External event received: {msg:?}");
+			info!("External event received: {msg}");
 			match msg {
 				ExternalEvent::NonHashedFileListSet(new_fl) => {
 					let mut fl_sig = use_context::<Signal<FileList>>();

@@ -33,6 +33,10 @@ pub struct NonHashedFileList {
 common_lst_impl!(NonHashedFileList);
 
 impl NonHashedFileList {
+	pub fn len(&self) -> usize {
+		self.files.len()
+	}
+
 	pub async fn from_dir<P: AsRef<Path>>(dir_path: P) -> io::Result<Self> {
 		let dir_path = dir_path.as_ref().to_path_buf();
 		let files = walkdir::WalkDir::new(&dir_path)
