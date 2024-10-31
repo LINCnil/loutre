@@ -274,6 +274,19 @@ progress[value]::-webkit-progress-value {
 	word-break: break-all;
 }
 
+/* Grid component */
+
+.component-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	align-items: center;
+}
+
+.component-grid > *:nth-child(odd) {
+	text-align: right;
+}
+
 /* Header component */
 
 .component-header {

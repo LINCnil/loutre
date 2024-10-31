@@ -15,6 +15,8 @@ view_config_title = Configuration
 cpn_config_menu_main_title = Général
 cpn_config_menu_clipboard_title = Presse-papier
 
+view_config_main_msg_empty_files_warning = Afficher un avertissement en cas de chargement d'un dossier comprenant des fichiers vides.
+
 ## Header
 
 cpn_header_config = Configuration

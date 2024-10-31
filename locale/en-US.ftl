@@ -15,6 +15,8 @@ view_config_title = Configuration
 cpn_config_menu_main_title = General
 cpn_config_menu_clipboard_title = Clipboard
 
+view_config_main_msg_empty_files_warning = Display a warning when loading a directory that contains empty files.
+
 ## Header
 
 cpn_header_config = Configuration

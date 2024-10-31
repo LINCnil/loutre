@@ -15,7 +15,6 @@ pub fn ClipboardConfig() -> Element {
 				}
 			}
 			ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
-			p { "Debug: ClipboardConfigView" }
 		}
 	}
 }

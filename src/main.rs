@@ -8,6 +8,7 @@ mod hash;
 mod i18n;
 mod nb_repr;
 mod notifications;
+mod parsers;
 mod progress;
 mod theme;
 mod views;

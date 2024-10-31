@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::config::Config;
 use crate::files::FileList;
 use crate::notifications::{NotificationBlackList, NotificationLevel};
 use dioxus::prelude::*;
@@ -31,8 +32,10 @@ pub struct NotificationProps {
 #[component]
 pub fn Notification(props: NotificationProps) -> Element {
 	let mut bl_sig = use_context::<Signal<NotificationBlackList>>();
+	let cfg = use_context::<Signal<Config>>()();
+
 	rsx! {
-		if !bl_sig().contains(&props.id) {
+		if cfg.is_empty_file_warning_enabled() && !bl_sig().contains(&props.id) {
 			div {
 				class: "component-notification component-notification-level-{props.level}",
 				div {
