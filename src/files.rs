@@ -27,7 +27,7 @@ macro_rules! common_lst_impl {
 #[derive(Debug, Clone)]
 pub struct NonHashedFileList {
 	base_dir: PathBuf,
-	files: HashMap<Vec<u8>, NonHashedFile>,
+	files: HashMap<FileId, NonHashedFile>,
 }
 
 common_lst_impl!(NonHashedFileList);
@@ -106,20 +106,25 @@ impl NonHashedFileList {
 #[derive(Debug, Clone)]
 pub struct HashedFileList {
 	base_dir: PathBuf,
-	files: HashMap<Vec<u8>, HashedFile>,
+	files: HashMap<FileId, HashedFile>,
 }
 
 common_lst_impl!(HashedFileList);
 
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct FileId(Vec<u8>);
+
 macro_rules! common_file_impl {
 	($file_type: ty) => {
 		impl $file_type {
-			pub fn get_id(&self) -> Vec<u8> {
-				[
-					self.base_dir.as_os_str().as_encoded_bytes(),
-					self.relative_path.as_os_str().as_encoded_bytes(),
-				]
-				.join(&0)
+			pub fn get_id(&self) -> FileId {
+				FileId(
+					[
+						self.base_dir.as_os_str().as_encoded_bytes(),
+						self.relative_path.as_os_str().as_encoded_bytes(),
+					]
+					.join(&0),
+				)
 			}
 
 			pub fn get_base_dir(&self) -> &Path {
