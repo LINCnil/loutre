@@ -18,6 +18,7 @@ pub struct Config {
 	pub enable_duplicate_file_warning: Option<bool>,
 	pub enable_empty_file_warning: Option<bool>,
 	pub include_hidden_files: Option<bool>,
+	pub include_system_files: Option<bool>,
 }
 
 impl Config {
@@ -68,6 +69,10 @@ impl Config {
 
 	pub fn include_hidden_files(&self) -> bool {
 		self.include_hidden_files.unwrap_or(false)
+	}
+
+	pub fn include_system_files(&self) -> bool {
+		self.include_system_files.unwrap_or(false)
 	}
 
 	fn load_config(content: &str) -> Config {

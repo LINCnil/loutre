@@ -86,6 +86,7 @@ async fn load_directory(path: &Path) {
 	info!("Loading directory: {}", path.display());
 	let config = use_context::<Signal<Config>>()();
 	let include_hidden_files = config.include_hidden_files();
+	let include_system_files = config.include_system_files();
 	let pg_tx = use_context::<Signal<ExternalEventSender>>()();
 	if let Err(e) = pg_tx.send(ExternalEvent::FileListReset).await {
 		error!("Error sending file list reset message: {e}");
@@ -99,7 +100,9 @@ async fn load_directory(path: &Path) {
 			if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarAdd).await {
 				error!("Error sending loading bar message: {e}");
 			}
-			match NonHashedFileList::from_dir(&path, include_hidden_files).await {
+			match NonHashedFileList::from_dir(&path, include_hidden_files, include_system_files)
+				.await
+			{
 				Ok(new_lst) => {
 					if let Err(e) = pg_tx
 						.send(ExternalEvent::NonHashedFileListSet(new_lst))

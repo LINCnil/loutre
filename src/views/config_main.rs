@@ -20,29 +20,7 @@ pub fn MainConfig() -> Element {
 			}
 			ConfigMenu { hl: ConfigMenuHighlight::Main }
 			Grid {
-				p {
-					label {
-						r#for: "cfg_main_empty_files_warning",
-						{ t!("view_config_main_msg_empty_files_warning") }
-					}
-				}
-				div {
-					input {
-						id: "cfg_main_empty_files_warning",
-						r#type: "checkbox",
-						checked: cfg_sig().is_empty_file_warning_enabled(),
-						onchange: move |event| {
-							let new_value = parse_bool(&event.data.value());
-							spawn(async move {
-								let mut cfg = cfg_sig();
-								cfg.enable_empty_file_warning = Some(new_value);
-								cfg.write_to_file();
-								cfg_sig.set(cfg);
-							});
-						},
-					}
-				}
-
+				// Include hidden files
 				p {
 					label {
 						r#for: "cfg_main_include_hidden_files",
@@ -59,6 +37,54 @@ pub fn MainConfig() -> Element {
 							spawn(async move {
 								let mut cfg = cfg_sig();
 								cfg.include_hidden_files = Some(new_value);
+								cfg.write_to_file();
+								cfg_sig.set(cfg);
+							});
+						},
+					}
+				}
+
+				// Include system files
+				p {
+					label {
+						r#for: "cfg_main_include_system_files",
+						{ t!("view_config_main_msg_include_system_files") }
+					}
+				}
+				div {
+					input {
+						id: "cfg_main_include_system_files",
+						r#type: "checkbox",
+						checked: cfg_sig().include_system_files(),
+						onchange: move |event| {
+							let new_value = parse_bool(&event.data.value());
+							spawn(async move {
+								let mut cfg = cfg_sig();
+								cfg.include_system_files = Some(new_value);
+								cfg.write_to_file();
+								cfg_sig.set(cfg);
+							});
+						},
+					}
+				}
+
+				// Empty files warning
+				p {
+					label {
+						r#for: "cfg_main_empty_files_warning",
+						{ t!("view_config_main_msg_empty_files_warning") }
+					}
+				}
+				div {
+					input {
+						id: "cfg_main_empty_files_warning",
+						r#type: "checkbox",
+						checked: cfg_sig().is_empty_file_warning_enabled(),
+						onchange: move |event| {
+							let new_value = parse_bool(&event.data.value());
+							spawn(async move {
+								let mut cfg = cfg_sig();
+								cfg.enable_empty_file_warning = Some(new_value);
 								cfg.write_to_file();
 								cfg_sig.set(cfg);
 							});

@@ -19,7 +19,8 @@ cpn_config_menu_main_title = Général
 cpn_config_menu_clipboard_title = Presse-papier
 
 view_config_main_msg_empty_files_warning = Afficher un avertissement en cas de chargement d'un dossier comprenant des fichiers vides.
-view_config_main_msg_include_hidden_files = Inclure les fichiers cachés
+view_config_main_msg_include_hidden_files = Inclure les fichiers cachés.
+view_config_main_msg_include_system_files = Inclure les fichiers système.
 
 ## Header
 

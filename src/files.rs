@@ -88,6 +88,7 @@ impl NonHashedFileList {
 	pub async fn from_dir<P: AsRef<Path>>(
 		dir_path: P,
 		include_hidden_files: bool,
+		include_system_files: bool,
 	) -> io::Result<Self> {
 		let dir_path = dir_path.as_ref().to_path_buf();
 		let mut empty_files = HashSet::new();
@@ -102,6 +103,11 @@ impl NonHashedFileList {
 					if path.is_file() {
 						match NonHashedFile::new(&dir_path, &entry.clone().into_path()) {
 							Ok(file) => {
+								if !include_system_files && file.is_system {
+									info!("System file excluded: {}", file.relative_path.display());
+									excluded_files.insert(file);
+									return None;
+								}
 								if !include_hidden_files && file.is_hidden {
 									info!("Hidden file excluded: {}", file.relative_path.display());
 									excluded_files.insert(file);
@@ -238,6 +244,7 @@ pub struct NonHashedFile {
 	relative_path: PathBuf,
 	size: u64,
 	is_hidden: bool,
+	is_system: bool,
 }
 
 common_file_impl!(NonHashedFile);
@@ -252,6 +259,7 @@ impl NonHashedFile {
 			relative_path: relative_path.to_path_buf(),
 			size: 0,
 			is_hidden: is_hidden_file(path)?,
+			is_system: is_system_file(path)?,
 		};
 		file.size = file.get_absolute_path()?.metadata()?.len();
 		Ok(file)
@@ -308,10 +316,22 @@ fn is_hidden_file<P: AsRef<Path>>(path: P) -> io::Result<bool> {
 	}
 }
 
+#[cfg(unix)]
+#[inline]
+fn is_system_file(_path: &Path) -> io::Result<bool> {
+	Ok(false)
+}
+
 #[cfg(windows)]
 #[inline]
 fn is_hidden_file<P: AsRef<Path>>(path: P) -> io::Result<bool> {
 	file_has_attr(path, FILE_ATTRIBUTE_HIDDEN)
+}
+
+#[cfg(windows)]
+#[inline]
+fn is_system_file(path: &Path) -> io::Result<bool> {
+	file_has_attr(path, FILE_ATTRIBUTE_SYSTEM)
 }
 
 #[cfg(windows)]
