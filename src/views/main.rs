@@ -21,6 +21,7 @@ pub fn Main() -> Element {
 	rsx! {
 		DropZone {
 			ondrop: move |event: DragEvent| {
+				info!("DragEvent received: {event:?}");
 				spawn(async move {
 					if let Some(file_engine) = event.files() {
 						load_file(file_engine).await;
