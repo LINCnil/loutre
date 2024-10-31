@@ -5,6 +5,9 @@ view_main_open_receipt = Open a notice of receipt
 
 cpn_file_list_delete = Reset
 
+cpn_notif_empty_files_title = Empty files detected
+cpn_notif_empty_files_text = One or more files located in the selected directory are empty.
+
 ## Configuration
 
 view_config_title = Configuration

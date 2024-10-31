@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::io;
 use std::path::{Path, PathBuf};
 use tokio::task::JoinSet;
+use uuid::Uuid;
 
 #[derive(Clone, Debug, Default)]
 pub enum FileList {
@@ -15,6 +16,14 @@ pub enum FileList {
 }
 
 impl FileList {
+	pub fn get_id(&self) -> String {
+		match self {
+			Self::NonHashed(lst) => lst.get_id(),
+			Self::Hashed(lst) => lst.get_id(),
+			Self::None => String::new(),
+		}
+	}
+
 	pub fn has_empty_files(&self) -> bool {
 		match self {
 			Self::NonHashed(lst) => !lst.empty_files.is_empty(),
@@ -42,6 +51,10 @@ impl FileList {
 macro_rules! common_lst_impl {
 	($file_type: ty) => {
 		impl $file_type {
+			pub fn get_id(&self) -> String {
+				self.id.to_string()
+			}
+
 			pub fn get_base_dir(&self) -> &Path {
 				self.base_dir.as_path()
 			}
@@ -51,6 +64,7 @@ macro_rules! common_lst_impl {
 
 #[derive(Debug, Clone)]
 pub struct NonHashedFileList {
+	id: Uuid,
 	base_dir: PathBuf,
 	files: HashMap<FileId, NonHashedFile>,
 	empty_files: HashSet<FileId>,
@@ -96,6 +110,7 @@ impl NonHashedFileList {
 			})
 			.collect();
 		Ok(Self {
+			id: Uuid::new_v4(),
 			base_dir: dir_path,
 			files,
 			empty_files,
@@ -128,6 +143,7 @@ impl NonHashedFileList {
 			files.insert(k, f);
 		}
 		Ok(HashedFileList {
+			id: Uuid::new_v4(),
 			base_dir: self.base_dir.clone(),
 			files,
 		})
@@ -136,6 +152,7 @@ impl NonHashedFileList {
 
 #[derive(Debug, Clone)]
 pub struct HashedFileList {
+	id: Uuid,
 	base_dir: PathBuf,
 	files: HashMap<FileId, HashedFile>,
 }

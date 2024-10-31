@@ -5,6 +5,9 @@ view_main_open_receipt = Ouvrir un AR
 
 cpn_file_list_delete = Réinitialiser
 
+cpn_notif_empty_files_title = Fichiers vides détectés
+cpn_notif_empty_files_text = Un ou plusieurs fichiers contenus dans le dossier sélectionné sont vides.
+
 ## Configuration
 
 view_config_title = Configuration

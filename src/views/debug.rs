@@ -17,7 +17,7 @@ macro_rules! form_value_str {
 
 #[component]
 pub fn Debug() -> Element {
-	let mut notifs = use_signal(|| Vec::<(NotificationLevel, usize)>::new());
+	let mut notifs = use_signal(Vec::<(NotificationLevel, usize)>::new);
 
 	rsx! {
 		DropZone {

@@ -1,16 +1,23 @@
 #![allow(non_snake_case)]
 
+use crate::files::FileList;
 use crate::notifications::{NotificationBlackList, NotificationLevel};
 use dioxus::prelude::*;
-
-#[component]
-pub fn RawNotificationList() -> Element {
-	rsx! {}
-}
+use dioxus_i18n::t;
 
 #[component]
 pub fn NotificationList() -> Element {
-	rsx! {}
+	let fl = use_context::<Signal<FileList>>()();
+	rsx! {
+		if fl.has_empty_files() {
+			Notification {
+				id: "{fl.get_id()}",
+				level: NotificationLevel::Warning,
+				title: t!("cpn_notif_empty_files_title"),
+				p { { t!("cpn_notif_empty_files_text") } }
+			}
+		}
+	}
 }
 
 #[derive(Clone, PartialEq, Props)]
