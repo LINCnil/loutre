@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::components::{ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header};
+use crate::components::{Checkbox, ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
@@ -28,11 +28,10 @@ pub fn MainConfig() -> Element {
 					}
 				}
 				div {
-					input {
+					Checkbox {
 						id: "cfg_main_include_hidden_files",
-						r#type: "checkbox",
 						checked: cfg_sig().include_hidden_files(),
-						onchange: move |event| {
+						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
 							spawn(async move {
 								let mut cfg = cfg_sig();
@@ -52,11 +51,10 @@ pub fn MainConfig() -> Element {
 					}
 				}
 				div {
-					input {
+					Checkbox {
 						id: "cfg_main_include_system_files",
-						r#type: "checkbox",
 						checked: cfg_sig().include_system_files(),
-						onchange: move |event| {
+						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
 							spawn(async move {
 								let mut cfg = cfg_sig();
@@ -76,11 +74,10 @@ pub fn MainConfig() -> Element {
 					}
 				}
 				div {
-					input {
+					Checkbox {
 						id: "cfg_main_empty_files_warning",
-						r#type: "checkbox",
 						checked: cfg_sig().is_empty_file_warning_enabled(),
-						onchange: move |event| {
+						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
 							spawn(async move {
 								let mut cfg = cfg_sig();
