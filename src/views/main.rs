@@ -5,7 +5,7 @@ use crate::components::{
 	NotificationList, ProgressBar,
 };
 use crate::config::Config;
-use crate::events::{ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
 use crate::progress::ProgressBarStatus;
 use dioxus::html::{FileEngine, HasFileData};
@@ -116,35 +116,24 @@ async fn load_directory(path: &Path) {
 	let config = use_context::<Signal<Config>>()();
 	let include_hidden_files = config.include_hidden_files();
 	let include_system_files = config.include_system_files();
-	let pg_tx = use_context::<Signal<ExternalEventSender>>()();
-	if let Err(e) = pg_tx.send(ExternalEvent::FileListReset).await {
-		error!("Error sending file list reset message: {e}");
-	}
+	let tx = use_context::<Signal<ExternalEventSender>>()();
+	send_event(&tx, ExternalEvent::FileListReset).await;
 	let handle = Handle::current();
 	let path = path.to_path_buf();
 
 	thread::spawn(move || {
 		handle.spawn(async move {
 			info!("Directory loading thread started");
-			if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarAdd).await {
-				error!("Error sending loading bar message: {e}");
-			}
+			send_event(&tx, ExternalEvent::LoadingBarAdd).await;
 			match NonHashedFileList::from_dir(&path, include_hidden_files, include_system_files)
 				.await
 			{
 				Ok(new_lst) => {
-					if let Err(e) = pg_tx
-						.send(ExternalEvent::NonHashedFileListSet(new_lst))
-						.await
-					{
-						error!("Error sending non-hashed file list set message: {e}");
-					}
+					send_event(&tx, ExternalEvent::NonHashedFileListSet(new_lst)).await;
 				}
 				Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
 			};
-			if let Err(e) = pg_tx.send(ExternalEvent::LoadingBarDelete).await {
-				error!("Error sending loading bar message: {e}");
-			}
+			send_event(&tx, ExternalEvent::LoadingBarDelete).await;
 			info!("Directory loading thread done");
 		});
 	});

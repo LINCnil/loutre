@@ -1,7 +1,7 @@
-use crate::events::{ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use blake2::{Blake2b512, Blake2s256};
 use blake3::Hasher as Blake3;
-use dioxus_logger::tracing::{error, info};
+use dioxus_logger::tracing::info;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
@@ -20,29 +20,16 @@ macro_rules! alg_hash_file {
 		loop {
 			let n = $f.read(&mut $buffer).await?;
 			if n == 0 {
-				if let Err(e) = $tx
-					.send(ExternalEvent::ProgressBarAdd(processed_bytes))
-					.await
-				{
-					error!("Error sending progress bar message: {e}");
-				}
+				send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await;
 				break;
 			}
 			hasher.update(&$buffer[..n]);
 			processed_bytes += n;
 			if last_notif.elapsed() >= ref_duration {
-				match $tx
-					.send(ExternalEvent::ProgressBarAdd(processed_bytes))
-					.await
-				{
-					Ok(_) => {
-						processed_bytes = 0;
-						last_notif = Instant::now();
-					}
-					Err(e) => {
-						error!("Error sending progress bar message: {e}");
-					}
-				};
+				if send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await {
+					processed_bytes = 0;
+					last_notif = Instant::now();
+				}
 			}
 		}
 		Ok(hasher
@@ -64,12 +51,7 @@ macro_rules! blake3_hash_file {
 		loop {
 			let n = $f.read(&mut $buffer).await?;
 			if n == 0 {
-				if let Err(e) = $tx
-					.send(ExternalEvent::ProgressBarAdd(processed_bytes))
-					.await
-				{
-					error!("Error sending progress bar message: {e}");
-				}
+				send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await;
 				break;
 			}
 			if first_read {
@@ -83,18 +65,10 @@ macro_rules! blake3_hash_file {
 			}
 			processed_bytes += n;
 			if last_notif.elapsed() >= ref_duration {
-				match $tx
-					.send(ExternalEvent::ProgressBarAdd(processed_bytes))
-					.await
-				{
-					Ok(_) => {
-						processed_bytes = 0;
-						last_notif = Instant::now();
-					}
-					Err(e) => {
-						error!("Error sending progress bar message: {e}");
-					}
-				};
+				if send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await {
+					processed_bytes = 0;
+					last_notif = Instant::now();
+				}
 			}
 		}
 		Ok(hasher

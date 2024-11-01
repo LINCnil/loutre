@@ -1,10 +1,10 @@
 #![allow(non_snake_case)]
 
-use crate::events::{ExternalEvent, ExternalEventSender};
+use crate::events::{send_event_full, ExternalEvent};
 use crate::files::FileList;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
-use dioxus_logger::tracing::{error, info};
+use dioxus_logger::tracing::info;
 
 #[component]
 pub fn FileListIndicator() -> Element {
@@ -74,10 +74,7 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 							info!("Removing receipt");
 						} else {
 							info!("Removing file list");
-							let pg_tx = use_context::<Signal<ExternalEventSender>>()();
-							if let Err(e) = pg_tx.send(ExternalEvent::FileListReset).await {
-								error!("Error sending file list reset message: {e}");
-							}
+							send_event_full(ExternalEvent::FileListReset).await;
 						}
 					});
 				},

@@ -7,6 +7,19 @@ use tokio::sync::mpsc::{Receiver, Sender};
 pub type ExternalEventReceiver = Receiver<ExternalEvent>;
 pub type ExternalEventSender = Sender<ExternalEvent>;
 
+pub async fn send_event_full(event: ExternalEvent) -> bool {
+	let tx = use_context::<Signal<ExternalEventSender>>()();
+	send_event(&tx, event).await
+}
+
+pub async fn send_event(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
+	if let Err(e) = tx.send(event).await {
+		error!("Error sending event: {e}");
+		return false;
+	}
+	true
+}
+
 #[derive(Clone, Debug)]
 pub enum ExternalEvent {
 	FileListReset,
