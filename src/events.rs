@@ -16,7 +16,6 @@ pub enum ExternalEvent {
 	ProgressBarAdd(usize),
 	ProgressBarCreate(usize),
 	ProgressBarDelete,
-	ProgressBarSet((usize, usize)),
 }
 
 impl ExternalEvent {
@@ -57,12 +56,6 @@ impl ExternalEvent {
 			Self::ProgressBarDelete => {
 				let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
 				pg_sig.set(None);
-			}
-			Self::ProgressBarSet((max, value)) => {
-				let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-				let mut pg = ProgressBarStatus::new(max);
-				pg.add_progress(value);
-				pg_sig.set(Some(pg));
 			}
 		}
 	}

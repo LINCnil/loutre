@@ -62,7 +62,13 @@ pub fn Debug() -> Element {
 					let nb: usize = form_value_str!(data, "nb").parse().unwrap();
 					spawn(async move {
 						let pg_tx = use_context::<Signal<ExternalEventSender>>()();
-						if let Err(e) = pg_tx.send(ExternalEvent::ProgressBarSet((100, nb))).await {
+						if let Err(e) = pg_tx.send(ExternalEvent::ProgressBarDelete).await {
+							error!("Error sending progress bar message: {e}");
+						}
+						if let Err(e) = pg_tx.send(ExternalEvent::ProgressBarCreate(100)).await {
+							error!("Error sending progress bar message: {e}");
+						}
+						if let Err(e) = pg_tx.send(ExternalEvent::ProgressBarAdd(nb)).await {
 							error!("Error sending progress bar message: {e}");
 						}
 					});
