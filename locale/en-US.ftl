@@ -2,6 +2,8 @@
 
 view_main_open_dir = Open a directory
 view_main_open_receipt = Open a notice of receipt
+view_main_calc_fingerprints = Checksum calculation
+view_main_check_fingerprints = Data integrity check
 
 cpn_file_list_delete = Reset
 

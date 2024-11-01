@@ -1,12 +1,13 @@
 #![allow(non_snake_case)]
 
 use crate::components::{
-	DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar, NotificationList,
-	ProgressBar,
+	Button, DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar,
+	NotificationList, ProgressBar,
 };
 use crate::config::Config;
 use crate::events::{ExternalEvent, ExternalEventSender};
-use crate::files::NonHashedFileList;
+use crate::files::{FileList, NonHashedFileList};
+use crate::progress::ProgressBarStatus;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -18,6 +19,8 @@ use tokio::runtime::Handle;
 
 #[component]
 pub fn Main() -> Element {
+	let file_list = use_context::<Signal<FileList>>()();
+	let pg_status_opt = use_context::<Signal<Option<ProgressBarStatus>>>()();
 	rsx! {
 		DropZone {
 			ondrop: move |event: DragEvent| {
@@ -66,6 +69,31 @@ pub fn Main() -> Element {
 			NotificationList {}
 			ProgressBar {}
 			LoadingBar {}
+
+			if pg_status_opt.is_none() {
+				div {
+					if let FileList::NonHashed(_) = file_list {
+						Button {
+							onclick: move |_event| {
+								spawn(async move {
+									check_fingerprints().await;
+								});
+							},
+							{ t!("view_main_calc_fingerprints") }
+						}
+					}
+					if let FileList::Hashed(_) = file_list {
+						Button {
+							onclick: move |_event| {
+								spawn(async move {
+									calc_fingerprints().await;
+								});
+							},
+							{ t!("view_main_check_fingerprints") }
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -125,4 +153,15 @@ async fn load_directory(path: &Path) {
 
 async fn load_receipt(path: &Path) {
 	info!("Loading receipt: {}", path.display());
+	// TODO
+}
+
+async fn calc_fingerprints() {
+	info!("Starting file hashing");
+	// TODO
+}
+
+async fn check_fingerprints() {
+	info!("Starting data integrity check");
+	// TODO
 }

@@ -2,6 +2,8 @@
 
 view_main_open_dir = Ouvrir un dossier
 view_main_open_receipt = Ouvrir un AR
+view_main_calc_fingerprints = Calculer les empreintes
+view_main_check_fingerprints = Vérifier les empreintes
 
 cpn_file_list_delete = Réinitialiser
 
