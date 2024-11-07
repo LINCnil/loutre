@@ -3,7 +3,7 @@ use dioxus_i18n::prelude::*;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use unic_langid::{langid, LanguageIdentifier};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Lang(LanguageIdentifier);
 
 impl Default for Lang {

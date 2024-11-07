@@ -93,9 +93,11 @@ impl Config {
 
 #[cfg(test)]
 mod tests {
-	use super::Config;
+	use super::*;
+	use crate::hash::HashFunc;
 	use crate::nb_repr::NbRepr;
 	use crate::theme::Theme;
+	use unic_langid::langid;
 
 	#[test]
 	fn test_config() {
@@ -103,18 +105,26 @@ mod tests {
 theme = "dark"
 lang = "fr"
 number_representation = "letters"
+hash_function = "sha-512"
 "#;
 		let cfg = Config::load_config(s);
-		assert_eq!(cfg.theme, Theme::Dark);
-		assert_eq!(&cfg.lang, "fr");
+		assert_eq!(cfg.theme, Some(Theme::Dark));
+		assert_eq!(cfg.lang, langid!("fr").into());
 		assert_eq!(cfg.number_representation, NbRepr::Letters);
+		assert_eq!(cfg.hash_function, HashFunc::Sha512);
+		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.get_content_file_name(), "sha512sums.txt".to_string());
 	}
 
 	#[test]
 	fn test_empty_config() {
 		let cfg = Config::load_config("");
-		assert_eq!(cfg.theme, Theme::default());
-		assert_eq!(cfg.lang, String::new());
+		assert_eq!(cfg.theme, None);
+		assert_eq!(cfg.lang, Lang::default());
+		assert_eq!(cfg.number_representation, NbRepr::default());
+		assert_eq!(cfg.hash_function, HashFunc::default());
+		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
 	}
 
 	#[test]
@@ -123,9 +133,14 @@ number_representation = "letters"
 theme = "dark invalid theme"
 lang = "not a valid language tag"
 number_representation = "still invalid"
+hash_function = "also invalid"
 "#;
 		let cfg = Config::load_config(s);
-		assert_eq!(cfg.theme, Theme::default());
-		assert_eq!(cfg.lang, String::new());
+		assert_eq!(cfg.theme, None);
+		assert_eq!(cfg.lang, Lang::default());
+		assert_eq!(cfg.number_representation, NbRepr::default());
+		assert_eq!(cfg.hash_function, HashFunc::default());
+		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
 	}
 }
