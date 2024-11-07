@@ -120,8 +120,13 @@ impl fmt::Display for HashFunc {
 	}
 }
 
-impl HashFunc {
-	pub fn parse(s: &str) -> Result<Self, String> {
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseHashFuncError;
+
+impl std::str::FromStr for HashFunc {
+	type Err = ParseHashFuncError;
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		let s = s.to_ascii_lowercase().replace(['-', ' '], "");
 		match s.to_ascii_lowercase().as_str() {
 			"sha256" => Ok(Self::Sha256),
@@ -133,10 +138,12 @@ impl HashFunc {
 			"blake2s" => Ok(Self::Blake2s),
 			"blake2b" => Ok(Self::Blake2b),
 			"blake3" => Ok(Self::Blake3),
-			_ => Err("Invalid hash function".to_string()),
+			_ => Err(ParseHashFuncError),
 		}
 	}
+}
 
+impl HashFunc {
 	pub async fn hash_file<P: AsRef<Path>>(
 		&self,
 		file: P,
