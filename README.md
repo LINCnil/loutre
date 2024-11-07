@@ -168,18 +168,22 @@ l'hypothèse où des vulnérabilités seraient découvertes dans SHA-256 et Blak
 
 ## Favicon
 
-Une favicon peut être générée à partir de plusieurs images PNJ. Pour cela, il
-faut que les images PNG utilisent une colormap de 8 bits. Toutes ces opérations
-sont réalisables à l'aide de l'outil `convert` fourni avec ImageMagick.
+The favicon is generated from the SVG template using the following method:
 
-Convertir la colormap 16 bits d'un PNG en une colormap 8 bits :
-
-```
-convert name.png PNG8:name.png
-```
-
-Créer le fichier `.ico` à partir des différentes images :
+1. a set of PNG icons are generated using [Inkscape][inkscape]
+2. those images are converted into a single favicon using [ImageMagick][magick]
+3. temporary PNG images are deleted
 
 ```
-convert *.png -colors 256 favicon.ico
+for size in "256" "96" "80" "72" "64" "48" "40" "36" "32" "30" "24" "20" "16"; do inkscape -w "$size" -h "$size" "assets/favicon-template.svg" -o "assets/AppList.targetsize-${size}.png"; done
+magick "assets/AppList.targetsize-*.png" -colors 256 "assets/favicon.ico"
+rm assets/AppList.targetsize-*.png
 ```
+
+Read more about application icons on the [Microsoft Windows
+documentation][ms_icons] and [Wikipedia][wiki_icons].
+
+[inkscape]: https://inkscape.org/
+[magick]: https://imagemagick.org/
+[ms_icons]: https://learn.microsoft.com/en-us/windows/apps/design/style/iconography/app-icon-construction
+[wiki_icons]: https://en.wikipedia.org/wiki/ICO_(file_format)

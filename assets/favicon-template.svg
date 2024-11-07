@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="component-favicon-svg" data-name="component-favicon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 256 256">
+    <defs>
+        <style>
+.component-favicon-svg-paw {
+    stroke: url(#component-favicon-svg-gradient);
+}
+
+.component-favicon-svg-paw, .component-favicon-svg-body {
+    stroke-width: 9px;
+}
+
+.component-favicon-svg-paw, .component-favicon-svg-body, .component-favicon-svg-mustache {
+    fill: none;
+    stroke-miterlimit: 10;
+}
+
+.component-favicon-svg-body, .component-favicon-svg-mustache {
+    stroke: #001d96;
+}
+
+.component-favicon-svg-mustache {
+    stroke-width: 7px;
+}
+
+.component-favicon-svg-eye, .component-favicon-svg-nose {
+    fill: #001d96;
+}
+
+.component-favicon-svg-bg {
+    fill: #f8f8f8;
+}
+        </style>
+        <linearGradient id="component-favicon-svg-gradient" data-name="component-favicon-svg-gradient" x1="105.56" y1="235.99" x2="127.98" y2="108.84" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#001d96"/>
+            <stop offset=".47" stop-color="#6045ff"/>
+        </linearGradient>
+    </defs>
+    <g id="component-favicon-svg-main" data-name="component-favicon-svg-main">
+        <g>
+            <rect class="component-favicon-svg-bg" width="256" height="256" rx="40" ry="40"/>
+            <g>
+                <path class="component-favicon-svg-body" d="M192.55,228.81V89.83c0-34.6-28.05-62.65-62.65-62.65h0c-34.6,0-62.65,28.05-62.65,62.65v134.15s.03,0,.03,0"/>
+                <ellipse class="component-favicon-svg-nose" cx="170.16" cy="81.06" rx="11.43" ry="5.72"/>
+                <path class="component-favicon-svg-mustache" d="M147.29,98.21h.99c6.69,0,13.1-2.66,17.83-7.38l4.05-4.05,4.05,4.05c4.73,4.73,11.14,7.38,17.83,7.38h.99"/>
+                <path class="component-favicon-svg-eye" d="M112.99,75.34c0-6.31,5.12-11.43,11.43-11.43s11.43,5.12,11.43,11.43h-22.87Z"/>
+                <path class="component-favicon-svg-paw" d="M62.97,223.98h39.95c30.06,0,54.43-24.37,54.43-54.43v-28.1c0-15.04-12.19-27.23-27.23-27.23h0c-15.04,0-27.23,12.19-27.23,27.23v28.6"/>
+            </g>
+        </g>
+    </g>
+</svg>
