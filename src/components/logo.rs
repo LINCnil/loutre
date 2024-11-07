@@ -1,19 +1,26 @@
 #![allow(non_snake_case)]
 
-use crate::theme::Theme;
 use dioxus::prelude::*;
 
 #[component]
 pub fn Logo() -> Element {
-	let theme = use_context::<Signal<Theme>>()();
-	let img_b64 = match theme {
-		Theme::Dark => crate::assets::LOGO_DARK_B64,
-		Theme::Light => crate::assets::LOGO_LIGHT_B64,
+	let logo = include_str!("../../assets/logo.svg");
+	let logo = match logo.find("<svg") {
+		Some(i) => logo.split_at(i).1,
+		None => logo,
 	};
+
+	#[cfg(feature = "nightly")]
+	let logo = logo
+		.replace("#001d96", "#2242ff")
+		.replace("#bbe4ff", "#2242ff")
+		.replace("#6045ff", "#a95fff")
+		.replace("#45efce", "#a95fff")
+		.replace("#00000000", "#e3cfffff")
+		.replace("#ffffff00", "#a95fffff");
 	rsx! {
-		img {
-			class: "component-logo",
-			src: "{img_b64}",
+		div {
+			dangerous_inner_html: "{logo}"
 		}
 	}
 }

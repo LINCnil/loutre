@@ -58,27 +58,6 @@ fn file_to_b64(src_path: &str, dest_path: &str, file_type: &str) {
 fn main() {
 	if is_nightly() {
 		println!("cargo:rustc-cfg=feature=\"nightly\"");
-		file_to_b64(
-			"assets/main-logo-nightly.png",
-			"main-logo-dark.png.b64",
-			"image/png",
-		);
-		file_to_b64(
-			"assets/main-logo-nightly.png",
-			"main-logo-light.png.b64",
-			"image/png",
-		);
-	} else {
-		file_to_b64(
-			"assets/main-logo-dark.png",
-			"main-logo-dark.png.b64",
-			"image/png",
-		);
-		file_to_b64(
-			"assets/main-logo-light.png",
-			"main-logo-light.png.b64",
-			"image/png",
-		);
 	}
 	file_to_b64(
 		"assets/fonts/OpenSans.woff2",

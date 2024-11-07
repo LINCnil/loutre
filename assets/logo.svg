@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="161" height="54" id="component-logo-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 397.23 132.79">
+	<defs>
+		<style>
+:root {
+	--component-logo-main-color: #001d96;
+	--component-logo-gradient-color: #6045ff;
+	--component-logo-tag-color: #00000000;
+	--component-logo-tag-text-color: #ffffff00;
+}
+
+[data-theme="dark"] {
+	--component-logo-main-color: #bbe4ff;
+	--component-logo-gradient-color: #45efce;
+}
+
+.component-logo-svg-body {
+	stroke-width: 7.25px;
+}
+
+.component-logo-svg-body, .component-logo-svg-paw, .component-logo-svg-mustache {
+	fill: none;
+	stroke-miterlimit: 10;
+}
+
+.component-logo-svg-body, .component-logo-svg-mustache {
+	stroke: var(--component-logo-main-color);
+}
+
+.component-logo-svg-eye, .component-logo-svg-nose, .component-logo-svg-text {
+	fill: var(--component-logo-main-color);
+}
+
+.component-logo-svg-paw {
+	stroke: url(#component-logo-svg-gradient);
+	stroke-width: 7.22px;
+}
+
+.component-logo-svg-mustache {
+	stroke-width: 4.59px;
+}
+
+.component-logo-svg-gradient-stop-1 {
+	stop-color: var(--component-logo-main-color);
+}
+
+.component-logo-svg-gradient-stop-2 {
+	stop-color: var(--component-logo-gradient-color);
+}
+
+.component-logo-svg-tag {
+	fill: var(--component-logo-tag-color);
+}
+
+.component-logo-svg-tag-text {
+	fill: var(--component-logo-tag-text-color);
+}
+		</style>
+		<linearGradient id="component-logo-svg-gradient" data-name="component-logo-svg-gradient" x1="27.76" y1="137.52" x2="42.33" y2="54.9" gradientUnits="userSpaceOnUse">
+			<stop class="component-logo-svg-gradient-stop-1" offset="0"/>
+			<stop class="component-logo-svg-gradient-stop-2" offset=".47"/>
+		</linearGradient>
+	</defs>
+	<g id="component-logo-svg-main" data-name="component-logo-svg-main">
+		<g>
+			<path class="component-logo-svg-text" d="M141.81,101.81v9.46h-39.5v-60.06h11.47v50.6h28.03Z"/>
+			<path class="component-logo-svg-text" d="M197.04,81.25c0,18.75-11.92,30.58-28.94,30.58s-28.85-11.83-28.85-30.58,12.01-30.67,28.85-30.67,28.94,11.83,28.94,30.67ZM185.49,81.25c0-12.92-7.28-20.66-17.38-20.66s-17.29,7.74-17.29,20.66,7.28,20.66,17.29,20.66,17.38-7.83,17.38-20.66Z"/>
+			<path class="component-logo-svg-text" d="M251.92,51.21v36.49c0,14.65-10.01,24.21-24.66,24.21s-24.84-9.56-24.84-24.21v-36.49h11.47v36.4c0,9.1,5.46,14.29,13.38,14.29s13.2-5.19,13.2-14.2v-36.49h11.47Z"/>
+			<path class="component-logo-svg-text" d="M273.21,60.68h-18.56v-9.46h48.69v9.46h-18.66v50.6h-11.47v-50.6Z"/>
+			<path class="component-logo-svg-text" d="M354.65,111.28s-2.37.64-6.1.64c-17.84,0-12.83-22.02-27.03-22.02h-3.46v21.39h-11.47v-60.06h19.75c15.11,0,23.39,6.01,23.39,19.75,0,8.37-4.73,14.11-12.56,16.93,6.92,3.46,7.01,14.83,14.92,14.83,1,0,1.82-.18,1.82-.18l.73,8.74ZM324.8,81.61c7.92,0,13.56-3.73,13.56-10.56s-4.55-10.65-12.65-10.65h-7.64v21.2h6.73Z"/>
+			<path class="component-logo-svg-text" d="M369.66,60.68v15.29h24.12v9.1h-24.12v16.74h27.57v9.46h-39.04v-60.06h39.04v9.46h-27.57Z"/>
+		</g>
+		<path class="component-logo-svg-body" d="M83.46,132.79V43.54c0-22.05-17.87-39.92-39.92-39.92h0c-22.05,0-39.92,17.87-39.92,39.92v85.48s.02,0,.02,0"/>
+		<ellipse class="component-logo-svg-nose" cx="69.19" cy="37.95" rx="7.29" ry="3.64"/>
+		<path class="component-logo-svg-mustache" d="M54.62,48.88h.63c4.26,0,8.35-1.69,11.36-4.7l2.58-2.58,2.58,2.58c3.01,3.01,7.1,4.7,11.36,4.7h.63"/>
+		<path class="component-logo-svg-eye" d="M32.77,34.31c0-4.02,3.26-7.29,7.29-7.29s7.29,3.26,7.29,7.29h-14.57Z"/>
+		<path class="component-logo-svg-paw" d="M.03,129.02h26.32c19.16,0,34.68-15.53,34.68-34.68v-17.91c0-9.58-7.77-17.35-17.35-17.35h0c-9.58,0-17.35,7.77-17.35,17.35v18.22"/>
+		<g>
+			<rect class="component-logo-svg-tag" x="275.3" y="14.78" width="121.89" height="29.19" rx="14.6" ry="14.6"/>
+			<g>
+				<path class="component-logo-svg-tag-text" d="M292.05,36.56l3.2-13.79h3.18l2.82,8.17.73,2.45h.04l.52-2.63,1.84-7.98h2.59l-3.2,13.79h-3.13l-2.88-8.11-.73-2.42h-.04l-.48,2.55-1.86,7.98h-2.59Z"/>
+				<path class="component-logo-svg-tag-text" d="M313.37,22.76l-3.2,13.79h-2.88l3.2-13.79h2.88Z"/>
+				<path class="component-logo-svg-tag-text" d="M320.04,36.75c-1.02,0-1.94-.24-2.76-.71s-1.48-1.16-1.97-2.05c-.5-.89-.74-1.96-.74-3.2,0-1.1.16-2.14.49-3.12s.8-1.86,1.43-2.63c.63-.77,1.4-1.38,2.33-1.82.93-.44,1.99-.66,3.19-.66.96,0,1.83.15,2.6.44.77.29,1.43.74,1.96,1.34.54.6.9,1.37,1.08,2.32l-2.76.61c-.15-.79-.48-1.39-.99-1.78-.51-.39-1.17-.58-1.98-.58-.68,0-1.3.15-1.85.46-.55.31-1.02.72-1.4,1.25-.38.53-.68,1.13-.88,1.81-.2.68-.3,1.38-.3,2.12,0,.81.13,1.5.4,2.09.26.58.65,1.03,1.15,1.34.5.31,1.11.46,1.84.46.63,0,1.17-.1,1.62-.3.45-.2.83-.49,1.12-.86.29-.37.5-.79.63-1.26l.17-.52h-3.68l.48-2.09h6.02l-1.78,7.17h-2.01l.67-3.07.25.31c-.25.63-.57,1.16-.97,1.6-.4.44-.87.77-1.42,1-.55.23-1.2.35-1.93.35Z"/>
+				<path class="component-logo-svg-tag-text" d="M334.65,22.76l-3.2,13.79h-2.88l3.2-13.79h2.88ZM340.81,28.43l-.54,2.32h-8.92l.54-2.32h8.92ZM343.51,22.76l-3.2,13.79h-2.91l3.2-13.79h2.91Z"/>
+				<path class="component-logo-svg-tag-text" d="M357.82,22.76l-.54,2.32h-4.54l-2.65,11.47h-2.88l2.65-11.47h-4.6l.56-2.32h12Z"/>
+				<path class="component-logo-svg-tag-text" d="M360.37,34.24h7.25l-.54,2.32h-10.14l3.2-13.79h2.88l-2.65,11.47Z"/>
+				<path class="component-logo-svg-tag-text" d="M370.13,36.56l1.21-5.22-2.78-8.57h2.84l1.25,4.16.56,2.22,1.5-2.28,3.07-4.1h3.18l-6.79,8.78-1.17,5.02h-2.88Z"/>
+			</g>
+		</g>
+	</g>
+</svg>
