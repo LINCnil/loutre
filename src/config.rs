@@ -12,6 +12,7 @@ use std::path::PathBuf;
 pub struct Config {
 	pub theme: Option<Theme>,
 	pub lang: Lang,
+	pub content_file_name: Option<String>,
 	pub number_representation: NbRepr,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
@@ -53,6 +54,15 @@ impl Config {
 		}
 		path.push(crate::CONFIG_FILE_NAME);
 		path
+	}
+
+	pub fn get_content_file_name(&self) -> String {
+		match &self.content_file_name {
+			Some(name) => name.to_string(),
+			None => {
+				format!("{}sums.txt", self.hash_function.to_string().to_lowercase())
+			}
+		}
 	}
 
 	pub fn get_clipboard_threshold(&self) -> usize {
