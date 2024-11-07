@@ -34,8 +34,10 @@ impl std::str::FromStr for NotificationLevel {
 
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
 		match s {
+			#[cfg(feature = "nightly")]
 			"error" => Ok(Self::Error),
 			"warning" => Ok(Self::Warning),
+			#[cfg(feature = "nightly")]
 			"success" => Ok(Self::Success),
 			"info" => Ok(Self::Info),
 			_ => Err(()),

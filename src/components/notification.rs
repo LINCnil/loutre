@@ -60,8 +60,10 @@ pub fn Notification(props: NotificationProps) -> Element {
 					class: "component-notification-icon",
 					span {
 						class: match props.level {
+							#[cfg(feature = "nightly")]
 							NotificationLevel::Error => { "ri-close-circle-fill" },
 							NotificationLevel::Warning => { "ri-alert-fill" },
+							#[cfg(feature = "nightly")]
 							NotificationLevel::Success => { "ri-checkbox-circle-fill" },
 							NotificationLevel::Info => { "ri-information-2-fill" },
 						},
