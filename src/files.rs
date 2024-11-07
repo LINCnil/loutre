@@ -90,14 +90,18 @@ impl FileList {
 }
 
 macro_rules! common_lst_impl {
-	($file_type: ty) => {
-		impl $file_type {
+	($lst_type: ty, $file_type: ty) => {
+		impl $lst_type {
 			pub fn get_id(&self) -> String {
 				self.id.to_string()
 			}
 
 			pub fn get_base_dir(&self) -> &Path {
 				self.base_dir.as_path()
+			}
+
+			pub fn get_files(&self) -> Vec<$file_type> {
+				self.files.iter().map(|(_, v)| v.clone()).collect()
 			}
 		}
 	};
@@ -112,7 +116,7 @@ pub struct NonHashedFileList {
 	excluded_files: HashSet<NonHashedFile>,
 }
 
-common_lst_impl!(NonHashedFileList);
+common_lst_impl!(NonHashedFileList, NonHashedFile);
 
 impl NonHashedFileList {
 	pub fn len(&self) -> usize {
@@ -250,7 +254,27 @@ pub struct HashedFileList {
 	duplicated_files: HashMap<String, HashSet<FileId>>,
 }
 
-common_lst_impl!(HashedFileList);
+common_lst_impl!(HashedFileList, HashedFile);
+
+impl HashedFileList {
+	pub fn new() -> Self {
+		Self {
+			id: Uuid::new_v4(),
+			base_dir: PathBuf::new(),
+			files: HashMap::new(),
+			empty_files: HashSet::new(),
+			duplicated_files: HashMap::new(),
+		}
+	}
+
+	pub fn insert_file(&mut self, file: HashedFile) {
+		self.files.insert(file.get_id(), file);
+	}
+
+	pub fn is_empty(&self) -> bool {
+		self.files.is_empty()
+	}
+}
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct FileId(Vec<u8>);
@@ -343,18 +367,26 @@ pub struct HashedFile {
 common_file_impl!(HashedFile);
 
 impl HashedFile {
-	pub fn new<P, S>(base_dir: P, relative_path: P, size: u64, hash: S, hash_func: HashFunc) -> Self
+	pub fn new<P, S>(relative_path: P, size: u64, hash: S, hash_func: HashFunc) -> Self
 	where
 		P: AsRef<Path>,
 		S: AsRef<str>,
 	{
 		Self {
-			base_dir: base_dir.as_ref().to_path_buf(),
+			base_dir: PathBuf::new(),
 			relative_path: relative_path.as_ref().to_path_buf(),
 			size,
 			hash: hash.as_ref().into(),
 			hash_func,
 		}
+	}
+
+	pub fn get_hash(&self) -> &str {
+		self.hash.as_str()
+	}
+
+	pub fn get_hash_func(&self) -> HashFunc {
+		self.hash_func
 	}
 }
 

@@ -1,3 +1,4 @@
+mod analyse_hash;
 mod app;
 mod assets;
 mod components;
@@ -10,6 +11,7 @@ mod nb_repr;
 mod notifications;
 mod parsers;
 mod progress;
+mod receipt;
 mod theme;
 mod views;
 

@@ -5,6 +5,7 @@ use crate::events::{ExternalEventReceiver, ExternalEventSender};
 use crate::files::FileList;
 use crate::notifications::NotificationBlackList;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
+use crate::receipt::Receipt;
 use crate::theme::{get_default_theme, set_theme, Theme};
 use crate::views::*;
 use dioxus::prelude::*;
@@ -78,6 +79,8 @@ fn initialize_global_context(config: Config, progress_tx: ExternalEventSender) {
 
 	// Files
 	use_context_provider(|| Signal::new(FileList::default()));
+	let receipt_status: Option<Receipt> = None;
+	use_context_provider(|| Signal::new(receipt_status));
 
 	// Notification blacklist
 	use_context_provider(|| Signal::new(NotificationBlackList::new()));

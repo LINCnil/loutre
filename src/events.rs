@@ -1,5 +1,6 @@
 use crate::files::{FileList, NonHashedFileList};
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
+use crate::receipt::Receipt;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::error;
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -29,6 +30,8 @@ pub enum ExternalEvent {
 	ProgressBarAdd(usize),
 	ProgressBarCreate(usize),
 	ProgressBarDelete,
+	ReceiptReset,
+	ReceiptSet(Receipt),
 }
 
 impl ExternalEvent {
@@ -69,6 +72,14 @@ impl ExternalEvent {
 			Self::ProgressBarDelete => {
 				let mut pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
 				pg_sig.set(None);
+			}
+			Self::ReceiptReset => {
+				let mut rcpt_sig = use_context::<Signal<Option<Receipt>>>();
+				rcpt_sig.set(None);
+			}
+			Self::ReceiptSet(rcpt) => {
+				let mut rcpt_sig = use_context::<Signal<Option<Receipt>>>();
+				rcpt_sig.set(Some(rcpt));
 			}
 		}
 	}

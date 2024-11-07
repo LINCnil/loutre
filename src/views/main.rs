@@ -8,6 +8,7 @@ use crate::config::Config;
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
 use crate::progress::ProgressBarStatus;
+use crate::receipt::Receipt;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -76,7 +77,7 @@ pub fn Main() -> Element {
 						Button {
 							onclick: move |_event| {
 								spawn(async move {
-									check_fingerprints().await;
+									calc_fingerprints().await;
 								});
 							},
 							{ t!("view_main_calc_fingerprints") }
@@ -86,7 +87,7 @@ pub fn Main() -> Element {
 						Button {
 							onclick: move |_event| {
 								spawn(async move {
-									calc_fingerprints().await;
+									check_fingerprints().await;
 								});
 							},
 							{ t!("view_main_check_fingerprints") }
@@ -142,12 +143,34 @@ async fn load_directory(path: &Path) {
 
 async fn load_receipt(path: &Path) {
 	info!("Loading receipt: {}", path.display());
-	// TODO
+	let default_hash = crate::hash::HashFunc::Sha256; // TODO: REMOVE ME
+	let tx = use_context::<Signal<ExternalEventSender>>()();
+	send_event(&tx, ExternalEvent::ReceiptReset).await;
+	let handle = Handle::current();
+	let path = path.to_path_buf();
+
+	thread::spawn(move || {
+		handle.spawn(async move {
+			info!("Receipt loading thread started");
+			send_event(&tx, ExternalEvent::LoadingBarAdd).await;
+			match Receipt::new(&path, default_hash) {
+				Ok(new_receipt) => {
+					send_event(&tx, ExternalEvent::ReceiptSet(new_receipt)).await;
+				}
+				Err(_) => error!("Unable to load receipt: {}", path.display()),
+			};
+			send_event(&tx, ExternalEvent::LoadingBarDelete).await;
+			info!("Receipt loading thread done");
+		});
+	});
+	info!("Receipt loading async function done");
 }
 
 async fn calc_fingerprints() {
 	info!("Starting file hashing");
-	// TODO
+	// TODO: hash the files
+	// TODO: if there is a receipt, check fingerprints against it
+	// info!("Checking fingerprints against the receipt");
 }
 
 async fn check_fingerprints() {

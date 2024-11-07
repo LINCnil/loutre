@@ -2,6 +2,7 @@
 
 use crate::events::{send_event_full, ExternalEvent};
 use crate::files::FileList;
+use crate::receipt::Receipt;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
 use dioxus_logger::tracing::info;
@@ -27,8 +28,7 @@ pub fn FileListReceipt() -> Element {
 #[component]
 fn FileListMeta(is_receipt: bool) -> Element {
 	let path_opt = if is_receipt {
-		// TODO
-		None
+		use_context::<Signal<Option<Receipt>>>()().map(|rcpt| rcpt.to_string())
 	} else {
 		let file_list = use_context::<Signal<FileList>>()();
 		match file_list {
@@ -70,7 +70,7 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 				onclick: move |_| {
 					spawn(async move {
 						if is_receipt {
-							// TODO
+							send_event_full(ExternalEvent::ReceiptReset).await;
 							info!("Removing receipt");
 						} else {
 							info!("Removing file list");
