@@ -36,7 +36,8 @@ impl FileList {
 	pub fn has_empty_files(&self) -> bool {
 		match self {
 			Self::NonHashed(lst) => !lst.empty_files.is_empty(),
-			Self::Hashed(_) | Self::None => false,
+			Self::Hashed(lst) => !lst.empty_files.is_empty(),
+			Self::None => false,
 		}
 	}
 
@@ -44,6 +45,13 @@ impl FileList {
 		match self {
 			Self::NonHashed(lst) => !lst.excluded_files.is_empty(),
 			Self::Hashed(_) | Self::None => false,
+		}
+	}
+
+	pub fn has_duplicated_files(&self) -> bool {
+		match self {
+			Self::Hashed(lst) => !lst.duplicated_files.is_empty(),
+			Self::NonHashed(_) | Self::None => false,
 		}
 	}
 
@@ -60,6 +68,23 @@ impl FileList {
 				})
 				.collect(),
 			Self::Hashed(_) | Self::None => Vec::new(),
+		}
+	}
+
+	pub fn duplicated_files(&self) -> Vec<Vec<HashedFile>> {
+		match self {
+			Self::Hashed(lst) => lst
+				.duplicated_files
+				.clone()
+				.into_values()
+				.map(|file_set| {
+					file_set
+						.iter()
+						.map(|file_id| lst.files.get(file_id).unwrap().to_owned())
+						.collect()
+				})
+				.collect(),
+			Self::NonHashed(_) | Self::None => Vec::new(),
 		}
 	}
 }
@@ -188,15 +213,30 @@ impl NonHashedFileList {
 			})
 			.collect();
 		let mut files = HashMap::with_capacity(self.files.len());
+		let mut duplicated_files: HashMap<String, HashSet<FileId>> =
+			HashMap::with_capacity(self.files.len());
 		for r in handle_list.join_all().await {
 			let r: io::Result<_> = r?;
 			let (k, f) = r?;
+			match duplicated_files.get_mut(&f.hash) {
+				Some(set) => {
+					set.insert(f.get_id());
+				}
+				None => {
+					let mut set = HashSet::with_capacity(1);
+					set.insert(f.get_id());
+					duplicated_files.insert(f.hash.clone(), set);
+				}
+			}
 			files.insert(k, f);
 		}
+		duplicated_files.retain(|_, v| v.len() > 1);
 		Ok(HashedFileList {
 			id: Uuid::new_v4(),
 			base_dir: self.base_dir.clone(),
 			files,
+			empty_files: self.empty_files.clone(),
+			duplicated_files,
 		})
 	}
 }
@@ -206,6 +246,8 @@ pub struct HashedFileList {
 	id: Uuid,
 	base_dir: PathBuf,
 	files: HashMap<FileId, HashedFile>,
+	empty_files: HashSet<FileId>,
+	duplicated_files: HashMap<String, HashSet<FileId>>,
 }
 
 common_lst_impl!(HashedFileList);

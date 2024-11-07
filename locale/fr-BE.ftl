@@ -13,6 +13,9 @@ cpn_notif_empty_files_text = Un ou plusieurs fichiers contenus dans le dossier s
 cpn_notif_excluded_files_title = Fichiers ignoré
 cpn_notif_excluded_files_text = Des fichiers cachés ou des fichiers système ont été automatiquement ignorés.
 
+cpn_notif_duplicated_files_title = Fichiers dupliqués détectés
+cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier sélectionné sont identiques.
+
 ## Configuration
 
 view_config_title = Configuration

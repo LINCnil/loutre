@@ -27,6 +27,15 @@ pub fn NotificationList() -> Element {
 				p { { t!("cpn_notif_excluded_files_text") } }
 			}
 		}
+
+		if fl.has_duplicated_files() {
+			Notification {
+				id: "duplicated_files_{fl.get_id()}",
+				level: NotificationLevel::Warning,
+				title: t!("cpn_notif_duplicated_files_title"),
+				p { { t!("cpn_notif_duplicated_files_text") } }
+			}
+		}
 	}
 }
 

@@ -13,6 +13,9 @@ cpn_notif_empty_files_text = One or more files located in the selected directory
 cpn_notif_excluded_files_title = Ignored files
 cpn_notif_excluded_files_text = Hidden or system files has automatically been ignored.
 
+cpn_notif_duplicated_files_title = Duplicated files detected
+cpn_notif_duplicated_files_text = Several files located in the selected directory are identical.
+
 ## Configuration
 
 view_config_title = Configuration
