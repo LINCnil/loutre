@@ -1,4 +1,5 @@
 use crate::hash::HashFunc;
+use crate::i18n::Lang;
 use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
 use serde_derive::{Deserialize, Serialize};
@@ -10,7 +11,7 @@ use std::path::PathBuf;
 #[serde(default)]
 pub struct Config {
 	pub theme: Option<Theme>,
-	pub lang: String,
+	pub lang: Lang,
 	pub number_representation: NbRepr,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,

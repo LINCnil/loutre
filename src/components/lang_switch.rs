@@ -12,7 +12,7 @@ async fn change_lang(to_lang: LanguageIdentifier) {
 
 	// Write it to the configuration
 	let mut config = use_context::<Signal<Config>>()();
-	config.lang = to_lang.to_string();
+	config.lang = to_lang.into();
 	config.write_to_file();
 }
 

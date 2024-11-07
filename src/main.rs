@@ -28,7 +28,6 @@ const CONFIG_FILE_DIR: &str = "CNIL";
 const CONFIG_FILE_SUBDIR: &str = "loutre";
 const CONFIG_FILE_NAME: &str = "config.toml";
 
-const DEFAULT_LANG: &str = "fr-FR";
 const DEFAULT_CLIPBOARD_THRESHOLD: usize = 42;
 const NB_FILES_START: u32 = 1;
 const PROGRESS_BAR_CHANNEL_CAPACITY: usize = 1024;
