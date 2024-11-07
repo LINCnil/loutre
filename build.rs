@@ -31,9 +31,8 @@ fn get_favicon_path() -> &'static str {
 
 #[cfg(windows)]
 fn set_windows_metadata() {
-	let mut res = winres::WindowsResource::new();
+	let mut res = winresource::WindowsResource::new();
 	res.set_icon(get_favicon_path());
-	res.set_language(0x000c); // French
 	res.compile().unwrap();
 }
 
