@@ -20,7 +20,7 @@ use dioxus::prelude::*;
 use dioxus_logger::tracing::{info, Level};
 
 const APP_NAME: &str = "LOUTRE — LOgiciel Unique de TRaitement des Empreintes";
-const BUFF_SIZE: usize = 524288; // 512 KiB
+const BUFF_SIZE: usize = 524_288; // 512 KiB
 const BUFF_NOTIF_THRESHOLD: u64 = 700; // in milliseconds
 
 #[cfg(unix)]

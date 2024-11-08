@@ -1,16 +1,16 @@
-use crate::events::{send_event, ExternalEvent, ExternalEventSender};
+use crate::events::{send_event_sync, ExternalEvent, ExternalEventSender};
 use blake2::{Blake2b512, Blake2s256};
 use blake3::Hasher as Blake3;
 use dioxus_logger::tracing::info;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
+use std::time::{Duration, Instant};
 use std::{fmt, io, thread};
 use strum::EnumIter;
-use tokio::fs::File;
-use tokio::io::AsyncReadExt;
-use tokio::time::{Duration, Instant};
 
 pub const CHARS_TO_REMOVE: &[char] = &['-', '_', ' '];
 
@@ -21,15 +21,15 @@ macro_rules! alg_hash_file {
 		let mut last_notif = Instant::now();
 		let ref_duration = Duration::from_millis(crate::BUFF_NOTIF_THRESHOLD);
 		loop {
-			let n = $f.read(&mut $buffer).await?;
+			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
-				send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await;
+				send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes));
 				break;
 			}
 			hasher.update(&$buffer[..n]);
-			processed_bytes += n;
+			processed_bytes += (n as u64);
 			if last_notif.elapsed() >= ref_duration {
-				if send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await {
+				if send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
 					processed_bytes = 0;
 					last_notif = Instant::now();
 				}
@@ -52,9 +52,9 @@ macro_rules! blake3_hash_file {
 		let mut first_read = true;
 		let mut use_rayon = true;
 		loop {
-			let n = $f.read(&mut $buffer).await?;
+			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
-				send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await;
+				send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes));
 				break;
 			}
 			if first_read {
@@ -66,9 +66,9 @@ macro_rules! blake3_hash_file {
 			} else {
 				hasher.update(&$buffer[..n]);
 			}
-			processed_bytes += n;
+			processed_bytes += (n as u64);
 			if last_notif.elapsed() >= ref_duration {
-				if send_event(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)).await {
+				if send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
 					processed_bytes = 0;
 					last_notif = Instant::now();
 				}
@@ -146,14 +146,14 @@ impl std::str::FromStr for HashFunc {
 }
 
 impl HashFunc {
-	pub async fn hash_file<P: AsRef<Path>>(
+	pub fn hash_file<P: AsRef<Path>>(
 		&self,
 		file: P,
 		tx: ExternalEventSender,
 	) -> io::Result<String> {
 		let file = file.as_ref();
 		info!("Calculating the {self} hash of file: {}", file.display());
-		let mut f = File::open("foo.txt").await?;
+		let mut f = File::open(file)?;
 		let mut buffer = [0; crate::BUFF_SIZE];
 		match self {
 			Self::Sha256 => alg_hash_file!(f, buffer, tx, Sha256),

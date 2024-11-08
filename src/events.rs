@@ -1,4 +1,4 @@
-use crate::files::{FileList, NonHashedFileList};
+use crate::files::{FileList, HashedFileList, NonHashedFileList};
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
@@ -16,14 +16,23 @@ pub async fn send_event(tx: &ExternalEventSender, event: ExternalEvent) -> bool 
 	true
 }
 
+pub fn send_event_sync(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
+	if let Err(e) = tx.blocking_send(event) {
+		error!("Error sending event: {e}");
+		return false;
+	}
+	true
+}
+
 #[derive(Clone, Debug)]
 pub enum ExternalEvent {
 	FileListReset,
+	HashedFileListSet(HashedFileList),
 	NonHashedFileListSet(NonHashedFileList),
 	LoadingBarAdd,
 	LoadingBarDelete,
-	ProgressBarAdd(usize),
-	ProgressBarCreate(usize),
+	ProgressBarAdd(u64),
+	ProgressBarCreate(u64),
 	ProgressBarDelete,
 	ReceiptReset,
 	ReceiptSet(Receipt),
@@ -40,6 +49,9 @@ impl ExternalEvent {
 		match self {
 			Self::FileListReset => {
 				fl_sig.set(FileList::None);
+			}
+			Self::HashedFileListSet(new_hfl) => {
+				fl_sig.set(FileList::Hashed(new_hfl));
 			}
 			Self::NonHashedFileListSet(new_fl) => {
 				fl_sig.set(FileList::NonHashed(new_fl));

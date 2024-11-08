@@ -5,7 +5,7 @@ use crate::components::{
 	NotificationList, ProgressBar,
 };
 use crate::config::Config;
-use crate::events::{send_event, ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, send_event_sync, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
 use crate::progress::ProgressBarStatus;
 use crate::receipt::Receipt;
@@ -20,7 +20,7 @@ use tokio::runtime::Handle;
 
 #[component]
 pub fn Main() -> Element {
-	let file_list = use_context::<Signal<FileList>>()();
+	let file_list_sig = use_context::<Signal<FileList>>();
 	let pg_status_opt = use_context::<Signal<Option<ProgressBarStatus>>>()();
 	let config_sig = use_context::<Signal<Config>>();
 	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
@@ -76,17 +76,17 @@ pub fn Main() -> Element {
 
 			if pg_status_opt.is_none() {
 				div {
-					if let FileList::NonHashed(_) = file_list {
+					if let FileList::NonHashed(_) = file_list_sig() {
 						Button {
 							onclick: move |_event| {
 								spawn(async move {
-									calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig()).await;
+									calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
 								});
 							},
 							{ t!("view_main_calc_fingerprints") }
 						}
 					}
-					if let FileList::Hashed(_) = file_list {
+					if let FileList::Hashed(_) = file_list_sig() {
 						Button {
 							onclick: move |_event| {
 								spawn(async move {
@@ -116,7 +116,10 @@ async fn load_file(config: &Config, tx: ExternalEventSender, file_engine: Arc<dy
 }
 
 async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
-	info!("Loading directory: {}", path.display());
+	info!(
+		"Directory loading async function started: {}",
+		path.display()
+	);
 	let include_hidden_files = config.include_hidden_files();
 	let include_system_files = config.include_system_files();
 	send_event(&tx, ExternalEvent::FileListReset).await;
@@ -169,18 +172,48 @@ async fn load_receipt(config: &Config, tx: ExternalEventSender, path: &Path) {
 	info!("Receipt loading async function done");
 }
 
-async fn calc_fingerprints(config: &Config, tx: ExternalEventSender, receipt_opt: Option<Receipt>) {
-	let hash_func = match receipt_opt {
+async fn calc_fingerprints(
+	config: &Config,
+	tx: ExternalEventSender,
+	receipt_opt: Option<Receipt>,
+	file_list: FileList,
+) {
+	info!("File hashing async function started");
+	let hash_func = match &receipt_opt {
 		Some(rcpt) => rcpt.get_main_hashing_function(),
 		None => config.hash_function,
 	};
-	// TODO: hash the files
-	// TODO: if there is a receipt, check fingerprints against it
-	// info!("Checking fingerprints against the receipt");
+
+	if let FileList::NonHashed(file_list) = file_list {
+		thread::spawn(move || {
+			info!("File hashing thread started");
+
+			let total_size = file_list.total_size();
+			send_event_sync(&tx, ExternalEvent::ProgressBarCreate(total_size));
+			info!("Total size to hash: {total_size} bytes");
+
+			match file_list.hash(hash_func, tx.clone()) {
+				Ok(hashed_file_list) => {
+					send_event_sync(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
+				}
+				Err(e) => error!("Unable to hash files: {e}"),
+			};
+			send_event_sync(&tx, ExternalEvent::ProgressBarDelete);
+
+			if let Some(rcpt) = receipt_opt {
+				info!("Checking fingerprints against the receipt");
+				// TODO
+			}
+
+			info!("File hashing thread done");
+		});
+	}
+
 	info!("File hashing async function done");
 }
 
 async fn check_fingerprints() {
-	info!("Starting data integrity check");
+	info!("Data integrity check async function started");
 	// TODO
+	info!("Data integrity check async function done");
 }

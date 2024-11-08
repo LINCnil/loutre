@@ -1,12 +1,12 @@
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
 use dioxus_logger::tracing::{error, info};
+use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
 use std::path::{Path, PathBuf};
-use tokio::task::JoinSet;
 use uuid::Uuid;
 
 // Microsoft Windows File Attribute Constants
@@ -123,6 +123,10 @@ impl NonHashedFileList {
 		self.files.len()
 	}
 
+	pub fn total_size(&self) -> u64 {
+		self.files.values().fold(0, |acc, f| acc + f.size)
+	}
+
 	pub async fn from_dir<P: AsRef<Path>>(
 		dir_path: P,
 		include_hidden_files: bool,
@@ -197,42 +201,32 @@ impl NonHashedFileList {
 		})
 	}
 
-	pub async fn hash(
-		&self,
-		hash_func: HashFunc,
-		tx: ExternalEventSender,
-	) -> io::Result<HashedFileList> {
-		// TODO: use several threads with an LPT
-		let handle_list: JoinSet<_> = self
-			.files
-			.iter()
-			.map(|(k, f)| {
-				let k = k.clone();
-				let f = f.to_owned();
-				let tx = tx.clone();
-				tokio::spawn(async move {
-					let file = f.hash(hash_func, tx).await?;
-					Ok((k, file))
-				})
-			})
-			.collect();
-		let mut files = HashMap::with_capacity(self.files.len());
+	pub fn hash(&self, hash_func: HashFunc, tx: ExternalEventSender) -> io::Result<HashedFileList> {
+		let files: HashMap<FileId, HashedFile> = HashMap::with_capacity(self.files.len());
+		let files_mx = std::sync::Mutex::new(files);
+		self.files
+			.par_iter()
+			.try_for_each(|(k, f)| -> io::Result<()> {
+				let file = f.hash(hash_func, tx.clone())?;
+				let mut files_lock = files_mx.lock().unwrap();
+				files_lock.insert(k.clone(), file);
+				Ok(())
+			})?;
+		let files = files_mx.into_inner().unwrap();
+
 		let mut duplicated_files: HashMap<String, HashSet<FileId>> =
 			HashMap::with_capacity(self.files.len());
-		for r in handle_list.join_all().await {
-			let r: io::Result<_> = r?;
-			let (k, f) = r?;
+		for (k, f) in files.iter() {
 			match duplicated_files.get_mut(&f.hash) {
 				Some(set) => {
-					set.insert(f.get_id());
+					set.insert(k.clone());
 				}
 				None => {
 					let mut set = HashSet::with_capacity(1);
-					set.insert(f.get_id());
+					set.insert(k.clone());
 					duplicated_files.insert(f.hash.clone(), set);
 				}
-			}
-			files.insert(k, f);
+			};
 		}
 		duplicated_files.retain(|_, v| v.len() > 1);
 		Ok(HashedFileList {
@@ -359,16 +353,14 @@ impl NonHashedFile {
 		Ok(file)
 	}
 
-	pub async fn hash(
-		&self,
-		hash_func: HashFunc,
-		tx: ExternalEventSender,
-	) -> io::Result<HashedFile> {
+	pub fn hash(&self, hash_func: HashFunc, tx: ExternalEventSender) -> io::Result<HashedFile> {
+		let path = self.get_absolute_path()?;
+		let hash = hash_func.hash_file(path, tx)?;
 		Ok(HashedFile {
 			base_dir: self.base_dir.clone(),
 			relative_path: self.relative_path.clone(),
 			size: self.size,
-			hash: hash_func.hash_file(self.get_absolute_path()?, tx).await?,
+			hash,
 			hash_func,
 		})
 	}

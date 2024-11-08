@@ -61,7 +61,7 @@ pub fn Debug() -> Element {
 					info!("Progress bar form event: {event:?}");
 					let data = event.data.values();
 					info!("Progress bar form event data: {data:?}");
-					let nb: usize = form_value_str!(data, "nb").parse().unwrap();
+					let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
 					let tx = tx_sig();
 					spawn(async move {
 						send_event(&tx, ExternalEvent::ProgressBarDelete).await;

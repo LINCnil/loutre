@@ -15,24 +15,24 @@ impl LoadingBarStatus {
 
 #[derive(Clone, Copy, Debug)]
 pub struct ProgressBarStatus {
-	max: usize,
-	value: usize,
+	max: u64,
+	value: u64,
 }
 
 impl ProgressBarStatus {
-	pub fn new(max: usize) -> Self {
+	pub fn new(max: u64) -> Self {
 		Self { max, value: 0 }
 	}
 
-	pub fn get_max(&self) -> usize {
+	pub fn get_max(&self) -> u64 {
 		self.max
 	}
 
-	pub fn get_value(&self) -> usize {
+	pub fn get_value(&self) -> u64 {
 		self.value
 	}
 
-	pub fn add_progress(&mut self, progress: usize) {
+	pub fn add_progress(&mut self, progress: u64) {
 		self.value += progress;
 	}
 }
