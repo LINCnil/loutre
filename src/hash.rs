@@ -9,7 +9,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::time::{Duration, Instant};
-use std::{fmt, io, thread};
+use std::{fmt, io};
 use strum::EnumIter;
 
 pub const CHARS_TO_REMOVE: &[char] = &['-', '_', ' '];
@@ -165,13 +165,6 @@ impl HashFunc {
 			Self::Blake2s => alg_hash_file!(f, buffer, tx, Blake2s256),
 			Self::Blake2b => alg_hash_file!(f, buffer, tx, Blake2b512),
 			Self::Blake3 => blake3_hash_file!(f, buffer, tx, Blake3),
-		}
-	}
-
-	fn nb_threads(&self) -> usize {
-		match thread::available_parallelism() {
-			Ok(nb) => nb.get(),
-			Err(_) => 1,
 		}
 	}
 }
