@@ -49,15 +49,13 @@ pub async fn get_default_theme() -> Theme {
 	Theme::Light
 }
 
-pub async fn set_theme(theme: Theme) {
+pub async fn set_theme(mut config_sig: Signal<Config>, mut theme_sig: Signal<Theme>, theme: Theme) {
 	// Set the theme context
 	let js = format!("document.documentElement.setAttribute('data-theme', '{theme}');");
 	let _ = eval(&js).await;
-	let mut theme_sig = use_context::<Signal<Theme>>();
 	theme_sig.set(theme);
 
 	// Write it to the configuration
-	let mut config_sig = use_context::<Signal<Config>>();
 	let mut config = config_sig();
 	config.theme = Some(theme);
 	config.write_to_file();

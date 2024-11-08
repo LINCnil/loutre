@@ -22,13 +22,16 @@ use tokio::runtime::Handle;
 pub fn Main() -> Element {
 	let file_list = use_context::<Signal<FileList>>()();
 	let pg_status_opt = use_context::<Signal<Option<ProgressBarStatus>>>()();
+	let config_sig = use_context::<Signal<Config>>();
+	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
+	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 	rsx! {
 		DropZone {
 			ondrop: move |event: DragEvent| {
 				info!("DragEvent received: {event:?}");
 				spawn(async move {
 					if let Some(file_engine) = event.files() {
-						load_file(file_engine).await;
+						load_file(&config_sig(), tx_sig(), file_engine).await;
 					}
 				});
 			},
@@ -43,7 +46,7 @@ pub fn Main() -> Element {
 					onchange: move |event: FormEvent| {
 						spawn(async move {
 							if let Some(file_engine) = event.files() {
-								load_file(file_engine).await;
+								load_file(&config_sig(), tx_sig(), file_engine).await;
 							}
 						});
 					},
@@ -58,7 +61,7 @@ pub fn Main() -> Element {
 					onchange: move |event: FormEvent| {
 						spawn(async move {
 							if let Some(file_engine) = event.files() {
-								load_file(file_engine).await;
+								load_file(&config_sig(), tx_sig(), file_engine).await;
 							}
 						});
 					},
@@ -77,7 +80,7 @@ pub fn Main() -> Element {
 						Button {
 							onclick: move |_event| {
 								spawn(async move {
-									calc_fingerprints().await;
+									calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig()).await;
 								});
 							},
 							{ t!("view_main_calc_fingerprints") }
@@ -99,25 +102,23 @@ pub fn Main() -> Element {
 	}
 }
 
-async fn load_file(file_engine: Arc<dyn FileEngine>) {
+async fn load_file(config: &Config, tx: ExternalEventSender, file_engine: Arc<dyn FileEngine>) {
 	info!("File loading: {:?}", file_engine.files());
 	if let Some(f) = file_engine.files().first() {
 		let path = Path::new(f);
-		if path.is_dir() {
-			load_directory(path).await;
-		}
 		if path.is_file() {
-			load_receipt(path).await;
+			load_receipt(config, tx.clone(), path).await;
+		}
+		if path.is_dir() {
+			load_directory(config, tx, path).await;
 		}
 	}
 }
 
-async fn load_directory(path: &Path) {
+async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
 	info!("Loading directory: {}", path.display());
-	let config = use_context::<Signal<Config>>()();
 	let include_hidden_files = config.include_hidden_files();
 	let include_system_files = config.include_system_files();
-	let tx = use_context::<Signal<ExternalEventSender>>()();
 	send_event(&tx, ExternalEvent::FileListReset).await;
 	let handle = Handle::current();
 	let path = path.to_path_buf();
@@ -141,14 +142,12 @@ async fn load_directory(path: &Path) {
 	info!("Directory loading async function done");
 }
 
-async fn load_receipt(path: &Path) {
+async fn load_receipt(config: &Config, tx: ExternalEventSender, path: &Path) {
 	info!("Loading receipt: {}", path.display());
-	let config = use_context::<Signal<Config>>()();
 	let default_hash = match crate::analyse_hash::from_path(path) {
 		Some(h) => h,
 		None => config.hash_function,
 	};
-	let tx = use_context::<Signal<ExternalEventSender>>()();
 	send_event(&tx, ExternalEvent::ReceiptReset).await;
 	let handle = Handle::current();
 	let path = path.to_path_buf();
@@ -170,9 +169,7 @@ async fn load_receipt(path: &Path) {
 	info!("Receipt loading async function done");
 }
 
-async fn calc_fingerprints() {
-	let config = use_context::<Signal<Config>>()();
-	let receipt_opt = use_context::<Signal<Option<Receipt>>>()();
+async fn calc_fingerprints(config: &Config, tx: ExternalEventSender, receipt_opt: Option<Receipt>) {
 	let hash_func = match receipt_opt {
 		Some(rcpt) => rcpt.get_main_hashing_function(),
 		None => config.hash_function,

@@ -5,19 +5,19 @@ use dioxus::prelude::*;
 use dioxus_i18n::prelude::*;
 use unic_langid::{langid, LanguageIdentifier};
 
-async fn change_lang(to_lang: LanguageIdentifier) {
+async fn change_lang(config: &mut Config, to_lang: LanguageIdentifier) {
 	// Change the current language
 	let mut i18n = i18n();
 	i18n.set_language(to_lang.clone());
 
 	// Write it to the configuration
-	let mut config = use_context::<Signal<Config>>()();
 	config.lang = to_lang.into();
 	config.write_to_file();
 }
 
 #[component]
 pub fn LangSwitch() -> Element {
+	let config = use_context::<Signal<Config>>();
 	let langs = [
 		(langid!("en-US"), "English (US)"),
 		(langid!("fr-BE"), "Français (Belgique)"),
@@ -36,7 +36,7 @@ pub fn LangSwitch() -> Element {
 						onclick: move |_| {
 							let value = id.clone();
 							spawn(async move {
-								change_lang(value).await;
+								change_lang(&mut config(), value).await;
 							});
 						},
 						"{name}"

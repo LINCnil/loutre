@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::components::{DropZone, Header, LoadingBar, Notification, ProgressBar};
-use crate::events::{send_event, send_event_full, ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
 use dioxus::prelude::*;
@@ -18,6 +18,8 @@ macro_rules! form_value_str {
 #[component]
 pub fn Debug() -> Element {
 	let mut notifs = use_signal(Vec::<(NotificationLevel, usize)>::new);
+	let loading_bar = use_context::<Signal<LoadingBarStatus>>()();
+	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 
 	rsx! {
 		DropZone {
@@ -60,8 +62,8 @@ pub fn Debug() -> Element {
 					let data = event.data.values();
 					info!("Progress bar form event data: {data:?}");
 					let nb: usize = form_value_str!(data, "nb").parse().unwrap();
+					let tx = tx_sig();
 					spawn(async move {
-						let tx = use_context::<Signal<ExternalEventSender>>()();
 						send_event(&tx, ExternalEvent::ProgressBarDelete).await;
 						send_event(&tx, ExternalEvent::ProgressBarCreate(100)).await;
 						send_event(&tx, ExternalEvent::ProgressBarAdd(nb)).await;
@@ -78,10 +80,11 @@ pub fn Debug() -> Element {
 					input { r#type: "submit" }
 					button {
 						prevent_default: "onclick",
-						onclick: |_event| {
+						onclick: move |_event| {
 							info!("Debug: Progress bar button onclick");
+							let tx = tx_sig();
 							spawn(async move {
-								send_event_full(ExternalEvent::ProgressBarDelete).await;
+								send_event(&tx, ExternalEvent::ProgressBarDelete).await;
 							});
 						},
 						"Reset"
@@ -93,15 +96,15 @@ pub fn Debug() -> Element {
 				legend { "Loading bar" }
 				button {
 					prevent_default: "onclick",
-					onclick: |_event| {
+					onclick: move |_event| {
 						info!("Debug: Loading bar button onclick");
+						let tx = tx_sig();
 						spawn(async move {
-							let loading_bar = use_context::<Signal<LoadingBarStatus>>()();
 							let new_status_evt = match loading_bar {
 								LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
 								LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
 							};
-							send_event_full(new_status_evt).await;
+							send_event(&tx, new_status_evt).await;
 						});
 					},
 					"Toogle"

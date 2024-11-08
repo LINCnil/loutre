@@ -41,19 +41,25 @@ pub fn App() -> Element {
 }
 
 fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
+	let fl_sig = use_context::<Signal<FileList>>();
+	let lb_sig = use_context::<Signal<LoadingBarStatus>>();
+	let pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
+	let rcpt_sig = use_context::<Signal<Option<Receipt>>>();
 	use_coroutine(|_| async move {
 		info!("Waiting for an external event…");
 		while let Some(event) = progress_rx.recv().await {
 			info!("External event received: {event}");
-			event.handle();
+			event.handle(fl_sig, lb_sig, pg_sig, rcpt_sig);
 		}
 	})
 }
 
 fn initialize_theme() {
+	let config_sig = use_context::<Signal<Config>>();
+	let theme_sig = use_context::<Signal<Theme>>();
 	use_effect(move || {
-		spawn(async {
-			let config = use_context::<Signal<Config>>()();
+		let config = config_sig();
+		spawn(async move {
 			let default_theme = match config.theme {
 				Some(t) => {
 					info!("loading theme from configuration: {t}");
@@ -65,7 +71,7 @@ fn initialize_theme() {
 					t
 				}
 			};
-			set_theme(default_theme).await;
+			set_theme(config_sig, theme_sig, default_theme).await;
 		});
 	});
 }

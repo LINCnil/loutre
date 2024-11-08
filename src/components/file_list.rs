@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::events::{send_event_full, ExternalEvent};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::files::FileList;
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
@@ -27,10 +27,11 @@ pub fn FileListReceipt() -> Element {
 
 #[component]
 fn FileListMeta(is_receipt: bool) -> Element {
+	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
+	let file_list = use_context::<Signal<FileList>>()();
 	let path_opt = if is_receipt {
-		use_context::<Signal<Option<Receipt>>>()().map(|rcpt| rcpt.to_string())
+		receipt_opt_sig().map(|rcpt| rcpt.to_string())
 	} else {
-		let file_list = use_context::<Signal<FileList>>()();
 		match file_list {
 			FileList::NonHashed(lst) => Some(lst.get_base_dir().display().to_string()),
 			FileList::Hashed(lst) => Some(lst.get_base_dir().display().to_string()),
@@ -49,6 +50,7 @@ fn FileListMeta(is_receipt: bool) -> Element {
 
 #[component]
 fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
+	let tx = use_context::<Signal<ExternalEventSender>>()();
 	let icon_class = if is_receipt {
 		"ri-mail-check-line"
 	} else {
@@ -68,13 +70,14 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 				class: "component-file-list-delete ri-close-large-line",
 				title: t!("cpn_file_list_delete"),
 				onclick: move |_| {
+					let txc = tx.clone();
 					spawn(async move {
 						if is_receipt {
-							send_event_full(ExternalEvent::ReceiptReset).await;
+							send_event(&txc, ExternalEvent::ReceiptReset).await;
 							info!("Removing receipt");
 						} else {
 							info!("Removing file list");
-							send_event_full(ExternalEvent::FileListReset).await;
+							send_event(&txc, ExternalEvent::FileListReset).await;
 						}
 					});
 				},
