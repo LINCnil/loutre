@@ -57,22 +57,26 @@ fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Cor
 fn initialize_theme() {
 	let config_sig = use_context::<Signal<Config>>();
 	let theme_sig = use_context::<Signal<Theme>>();
+	let mut is_init = true;
 	use_effect(move || {
-		let config = config_sig();
-		spawn(async move {
-			let default_theme = match config.theme {
-				Some(t) => {
-					info!("loading theme from configuration: {t}");
-					t
-				}
-				None => {
-					let t = get_default_theme().await;
-					info!("no theme configured, loading default one: {t}");
-					t
-				}
-			};
-			set_theme(config_sig, theme_sig, default_theme).await;
-		});
+		if is_init {
+			is_init = false;
+			let config = config_sig();
+			spawn(async move {
+				let default_theme = match config.theme {
+					Some(t) => {
+						info!("loading theme from configuration: {t}");
+						t
+					}
+					None => {
+						let t = get_default_theme().await;
+						info!("no theme configured, loading default one: {t}");
+						t
+					}
+				};
+				set_theme(config_sig, theme_sig, default_theme).await;
+			});
+		}
 	});
 }
 
