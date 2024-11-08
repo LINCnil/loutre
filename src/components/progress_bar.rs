@@ -2,10 +2,13 @@
 
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use dioxus::prelude::*;
+use dioxus_i18n::t;
+use humansize::{make_format, DECIMAL};
 
 #[component]
 pub fn ProgressBar() -> Element {
 	let status_opt = use_context::<Signal<Option<ProgressBarStatus>>>()();
+	let formatter = make_format(DECIMAL);
 	rsx! {
 		if let Some(status) = status_opt {
 			div {
@@ -14,6 +17,14 @@ pub fn ProgressBar() -> Element {
 					max: "{status.get_max()}",
 					value: "{status.get_value()}",
 				}
+				p {{
+					t!(
+						"cpn_progress_bar_status",
+						done: formatter(status.get_value()),
+						total: formatter(status.get_max()),
+						percent: status.get_value() * 100 / status.get_max()
+					)
+				}}
 			}
 		}
 	}

@@ -7,6 +7,8 @@ view_main_check_fingerprints = Data integrity check
 
 cpn_file_list_delete = Reset
 
+cpn_progress_bar_status = Progress: { $done } / { $total } ({ $percent } %)
+
 cpn_notif_empty_files_title = Empty files detected
 cpn_notif_empty_files_text = One or more files located in the selected directory are empty.
 

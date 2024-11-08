@@ -7,6 +7,8 @@ view_main_check_fingerprints = Vérifier les empreintes
 
 cpn_file_list_delete = Réinitialiser
 
+cpn_progress_bar_status = Réalisé : { $done } / { $total } ({ $percent } %)
+
 cpn_notif_empty_files_title = Fichiers vides détectés
 cpn_notif_empty_files_text = Un ou plusieurs fichiers contenus dans le dossier sélectionné sont vides.
 
