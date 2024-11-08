@@ -7,9 +7,12 @@ use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
 use std::path::Path;
 use std::{fmt, io, thread};
+use strum::EnumIter;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 use tokio::time::{Duration, Instant};
+
+pub const CHARS_TO_REMOVE: &[char] = &['-', '_', ' '];
 
 macro_rules! alg_hash_file {
 	($f: ident, $buffer: ident, $tx: ident, $alg: ident) => {{
@@ -80,7 +83,7 @@ macro_rules! blake3_hash_file {
 	}};
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Copy, Clone, Debug, Default, EnumIter, PartialEq, Eq, Deserialize, Serialize)]
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
 	#[default]
@@ -127,8 +130,7 @@ impl std::str::FromStr for HashFunc {
 	type Err = ParseHashFuncError;
 
 	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		let s = s.to_ascii_lowercase().replace(['-', ' '], "");
-		match s.to_ascii_lowercase().as_str() {
+		match s.replace(CHARS_TO_REMOVE, "").to_ascii_lowercase().as_str() {
 			"sha256" => Ok(Self::Sha256),
 			"sha384" => Ok(Self::Sha384),
 			"sha512" => Ok(Self::Sha512),

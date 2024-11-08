@@ -51,7 +51,7 @@ pub fn Main() -> Element {
 				}
 				FileButton {
 					icon: "ri-mail-check-line",
-					accept: ".msg, .txt",
+					accept: ".msg,.txt",
 					multiple: false,
 					directory: false,
 					name: "view-main-btn-select-receipt",
@@ -143,7 +143,13 @@ async fn load_directory(path: &Path) {
 
 async fn load_receipt(path: &Path) {
 	info!("Loading receipt: {}", path.display());
-	let default_hash = crate::hash::HashFunc::Sha256; // TODO: REMOVE ME
+	let default_hash = match crate::analyse_hash::from_path(path) {
+		Some(h) => h,
+		None => {
+			let config = use_context::<Signal<Config>>()();
+			config.hash_function
+		}
+	};
 	let tx = use_context::<Signal<ExternalEventSender>>()();
 	send_event(&tx, ExternalEvent::ReceiptReset).await;
 	let handle = Handle::current();
