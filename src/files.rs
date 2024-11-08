@@ -274,6 +274,25 @@ impl HashedFileList {
 	pub fn is_empty(&self) -> bool {
 		self.files.is_empty()
 	}
+
+	pub fn get_main_hashing_function(&self) -> HashFunc {
+		let mut occurrences = HashMap::with_capacity(self.files.len());
+		for file in self.files.values() {
+			match occurrences.get_mut(&file.hash_func) {
+				Some(nb) => {
+					*nb += 1;
+				}
+				None => {
+					occurrences.insert(file.hash_func, 1);
+				}
+			}
+		}
+		let mut occurrences: Vec<(HashFunc, usize)> =
+			occurrences.iter().map(|(k, v)| (*k, *v)).collect();
+		occurrences.sort_by(|a, b| a.1.cmp(&b.1));
+		let (hash_func, _) = occurrences.pop().unwrap();
+		hash_func
+	}
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]

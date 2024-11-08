@@ -143,12 +143,10 @@ async fn load_directory(path: &Path) {
 
 async fn load_receipt(path: &Path) {
 	info!("Loading receipt: {}", path.display());
+	let config = use_context::<Signal<Config>>()();
 	let default_hash = match crate::analyse_hash::from_path(path) {
 		Some(h) => h,
-		None => {
-			let config = use_context::<Signal<Config>>()();
-			config.hash_function
-		}
+		None => config.hash_function,
 	};
 	let tx = use_context::<Signal<ExternalEventSender>>()();
 	send_event(&tx, ExternalEvent::ReceiptReset).await;
@@ -173,10 +171,16 @@ async fn load_receipt(path: &Path) {
 }
 
 async fn calc_fingerprints() {
-	info!("Starting file hashing");
+	let config = use_context::<Signal<Config>>()();
+	let receipt_opt = use_context::<Signal<Option<Receipt>>>()();
+	let hash_func = match receipt_opt {
+		Some(rcpt) => rcpt.get_main_hashing_function(),
+		None => config.hash_function,
+	};
 	// TODO: hash the files
 	// TODO: if there is a receipt, check fingerprints against it
 	// info!("Checking fingerprints against the receipt");
+	info!("File hashing async function done");
 }
 
 async fn check_fingerprints() {

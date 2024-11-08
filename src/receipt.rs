@@ -26,6 +26,10 @@ impl Receipt {
 	pub fn get_files(&self) -> Vec<HashedFile> {
 		self.files.get_files()
 	}
+
+	pub fn get_main_hashing_function(&self) -> HashFunc {
+		self.files.get_main_hashing_function()
+	}
 }
 
 impl fmt::Display for Receipt {

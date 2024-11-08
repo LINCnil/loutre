@@ -83,7 +83,7 @@ macro_rules! blake3_hash_file {
 	}};
 }
 
-#[derive(Copy, Clone, Debug, Default, EnumIter, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Copy, Clone, Debug, Default, EnumIter, Hash, PartialEq, Eq, Deserialize, Serialize)]
 pub enum HashFunc {
 	#[serde(rename = "sha-256")]
 	#[default]
