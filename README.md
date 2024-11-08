@@ -2,168 +2,80 @@
 
 # LOgiciel Unique de TRaitement des Empreintes (LOUTRE)
 
-Lors d'un contrôle, les agents de la CNIL collectent des pièces numériques qui
-serviront à l'instruction du dossier. Afin de s'assurer de l'intégrité de ces
-pièces, ils calculent l'empreinte numérique de chacune d'entre elles.
-L'évolution des pratiques internes, en particulier l'arrivée de la plateforme
-d'échanges sécurisés, a conduit à la réalisation de différents outils, chacun
-utilisant des technologies différentes. Il a dont été décidé de regrouper ces
-différents outils en un seul : le logiciel unique de traitement des empreintes
-(LOUTRE).
 
+## Build
 
-## Compilation
+Dependencies are liste in the [Dioxus documentation][dioxus_doc].
 
-Les dépendances sont listées dans la documentation de
-[Dioxus](https://dioxuslabs.com/learn/0.5/getting_started).
-
-La compilation d'une version de production s'effectue à l'aide de la commande
-suivante :
+You can compile a production version using the following command:
 
 ```
 cargo build --release
 ```
 
+For a debug version, remove the `--release` flag.
 
-## Droit d'auteur
+[dioxus_doc]: https://dioxuslabs.com/learn/0.5/getting_started
+
+
+## Licence
 
 ![Logo EUPL](https://raw.githubusercontent.com/LINCnil/loutre/main/LICENSE/Logo_EUPL.png)
 
-Vous êtes libres d'utiliser, de modifier et de redistribuer ces outil sous les
-termes de la [licence publique de l'Union européenne (EUPL)
-v1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
-Une copie de cette licence est disponible dans le dossier `LICENSE`.
+You are free tu use, copy, modify, and/or distribute this software under the
+terms of the [European Union Public License (EUPL) v1.2][eupl_12].
+
+A copy of this license is available in the `LICENSE` directory.
+
+[eupl_12]: https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 
 
 ## Configuration
 
-La configuration du logiciel se fait depuis le panneau de configuration de
-l'interface graphique (recommandé) ou bien directement dans un fichier
-`config.toml`. Ce fichier est au format [TOML](https://toml.io/fr/) et ce situe
-par défaut dans l’un des répertoires suivants :
+The configuration should always be modified through the software's graphical
+interface. For use cases where this option is not available (for example in
+automatic deployments), it is possible to directly edit the configuration file.
+This file is named `config.toml` and is written in the [TOML format][toml]. Its
+location varies depending on the operating system.
 
-| Système d'exploitation | Valeur                                            | Exemple pour l'utilisateur toto                      |
-| ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
-| Microsoft Windows      | `{FOLDERID_RoamingAppData}\CNIL\loutre`           | `C:\Users\toto\AppData\Roaming\CNIL\loutre`          |
-| GNU/Linux              | `${XDG_CONFIG_HOME}/cnil/loutre`                  | `/home/toto/.config/cnil/loutre`                     |
-| macOS                  | `${HOME}/Library/Application Support/cnil/loutre` | `/home/toto/Library/Application Support/cnil/loutre` |
+| Operating System  | Value                                             | Example                                                  |
+| ----------------- | ------------------------------------------------- | -------------------------------------------------------- |
+| Microsoft Windows | `{FOLDERID_RoamingAppData}\CNIL\loutre`           | `C:\Users\john_doe\AppData\Roaming\CNIL\loutre`          |
+| GNU/Linux         | `${XDG_CONFIG_HOME}/cnil/loutre`                  | `/home/john_doe/.config/cnil/loutre`                     |
+| macOS             | `${HOME}/Library/Application Support/cnil/loutre` | `/home/john_doe/Library/Application Support/cnil/loutre` |
 
-Ce fichier est automatiquement généré lors du lancement du logiciel. Les
-options de configuration possible sont :
+[toml]: https://toml.io/
 
-- `theme` : chaîne de caractères
-  * `light` (défaut)
-  * `dark`
-- `lang` : chaîne de caractères représentant une étiquettes d’identification de
-  langues IETF telle que définiee par la recommandation standard BCP 47
-  * `en-US`
-  * `fr-BE`
-  * `fr-FR` (défaut)
-- `content_file_name` : chaîne de caractères définissant le nom du fichier dans
-  lequel sont contenues les empreintes des pièces (par défaut, `contenu.txt`)
-- `number_representation` : chaîne de caractères définissant la manière dont
-  est représenté le nombre de pièces dans un dossier
-  * `letters` : en toutes lettres
-  * `western arabic numerals` (défaut) : en chiffres arabes
-- `hash_function` : chaîne de caractères définissant la fonction de hachage à
-  utiliser
-  * `sha-256`
-  * `sha-384`
-  * `sha-512`
-  * `sha3-256`
-  * `sha3-384`
-  * `sha3-512`
-  * `blake2s`
-  * `blake2b`
-  * `blake3`
-- `clipboard_threshold` : nombre entier positif représentant le nombre de
-  fichiers à partir duquel le presse papier contient par défaut l'empreinte du
-  fichier de contenu plutôt que les empreintes de chaque pièce
-- `clipboard_persistence` : booléen définissant si le gestionnaire de
-  presse-papier doit persister ou non en mémoire (ne définissez ce paramètre
-  que si vous rencontrez des problèmes avec le copier/coller)
-- `enable_duplicate_file_warning` : booléen définissant s'il convient ou non
-  d'ajouter un avertissement en cas de fichiers identiques
-- `enable_empty_file_warning` : booléen définissant s'il convient ou non
-  d'ajouter un avertissement en cas de fichier vide
+### Choosing a hashing function
 
+As for 2024, all supported hashing functions uses a robust public algorithm
+without known vulnerability. All of them can therefore be safely used.
 
-## Architecture technique
+Those functions mostly varies in terms of fingerprint size, execution speed and
+popularity.
 
-Les sources, situées dans le dossier `src/`, ont les rôles suivants :
+The most popular function is SHA-256. Aside from its large popularity, it has a
+small fingerprint size and almost every recent x86 CPU supports the [Intel SHA
+extensions][x86_sha], which means it will be hardware-accelerated and therefore
+very quick to process. Those characteristics makes it an excellent choice.
 
-### Calcul des empreintes
+The intrinsically fastest function is Blake-3. It is very recent (2020) and
+therefore rarely used, but its modern conception makes it so fast that, without
+hardware acceleration, its performances may be similar to a
+hardware-accelerated SHA-256. Its fingerprint size is equal to the SHA-256 one.
+This is a very good choice when used with CPU that does not support the Intel
+SHA extensions.
 
-Le calcul des empreintes étant une opération pouvant de révéler longue, elle
-est effectuée sur plusieurs fils d'exécution. Répartir ainsi les fichiers en
-plusieurs sous-ensembles de manière à ce que la somme des tailles de fichiers
-soit la plus similaire possible entre les ensemble est [un problème
-NP-complet](https://en.wikipedia.org/wiki/Partition_problem) (cf. [optimal job
-scheduling](https://en.wikipedia.org/wiki/Optimal_job_scheduling)). Afin de
-rester simple tout en étant relativement efficace, l'implémentation actuelle
-repose sur [un
-LPT](https://en.wikipedia.org/wiki/Longest-processing-time-first_scheduling) :
-la liste des fichiers est triée du plus lourd au plus léger puis chaque fil
-d'exécution, à l'aide d'une
-[mutex](https://doc.rust-lang.org/std/sync/struct.Mutex.html), s'octroie le
-fichier le plus lord encore disponible.
+All the other functions are neither fastest nor more popular than SHA-256 and
+Blake-3. In most cases, the additional security brought by the longest
+fingerprint of some functions is not considered useful. Those additional
+functions are supported for two main reasons:
 
-Il est à noter que, afin que la barre de progression soit en mesure d'afficher
-une mesure fiable, chaque fil d'exécution remonte à intervalle régulier le
-nombre d'octets qu'il a traité. Tout comme pour le chargement des fichiers, la
-communication entre les fils d'exécution s'effectue à l'aide d'un canal.
+1. A better integration in processes that already uses those functions.
+2. The possibility to quickly react to an eventual vulnerability discovered in
+   the most popular functions.
 
-### L'analyse syntaxique
-
-Afin d'extraire les informations nécessaires des courriers électroniques
-faisant office d'accusés de réception, il est fait usage d'une bibliothèque
-d'[analyse syntaxique par
-combinaison](https://en.wikipedia.org/wiki/Parser_combinator) :
-[nom](https://github.com/Geal/nom). L'idée est de combiner entre eux plusieurs
-analyseurs syntaxiques d'éléments de base afin de créer des analyseurs
-syntaxiques plus poussés pouvant également à leur tour être combinés pour en
-former de nouveaux.
-
-### Équivalence Unicode et normalisation
-
-Afin de pouvoir comparer des noms de fichiers provenant de différentes sources,
-il est important de prendre en compte les [équivalences
-Unicode](https://fr.wikipedia.org/wiki/%C3%89quivalence_Unicode) et leur
-impact. Afin d'éviter de considérer comme différents deux noms de fichiers
-identiques mais dont certains caractères sont représentés sous des formes
-différentes, il est nécessaire d'effectuer une
-[normalisation](https://fr.wikipedia.org/wiki/Normalisation_Unicode). Dans le
-cas présent, l'algorithme de normalisation utilisé est NFKC.
-
-### Choix d'une fonction de hachage
-
-À l'heure actuelle (début 2023), toutes les fonctions de hachage supportées
-utilisent un algorithme public réputé fort et exempt de vulnérabilité connue.
-Elles peuvent donc toutes être utilisées.
-
-Ces fonctions diffèrent principalement par leur taille d'empreinte, leur
-vitesse d'exécution et leur popularité.
-
-La fonction la plus répandue est SHA-256. Cette fonction extrêmement populaire,
-dispose de la taille d'empreinte la plus faible parmi les fonctions supportées
-et les processeurs modernes permettent généralement d'accélérer ses
-performances directement au niveau du matériel afin d'être extrêmement rapide.
-C'est donc un excellent choix qui est grandement reconnu et fait consensus.
-
-La fonction intrinsèquement la plus rapide est Blake-3. Très récente (2020) et
-de conception moderne, elle est encore peu répandue mais se démarque par sa
-rapidité d'exécution exceptionnelle qui, sans accélération matérielle, rivalise
-avec une SHA-256 matériellement accélérée sans toutefois être nécessairement
-plus rapide que cette dernière. Sa taille d'empreinte est identique à celle de
-SHA-256. Il s'agit donc également d'un excellent choix particulièrement adapté
-au calcul d'empreintes de gros volumes de données sur les machines ne disposant
-pas d'accélération matérielle pour SHA-256.
-
-Les autres fonctions ne sont ni plus rapides ni plus populaires que SHA-256 et
-Blake-3. Elles n'apportent pas de gain significatif en terme de sécurité malgré
-des tailles d'empreintes supérieures ou égales. Leur présence est
-principalement motivé par la possibilité de les utiliser en urgence dans
-l'hypothèse où des vulnérabilités seraient découvertes dans SHA-256 et Blake-3.
+[x86_sha]: https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sha-extensions.html
 
 
 ## Favicon
