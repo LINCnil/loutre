@@ -82,10 +82,19 @@ functions are supported for two main reasons:
 After calculating the fingerprint of each file in the specified directory,
 Loutre stores those hashes in a file. You may chose the format of this file.
 
+Important note: the Cksum format has no official name. We named it this way
+because of the cksum tool. There is two very different variants of this format:
+one is used by default on several BSD systems, the other one is used by default
+in systems using GNU coreutils (mostly GNU/Linux distributions). All known
+recent versions of those operating systems include tools capable of reading and
+writing both variants.
+
 #### Cksum (BSD variant)
 
-This is the default choice. This format is compatible with the output of the
-following tools:
+This is the default choice. This variant is recommended since it explicitly
+stores the hashing function that has been used to generate the fingerprints.
+
+This format is compatible with the output of the following tools:
 
 - On GNU/Linux and other systems using GNU coreutils: [cksum][gnu_cksum] (using
   one of the following algorithms: sha256, sha384, sha512, blake2b)
@@ -97,10 +106,11 @@ following tools:
 - On OpenBSD: [cksum][openbsd_cksum] (using the following algorithms: sha256,
   sha384, sha512)
 
-This variant is recommended since it explicitly stores the hashing function
-that has been used to generate the fingerprints.
-
 #### Cksum (GNU variant)
+
+This variant does not stores the hashing function that has been used to
+generate the fingerprints. The content file's name should therefore indicate it
+in its name.
 
 This format is compatible with the output of the following tools:
 
@@ -114,10 +124,6 @@ This format is compatible with the output of the following tools:
   [sha512sum][freebsd_sha512sum]
 - On OpenBSD: [cksum][openbsd_cksum] (using the `-r` option and one of the
   following algorithms: sha256, sha384, sha512)
-
-This variant does not stores the hashing function that has been used to
-generate the fingerprints. The content file's name should therefore indicate it
-in its name.
 
 #### Cnil
 
