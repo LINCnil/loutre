@@ -1,6 +1,6 @@
 use crate::files::HashedFileList;
 use crate::hash::HashFunc;
-use crate::serializers::{ctn_file_cksum_gnu, ctn_file_cnil};
+use crate::serializers::{ctn_file_cksum_bsd, ctn_file_cksum_gnu, ctn_file_cnil};
 use serde_derive::{Deserialize, Serialize};
 use std::fmt;
 use std::fs::File;
@@ -10,6 +10,9 @@ use std::io;
 #[serde(rename_all = "lowercase")]
 pub enum ContentFileFormat {
 	#[default]
+	#[serde(alias = "cksum-bsd")]
+	CksumBsd,
+	#[serde(alias = "cksum-gnu")]
 	CksumGnu,
 	Cnil,
 }
@@ -17,7 +20,8 @@ pub enum ContentFileFormat {
 impl fmt::Display for ContentFileFormat {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		let ctn_file_fmt = match &self {
-			Self::CksumGnu => "cksum (GNU)",
+			Self::CksumBsd => "Cksum (BSD)",
+			Self::CksumGnu => "Cksum (GNU)",
 			Self::Cnil => "Cnil",
 		};
 		write!(f, "{ctn_file_fmt}")
@@ -27,6 +31,7 @@ impl fmt::Display for ContentFileFormat {
 impl ContentFileFormat {
 	pub fn default_content_file_name(&self, hash_func: HashFunc) -> String {
 		match self {
+			Self::CksumBsd => format!("{}.txt", hash_func.to_string().to_lowercase()),
 			Self::CksumGnu => format!("{}sums.txt", hash_func.to_string().to_lowercase()),
 			Self::Cnil => String::from("contenu.txt"),
 		}
@@ -38,6 +43,7 @@ impl ContentFileFormat {
 		hashed_list: &HashedFileList,
 	) -> io::Result<()> {
 		match self {
+			Self::CksumBsd => ctn_file_cksum_bsd(ctn_file, hashed_list),
 			Self::CksumGnu => ctn_file_cksum_gnu(ctn_file, hashed_list),
 			Self::Cnil => ctn_file_cnil(ctn_file, hashed_list),
 		}
@@ -51,6 +57,19 @@ mod tests {
 	#[test]
 	fn default_content_file_name() {
 		let tests = &[
+			(ContentFileFormat::CksumBsd, HashFunc::Sha256, "sha256.txt"),
+			(ContentFileFormat::CksumBsd, HashFunc::Sha512, "sha512.txt"),
+			(
+				ContentFileFormat::CksumBsd,
+				HashFunc::Sha3_384,
+				"sha3-384.txt",
+			),
+			(
+				ContentFileFormat::CksumBsd,
+				HashFunc::Blake2b,
+				"blake2b.txt",
+			),
+			(ContentFileFormat::CksumBsd, HashFunc::Blake3, "blake3.txt"),
 			(
 				ContentFileFormat::CksumGnu,
 				HashFunc::Sha256,

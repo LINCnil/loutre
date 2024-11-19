@@ -104,6 +104,7 @@ mod tests {
 theme = "dark"
 lang = "fr"
 number_representation = "letters"
+content_file_format = "cksum-gnu"
 hash_function = "sha-512"
 "#;
 		let cfg = Config::load_config(s);
@@ -112,7 +113,7 @@ hash_function = "sha-512"
 		assert_eq!(cfg.number_representation, NbRepr::Letters);
 		assert_eq!(cfg.hash_function, HashFunc::Sha512);
 		assert_eq!(cfg.content_file_name, None);
-		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
+		assert_eq!(cfg.content_file_format, ContentFileFormat::CksumGnu);
 		assert_eq!(cfg.get_content_file_name(), "sha512sums.txt".to_string());
 	}
 
@@ -144,7 +145,7 @@ hash_function = "sha-256"
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
-		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
+		assert_eq!(cfg.get_content_file_name(), "sha256.txt".to_string());
 	}
 
 	#[test]
@@ -163,6 +164,6 @@ hash_function = "also invalid"
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
-		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
+		assert_eq!(cfg.get_content_file_name(), "sha256.txt".to_string());
 	}
 }
