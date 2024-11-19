@@ -10,6 +10,7 @@ pub fn ctn_file_cksum_bsd(ctn_file: &mut File, hashed_list: &HashedFileList) -> 
 	Ok(())
 }
 
+#[inline]
 fn format_line(file: &HashedFile) -> String {
 	format!(
 		"{} ({}) = {}\n",
