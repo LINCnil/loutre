@@ -183,6 +183,7 @@ async fn calc_fingerprints(
 		Some(rcpt) => rcpt.get_main_hashing_function(),
 		None => config.hash_function,
 	};
+	let config = config.clone();
 
 	if let FileList::NonHashed(file_list) = file_list {
 		thread::spawn(move || {
@@ -192,7 +193,7 @@ async fn calc_fingerprints(
 			send_event_sync(&tx, ExternalEvent::ProgressBarCreate(total_size));
 			info!("Total size to hash: {total_size} bytes");
 
-			match file_list.hash(hash_func, tx.clone()) {
+			match file_list.hash(&config, hash_func, tx.clone()) {
 				Ok(hashed_file_list) => {
 					send_event_sync(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
 				}

@@ -1,8 +1,11 @@
+use crate::config::Config;
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
+use crate::serializers::ctn_file_cnil;
 use dioxus_logger::tracing::{error, info};
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
+use std::fs::File;
 use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
@@ -119,6 +122,12 @@ pub struct NonHashedFileList {
 common_lst_impl!(NonHashedFileList, NonHashedFile);
 
 impl NonHashedFileList {
+	fn get_content_file_absolute_path(&self, config: &Config) -> io::Result<PathBuf> {
+		let mut path = self.base_dir.clone().canonicalize()?;
+		path.push(config.get_content_file_name());
+		Ok(path)
+	}
+
 	pub fn len(&self) -> usize {
 		self.files.len()
 	}
@@ -201,15 +210,23 @@ impl NonHashedFileList {
 		})
 	}
 
-	pub fn hash(&self, hash_func: HashFunc, tx: ExternalEventSender) -> io::Result<HashedFileList> {
+	pub fn hash(
+		&self,
+		config: &Config,
+		hash_func: HashFunc,
+		tx: ExternalEventSender,
+	) -> io::Result<HashedFileList> {
+		let ctn_file_absolute_path = self.get_content_file_absolute_path(config)?;
 		let files: HashMap<FileId, HashedFile> = HashMap::with_capacity(self.files.len());
 		let files_mx = std::sync::Mutex::new(files);
 		self.files
 			.par_iter()
 			.try_for_each(|(k, f)| -> io::Result<()> {
-				let file = f.hash(hash_func, tx.clone())?;
-				let mut files_lock = files_mx.lock().unwrap();
-				files_lock.insert(k.clone(), file);
+				if f.get_absolute_path()? != ctn_file_absolute_path {
+					let file = f.hash(hash_func, tx.clone())?;
+					let mut files_lock = files_mx.lock().unwrap();
+					files_lock.insert(k.clone(), file);
+				}
 				Ok(())
 			})?;
 		let files = files_mx.into_inner().unwrap();
@@ -229,13 +246,15 @@ impl NonHashedFileList {
 			};
 		}
 		duplicated_files.retain(|_, v| v.len() > 1);
-		Ok(HashedFileList {
+		let hashed_lst = HashedFileList {
 			id: Uuid::new_v4(),
 			base_dir: self.base_dir.clone(),
 			files,
 			empty_files: self.empty_files.clone(),
 			duplicated_files,
-		})
+		};
+		hashed_lst.write_content_file_opt(ctn_file_absolute_path.as_path())?;
+		Ok(hashed_lst)
 	}
 }
 
@@ -286,6 +305,14 @@ impl HashedFileList {
 		occurrences.sort_by(|a, b| a.1.cmp(&b.1));
 		let (hash_func, _) = occurrences.pop().unwrap();
 		hash_func
+	}
+
+	fn write_content_file_opt(&self, ctn_file_path: &Path) -> io::Result<()> {
+		if !ctn_file_path.exists() {
+			let mut f = File::create_new(ctn_file_path)?;
+			return ctn_file_cnil(&mut f, self);
+		}
+		Ok(())
 	}
 }
 
@@ -390,6 +417,10 @@ impl HashedFile {
 			hash: hash.as_ref().into(),
 			hash_func,
 		}
+	}
+
+	pub fn get_size(&self) -> u64 {
+		self.size
 	}
 
 	pub fn get_hash(&self) -> &str {

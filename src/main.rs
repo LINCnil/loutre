@@ -12,6 +12,7 @@ mod notifications;
 mod parsers;
 mod progress;
 mod receipt;
+mod serializers;
 mod theme;
 mod views;
 
