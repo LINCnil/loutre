@@ -14,7 +14,7 @@ pub fn ctn_file_cksum_bsd(ctn_file: &mut File, hashed_list: &HashedFileList) -> 
 fn format_line(file: &HashedFile) -> String {
 	format!(
 		"{} ({}) = {}\n",
-		file.get_hash_func().to_string(),
+		file.get_hash_func(),
 		file.get_relative_path().display(),
 		file.get_hash(),
 	)

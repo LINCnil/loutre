@@ -31,7 +31,7 @@ impl fmt::Display for ContentFileFormat {
 impl ContentFileFormat {
 	pub fn default_content_file_name(&self, hash_func: HashFunc) -> String {
 		match self {
-			Self::CksumBsd => format!("CHECKSUM.{}.txt", hash_func.to_string()),
+			Self::CksumBsd => format!("CHECKSUM.{}.txt", hash_func),
 			Self::CksumGnu => format!("{}sums.txt", hash_func.to_string().to_lowercase()),
 			Self::Cnil => String::from("contenu.txt"),
 		}
