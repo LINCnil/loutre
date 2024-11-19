@@ -22,7 +22,7 @@ impl fmt::Display for ContentFileFormat {
 		let ctn_file_fmt = match &self {
 			Self::CksumBsd => "Cksum (BSD)",
 			Self::CksumGnu => "Cksum (GNU)",
-			Self::Cnil => "Cnil",
+			Self::Cnil => "CNIL",
 		};
 		write!(f, "{ctn_file_fmt}")
 	}
