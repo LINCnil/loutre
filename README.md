@@ -77,6 +77,68 @@ functions are supported for two main reasons:
 
 [x86_sha]: https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sha-extensions.html
 
+### Choosing a content file format
+
+After calculating the fingerprint of each file in the specified directory,
+Loutre stores those hashes in a file. You may chose the format of this file.
+
+#### Cksum (BSD variant)
+
+This is the default choice. This format is compatible with the output of the
+following tools:
+
+- On GNU/Linux and other systems using GNU coreutils: [cksum][gnu_cksum] (using
+  one of the following algorithms: sha256, sha384, sha512, blake2b)
+- On GNU/Linux and other systems using GNU coreutils:
+  [sha256sum][gnu_sha256sum], [sha384sum][gnu_sha384sum],
+  [sha512sum][gnu_sha512sum], [b2sum][gnu_b2sum] (using the `--tag` option)
+- On FreeBSD: [sha256][freebsd_sha256], [sha384][freebsd_sha384],
+  [sha512][freebsd_sha512]
+- On OpenBSD: [cksum][openbsd_cksum] (using the following algorithms: sha256,
+  sha384, sha512)
+
+This variant is recommended since it explicitly stores the hashing function
+that has been used to generate the fingerprints.
+
+#### Cksum (GNU variant)
+
+This format is compatible with the output of the following tools:
+
+- On GNU/Linux and other systems using GNU coreutils: [cksum][gnu_cksum] (using
+  the `--untagged` option and one of the following algorithms: sha256, sha384,
+  sha512, blake2b)
+- On GNU/Linux and other systems using GNU coreutils:
+  [sha256sum][gnu_sha256sum], [sha384sum][gnu_sha384sum],
+  [sha512sum][gnu_sha512sum], [b2sum][gnu_b2sum]
+- On FreeBSD: [sha256sum][freebsd_sha256sum], [sha384sum][freebsd_sha384sum],
+  [sha512sum][freebsd_sha512sum]
+- On OpenBSD: [cksum][openbsd_cksum] (using the `-r` option and one of the
+  following algorithms: sha256, sha384, sha512)
+
+This variant does not stores the hashing function that has been used to
+generate the fingerprints. The content file's name should therefore indicate it
+in its name.
+
+#### Cnil
+
+This format has been created by the French data protection authority
+(Commission nationale de l'informatique et des libertés, CNIL). It is not
+standard and no other use of this format is known. Its usage is discouraged
+unless you work at the CNIL.
+
+[gnu_sha256sum]: https://man.archlinux.org/man/sha256sum.1
+[gnu_sha384sum]: https://man.archlinux.org/man/sha384sum.1
+[gnu_sha512sum]: https://man.archlinux.org/man/sha512sum.1
+[gnu_b2sum]: https://man.archlinux.org/man/b2sum.1
+[gnu_cksum]: https://man.archlinux.org/man/cksum.1
+[freebsd_sha256sum]: https://man.freebsd.org/cgi/man.cgi?query=sha256sum
+[freebsd_sha384sum]: https://man.freebsd.org/cgi/man.cgi?query=sha384sum
+[freebsd_sha512sum]: https://man.freebsd.org/cgi/man.cgi?query=sha512sum
+[freebsd_sha256]: https://man.freebsd.org/cgi/man.cgi?query=sha256
+[freebsd_sha384]: https://man.freebsd.org/cgi/man.cgi?query=sha384
+[freebsd_sha512]: https://man.freebsd.org/cgi/man.cgi?query=sha512
+[openbsd_cksum]: https://man.openbsd.org/cksum.1
+
 
 ## Favicon
 
