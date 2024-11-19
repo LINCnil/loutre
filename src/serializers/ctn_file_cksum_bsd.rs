@@ -14,7 +14,7 @@ pub fn ctn_file_cksum_bsd(ctn_file: &mut File, hashed_list: &HashedFileList) -> 
 fn format_line(file: &HashedFile) -> String {
 	format!(
 		"{} ({}) = {}\n",
-		file.get_hash_func().to_string().to_uppercase(),
+		file.get_hash_func().to_string(),
 		file.get_relative_path().display(),
 		file.get_hash(),
 	)
@@ -84,10 +84,10 @@ mod tests {
 			PathBuf::from("  (test file)(01).txt"),
 			42,
 			"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-			HashFunc::Blake3,
+			HashFunc::Blake2b,
 		);
 		let line = format_line(&file);
-		let ref_line = "BLAKE3 (  (test file)(01).txt) = 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08\n";
+		let ref_line = "BLAKE2b (  (test file)(01).txt) = 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08\n";
 		assert_eq!(line, ref_line.to_string());
 	}
 }

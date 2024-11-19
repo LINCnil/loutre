@@ -145,7 +145,10 @@ hash_function = "sha-256"
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
-		assert_eq!(cfg.get_content_file_name(), "sha256.txt".to_string());
+		assert_eq!(
+			cfg.get_content_file_name(),
+			"CHECKSUM.SHA256.txt".to_string()
+		);
 	}
 
 	#[test]
@@ -164,6 +167,9 @@ hash_function = "also invalid"
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
-		assert_eq!(cfg.get_content_file_name(), "sha256.txt".to_string());
+		assert_eq!(
+			cfg.get_content_file_name(),
+			"CHECKSUM.SHA256.txt".to_string()
+		);
 	}
 }

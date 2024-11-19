@@ -31,7 +31,7 @@ impl fmt::Display for ContentFileFormat {
 impl ContentFileFormat {
 	pub fn default_content_file_name(&self, hash_func: HashFunc) -> String {
 		match self {
-			Self::CksumBsd => format!("{}.txt", hash_func.to_string().to_lowercase()),
+			Self::CksumBsd => format!("CHECKSUM.{}.txt", hash_func.to_string()),
 			Self::CksumGnu => format!("{}sums.txt", hash_func.to_string().to_lowercase()),
 			Self::Cnil => String::from("contenu.txt"),
 		}
@@ -57,19 +57,31 @@ mod tests {
 	#[test]
 	fn default_content_file_name() {
 		let tests = &[
-			(ContentFileFormat::CksumBsd, HashFunc::Sha256, "sha256.txt"),
-			(ContentFileFormat::CksumBsd, HashFunc::Sha512, "sha512.txt"),
+			(
+				ContentFileFormat::CksumBsd,
+				HashFunc::Sha256,
+				"CHECKSUM.SHA256.txt",
+			),
+			(
+				ContentFileFormat::CksumBsd,
+				HashFunc::Sha512,
+				"CHECKSUM.SHA512.txt",
+			),
 			(
 				ContentFileFormat::CksumBsd,
 				HashFunc::Sha3_384,
-				"sha3-384.txt",
+				"CHECKSUM.SHA3-384.txt",
 			),
 			(
 				ContentFileFormat::CksumBsd,
 				HashFunc::Blake2b,
-				"blake2b.txt",
+				"CHECKSUM.BLAKE2b.txt",
 			),
-			(ContentFileFormat::CksumBsd, HashFunc::Blake3, "blake3.txt"),
+			(
+				ContentFileFormat::CksumBsd,
+				HashFunc::Blake3,
+				"CHECKSUM.BLAKE3.txt",
+			),
 			(
 				ContentFileFormat::CksumGnu,
 				HashFunc::Sha256,
