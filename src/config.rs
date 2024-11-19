@@ -23,6 +23,7 @@ pub struct Config {
 	pub enable_empty_file_warning: Option<bool>,
 	pub include_hidden_files: Option<bool>,
 	pub include_system_files: Option<bool>,
+	pub set_files_as_readonly: Option<bool>,
 }
 
 impl Config {
@@ -86,6 +87,10 @@ impl Config {
 
 	pub fn include_system_files(&self) -> bool {
 		self.include_system_files.unwrap_or(false)
+	}
+
+	pub fn set_files_as_readonly(&self) -> bool {
+		self.set_files_as_readonly.unwrap_or(true)
 	}
 
 	fn load_config(content: &str) -> Config {

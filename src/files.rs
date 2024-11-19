@@ -5,7 +5,7 @@ use crate::hash::HashFunc;
 use dioxus_logger::tracing::{error, info};
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
+use std::fs::{self, File};
 use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
@@ -219,10 +219,15 @@ impl NonHashedFileList {
 		let ctn_file_absolute_path = self.get_content_file_absolute_path(config)?;
 		let files: HashMap<FileId, HashedFile> = HashMap::with_capacity(self.files.len());
 		let files_mx = std::sync::Mutex::new(files);
+		let set_ro = config.set_files_as_readonly();
 		self.files
 			.par_iter()
 			.try_for_each(|(k, f)| -> io::Result<()> {
-				if f.get_absolute_path()? != ctn_file_absolute_path {
+				let abs_path = f.get_absolute_path()?;
+				if abs_path != ctn_file_absolute_path {
+					if set_ro {
+						set_readonly(abs_path)?;
+					}
 					let file = f.hash(hash_func, tx.clone())?;
 					let mut files_lock = files_mx.lock().unwrap();
 					files_lock.insert(k.clone(), file);
@@ -255,6 +260,9 @@ impl NonHashedFileList {
 		};
 		hashed_lst
 			.write_content_file_opt(ctn_file_absolute_path.as_path(), config.content_file_format)?;
+		if set_ro {
+			set_readonly(ctn_file_absolute_path)?;
+		}
 		Ok(hashed_lst)
 	}
 }
@@ -435,6 +443,15 @@ impl HashedFile {
 	pub fn get_hash_func(&self) -> HashFunc {
 		self.hash_func
 	}
+}
+
+#[inline]
+fn set_readonly(path: PathBuf) -> io::Result<()> {
+	let metadata = path.metadata()?;
+	let mut permissions = metadata.permissions();
+	permissions.set_readonly(true);
+	fs::set_permissions(path, permissions)?;
+	Ok(())
 }
 
 #[cfg(unix)]
