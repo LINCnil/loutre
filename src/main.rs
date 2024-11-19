@@ -3,6 +3,7 @@ mod app;
 mod assets;
 mod components;
 mod config;
+mod content_file;
 mod events;
 mod files;
 mod hash;

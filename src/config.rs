@@ -1,3 +1,4 @@
+use crate::content_file::ContentFileFormat;
 use crate::hash::HashFunc;
 use crate::i18n::Lang;
 use crate::nb_repr::NbRepr;
@@ -13,6 +14,7 @@ pub struct Config {
 	pub theme: Option<Theme>,
 	pub lang: Lang,
 	pub content_file_name: Option<String>,
+	pub content_file_format: ContentFileFormat,
 	pub number_representation: NbRepr,
 	pub hash_function: HashFunc,
 	pub clipboard_persistence: Option<bool>,
@@ -59,9 +61,7 @@ impl Config {
 	pub fn get_content_file_name(&self) -> String {
 		match &self.content_file_name {
 			Some(name) => name.to_string(),
-			None => {
-				format!("{}sums.txt", self.hash_function.to_string().to_lowercase())
-			}
+			None => self.content_file_format.default_content_file_name(),
 		}
 	}
 

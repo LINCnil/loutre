@@ -1,7 +1,7 @@
 use crate::config::Config;
+use crate::content_file::ContentFileFormat;
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
-use crate::serializers::ctn_file_cnil;
 use dioxus_logger::tracing::{error, info};
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
@@ -253,7 +253,8 @@ impl NonHashedFileList {
 			empty_files: self.empty_files.clone(),
 			duplicated_files,
 		};
-		hashed_lst.write_content_file_opt(ctn_file_absolute_path.as_path())?;
+		hashed_lst
+			.write_content_file_opt(ctn_file_absolute_path.as_path(), config.content_file_format)?;
 		Ok(hashed_lst)
 	}
 }
@@ -307,10 +308,14 @@ impl HashedFileList {
 		hash_func
 	}
 
-	fn write_content_file_opt(&self, ctn_file_path: &Path) -> io::Result<()> {
+	fn write_content_file_opt(
+		&self,
+		ctn_file_path: &Path,
+		format: ContentFileFormat,
+	) -> io::Result<()> {
 		if !ctn_file_path.exists() {
 			let mut f = File::create_new(ctn_file_path)?;
-			return ctn_file_cnil(&mut f, self);
+			return format.write_content_file(&mut f, self);
 		}
 		Ok(())
 	}
