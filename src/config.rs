@@ -61,7 +61,9 @@ impl Config {
 	pub fn get_content_file_name(&self) -> String {
 		match &self.content_file_name {
 			Some(name) => name.to_string(),
-			None => self.content_file_format.default_content_file_name(),
+			None => self
+				.content_file_format
+				.default_content_file_name(self.hash_function),
 		}
 	}
 
@@ -94,9 +96,6 @@ impl Config {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::hash::HashFunc;
-	use crate::nb_repr::NbRepr;
-	use crate::theme::Theme;
 	use unic_langid::langid;
 
 	#[test]
@@ -113,7 +112,27 @@ hash_function = "sha-512"
 		assert_eq!(cfg.number_representation, NbRepr::Letters);
 		assert_eq!(cfg.hash_function, HashFunc::Sha512);
 		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
 		assert_eq!(cfg.get_content_file_name(), "sha512sums.txt".to_string());
+	}
+
+	#[test]
+	fn test_config_cnil() {
+		let s = r#"
+theme = "dark"
+lang = "fr"
+number_representation = "letters"
+content_file_format = "cnil"
+hash_function = "sha-256"
+"#;
+		let cfg = Config::load_config(s);
+		assert_eq!(cfg.theme, Some(Theme::Dark));
+		assert_eq!(cfg.lang, langid!("fr").into());
+		assert_eq!(cfg.number_representation, NbRepr::Letters);
+		assert_eq!(cfg.hash_function, HashFunc::Sha256);
+		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.content_file_format, ContentFileFormat::Cnil);
+		assert_eq!(cfg.get_content_file_name(), "contenu.txt".to_string());
 	}
 
 	#[test]
@@ -124,6 +143,7 @@ hash_function = "sha-512"
 		assert_eq!(cfg.number_representation, NbRepr::default());
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
 		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
 	}
 
@@ -132,6 +152,7 @@ hash_function = "sha-512"
 		let s = r#"
 theme = "dark invalid theme"
 lang = "not a valid language tag"
+content_file_format = "also invalid"
 number_representation = "still invalid"
 hash_function = "also invalid"
 "#;
@@ -141,6 +162,7 @@ hash_function = "also invalid"
 		assert_eq!(cfg.number_representation, NbRepr::default());
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
+		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
 		assert_eq!(cfg.get_content_file_name(), "sha256sums.txt".to_string());
 	}
 }
