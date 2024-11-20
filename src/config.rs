@@ -1,4 +1,4 @@
-use crate::content_file::ContentFileFormat;
+use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
 use crate::i18n::Lang;
 use crate::nb_repr::NbRepr;

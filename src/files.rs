@@ -1,6 +1,6 @@
 use crate::check::{CheckResult, CheckResultError};
 use crate::config::Config;
-use crate::content_file::ContentFileFormat;
+use crate::content_file_format::ContentFileFormat;
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
 use dioxus_logger::tracing::{error, info};

@@ -4,7 +4,7 @@ mod assets;
 mod check;
 mod components;
 mod config;
-mod content_file;
+mod content_file_format;
 mod events;
 mod files;
 mod hash;
