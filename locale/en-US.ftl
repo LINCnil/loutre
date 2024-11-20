@@ -26,13 +26,15 @@ cpn_notif_duplicated_files_text = Several files located in the selected director
 view_config_title = Configuration
 
 cpn_config_menu_main_title = General
+cpn_config_menu_messages_title = Messages
 cpn_config_menu_clipboard_title = Clipboard
 
-view_config_main_msg_empty_files_warning = Display a warning when loading a directory that contains empty files.
-view_config_main_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected.
 view_config_main_msg_include_hidden_files = Include hidden files.
 view_config_main_msg_include_system_files = Include system files.
 view_config_main_msg_set_files_readonly = Set files as read-only.
+
+view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files.
+view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected.
 
 ## Header
 

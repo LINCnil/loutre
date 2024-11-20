@@ -18,6 +18,8 @@ pub enum Route {
 	Main {},
 	#[route("/config/main")]
 	MainConfig {},
+	#[route("/config/messages")]
+	MessagesConfig {},
 	#[route("/config/clipboard")]
 	ClipboardConfig {},
 	#[cfg(feature = "nightly")]
