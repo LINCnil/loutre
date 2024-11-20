@@ -9,8 +9,10 @@ use dioxus_i18n::t;
 #[component]
 pub fn NotificationList() -> Element {
 	let fl = use_context::<Signal<FileList>>()();
+	let cfg = use_context::<Signal<Config>>()();
+
 	rsx! {
-		if fl.has_empty_files() {
+		if cfg.is_empty_file_warning_enabled() && fl.has_empty_files() {
 			Notification {
 				id: "empty_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
@@ -28,7 +30,7 @@ pub fn NotificationList() -> Element {
 			}
 		}
 
-		if fl.has_duplicated_files() {
+		if cfg.is_duplicate_file_warning_enabled() && fl.has_duplicated_files() {
 			Notification {
 				id: "duplicated_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
