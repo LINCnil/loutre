@@ -1,3 +1,4 @@
+use crate::check::{CheckResult, CheckResultError};
 use crate::config::Config;
 use crate::content_file::ContentFileFormat;
 use crate::events::ExternalEventSender;
@@ -103,8 +104,10 @@ macro_rules! common_lst_impl {
 				self.base_dir.as_path()
 			}
 
-			pub fn get_files(&self) -> Vec<$file_type> {
-				self.files.iter().map(|(_, v)| v.clone()).collect()
+			pub fn get_content_file_absolute_path(&self, config: &Config) -> io::Result<PathBuf> {
+				let mut path = self.base_dir.clone().canonicalize()?;
+				path.push(config.get_content_file_name());
+				Ok(path)
 			}
 		}
 	};
@@ -122,18 +125,19 @@ pub struct NonHashedFileList {
 common_lst_impl!(NonHashedFileList, NonHashedFile);
 
 impl NonHashedFileList {
-	fn get_content_file_absolute_path(&self, config: &Config) -> io::Result<PathBuf> {
-		let mut path = self.base_dir.clone().canonicalize()?;
-		path.push(config.get_content_file_name());
-		Ok(path)
-	}
-
 	pub fn len(&self) -> usize {
 		self.files.len()
 	}
 
 	pub fn total_size(&self) -> u64 {
 		self.files.values().fold(0, |acc, f| acc + f.size)
+	}
+
+	pub fn content_file_exists(&self, config: &Config) -> bool {
+		if let Ok(ctn_file_path) = self.get_content_file_absolute_path(config) {
+			return ctn_file_path.is_file();
+		}
+		false
 	}
 
 	pub async fn from_dir<P: AsRef<Path>>(
@@ -257,6 +261,7 @@ impl NonHashedFileList {
 			files,
 			empty_files: self.empty_files.clone(),
 			duplicated_files,
+			result: CheckResult::None,
 		};
 		hashed_lst
 			.write_content_file_opt(ctn_file_absolute_path.as_path(), config.content_file_format)?;
@@ -274,6 +279,7 @@ pub struct HashedFileList {
 	files: HashMap<FileId, HashedFile>,
 	empty_files: HashSet<FileId>,
 	duplicated_files: HashMap<String, HashSet<FileId>>,
+	result: CheckResult,
 }
 
 common_lst_impl!(HashedFileList, HashedFile);
@@ -286,15 +292,52 @@ impl HashedFileList {
 			files: HashMap::new(),
 			empty_files: HashSet::new(),
 			duplicated_files: HashMap::new(),
+			result: CheckResult::None,
 		}
+	}
+
+	pub fn get_files(&self, base_dir: &Path) -> Vec<HashedFile> {
+		self.files
+			.values()
+			.map(|v| {
+				let mut f = v.clone();
+				f.base_dir = base_dir.to_path_buf();
+				f
+			})
+			.collect()
+	}
+
+	pub fn get_files_no_base_dir(&self) -> Vec<HashedFile> {
+		self.get_files(PathBuf::new().as_path())
 	}
 
 	pub fn insert_file(&mut self, file: HashedFile) {
 		self.files.insert(file.get_id(), file);
 	}
 
+	pub fn set_result_ok(&mut self) {
+		self.result = CheckResult::Ok;
+	}
+
+	pub fn push_result_error(&mut self, error: CheckResultError) {
+		match &self.result {
+			CheckResult::Error(v) => {
+				let mut v = v.clone();
+				v.push(error);
+				self.result = CheckResult::Error(v);
+			}
+			_ => {
+				self.result = CheckResult::Error(vec![error]);
+			}
+		}
+	}
+
 	pub fn is_empty(&self) -> bool {
 		self.files.is_empty()
+	}
+
+	pub fn get_result(&self) -> CheckResult {
+		self.result.clone()
 	}
 
 	pub fn get_main_hashing_function(&self) -> HashFunc {
@@ -345,22 +388,10 @@ macro_rules! common_file_impl {
 				)
 			}
 
-			pub fn get_base_dir(&self) -> &Path {
-				self.base_dir.as_path()
-			}
-
-			pub fn get_relative_path(&self) -> &Path {
-				self.relative_path.as_path()
-			}
-
 			pub fn get_absolute_path(&self) -> io::Result<PathBuf> {
 				let mut path = self.base_dir.clone();
 				path.push(self.relative_path.clone());
 				path.canonicalize()
-			}
-
-			pub fn is_empty(&self) -> bool {
-				self.size == 0
 			}
 		}
 	};
@@ -378,6 +409,10 @@ pub struct NonHashedFile {
 common_file_impl!(NonHashedFile);
 
 impl NonHashedFile {
+	pub fn is_empty(&self) -> bool {
+		self.size == 0
+	}
+
 	pub fn new<P: AsRef<Path>>(base_dir: P, path: P) -> io::Result<Self> {
 		let base_dir = base_dir.as_ref();
 		let path = path.as_ref();
@@ -406,7 +441,7 @@ impl NonHashedFile {
 	}
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct HashedFile {
 	base_dir: PathBuf,
 	relative_path: PathBuf,
@@ -442,6 +477,10 @@ impl HashedFile {
 
 	pub fn get_hash_func(&self) -> HashFunc {
 		self.hash_func
+	}
+
+	pub fn get_relative_path(&self) -> &Path {
+		self.relative_path.as_path()
 	}
 }
 

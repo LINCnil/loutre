@@ -1,6 +1,7 @@
 mod analyse_hash;
 mod app;
 mod assets;
+mod check;
 mod components;
 mod config;
 mod content_file;

@@ -4,6 +4,9 @@ view_main_open_dir = Open a directory
 view_main_open_receipt = Open a notice of receipt
 view_main_calc_fingerprints = Checksum calculation
 view_main_check_fingerprints = Data integrity check
+view_main_check_result_title = Data integrity check result
+view_main_check_result_ok_text = Data integrity check passed.
+view_main_check_result_err_text = Data integrity check failed.
 
 cpn_file_list_delete = Reset
 

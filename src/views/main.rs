@@ -1,12 +1,14 @@
 #![allow(non_snake_case)]
 
+use crate::check::{check, CheckResult, CheckResultError, CheckType};
 use crate::components::{
 	Button, DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar,
-	NotificationList, ProgressBar,
+	Notification, NotificationList, ProgressBar,
 };
 use crate::config::Config;
 use crate::events::{send_event, send_event_sync, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
+use crate::notifications::NotificationLevel;
 use crate::progress::ProgressBarStatus;
 use crate::receipt::Receipt;
 use dioxus::html::{FileEngine, HasFileData};
@@ -76,24 +78,43 @@ pub fn Main() -> Element {
 
 			if pg_status_opt.is_none() {
 				div {
-					if let FileList::NonHashed(_) = file_list_sig() {
-						Button {
-							onclick: move |_event| {
-								spawn(async move {
-									calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
-								});
-							},
-							{ t!("view_main_calc_fingerprints") }
+					if let FileList::NonHashed(file_lst) = file_list_sig() {
+						if file_lst.content_file_exists(&config_sig()) {
+							Button {
+								onclick: move |_event| {
+									spawn(async move {
+										calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+									});
+								},
+								{ t!("view_main_check_fingerprints") }
+							}
+						} else {
+							Button {
+								onclick: move |_event| {
+									spawn(async move {
+										calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+									});
+								},
+								{ t!("view_main_calc_fingerprints") }
+							}
 						}
 					}
-					if let FileList::Hashed(_) = file_list_sig() {
-						Button {
-							onclick: move |_event| {
-								spawn(async move {
-									check_fingerprints().await;
-								});
-							},
-							{ t!("view_main_check_fingerprints") }
+					if let FileList::Hashed(lst) = file_list_sig() {
+						if let CheckResult::Ok = lst.get_result() {
+							Notification {
+								id: "view-main-file-check-ok",
+								level: NotificationLevel::Success,
+								title: t!("view_main_check_result_title"),
+								p { { t!("view_main_check_result_ok_text") } }
+							}
+						}
+						if let CheckResult::Error(_) = lst.get_result() {
+							Notification {
+								id: "view-main-file-check-err",
+								level: NotificationLevel::Error,
+								title: t!("view_main_check_result_title"),
+								p { { t!("view_main_check_result_err_text") } }
+							}
 						}
 					}
 				}
@@ -189,32 +210,81 @@ async fn calc_fingerprints(
 		thread::spawn(move || {
 			info!("File hashing thread started");
 
+			let base_dir = file_list.get_base_dir();
 			let total_size = file_list.total_size();
 			send_event_sync(&tx, ExternalEvent::ProgressBarCreate(total_size));
 			info!("Total size to hash: {total_size} bytes");
 
+			// Calculating fingerprints
 			match file_list.hash(&config, hash_func, tx.clone()) {
-				Ok(hashed_file_list) => {
+				Ok(mut hashed_file_list) => {
+					send_event_sync(&tx, ExternalEvent::ProgressBarDelete);
+					send_event_sync(&tx, ExternalEvent::LoadingBarAdd);
+
+					// Checking fingerprints against the content file
+					info!("Checking fingerprints against the content file");
+					let hashed_file_lst = hashed_file_list.get_files(base_dir);
+					if let Ok(ctn_file_path) =
+						hashed_file_list.get_content_file_absolute_path(&config)
+					{
+						let default_hash = match crate::analyse_hash::from_path(&ctn_file_path) {
+							Some(h) => h,
+							None => config.hash_function,
+						};
+						match Receipt::new(&ctn_file_path, default_hash) {
+							Ok(ctn_file) => {
+								match check(
+									&hashed_file_lst,
+									&ctn_file.get_files(base_dir),
+									CheckType::ContentFile,
+								) {
+									CheckResult::Ok => hashed_file_list.set_result_ok(),
+									CheckResult::Error(err_lst) => {
+										for e in err_lst {
+											hashed_file_list.push_result_error(e);
+										}
+									}
+									CheckResult::None => {}
+								}
+							}
+							Err(_) => {
+								hashed_file_list
+									.push_result_error(CheckResultError::ContentFileParseError);
+							}
+						};
+					}
+
+					// Checking fingerprints against the receipt
+					if let Some(rcpt) = receipt_opt {
+						info!("Checking fingerprints against the receipt");
+						match check(
+							&hashed_file_lst,
+							&rcpt.get_files(base_dir),
+							CheckType::Receipt,
+						) {
+							CheckResult::Ok => {
+								if !hashed_file_list.get_result().is_err() {
+									hashed_file_list.set_result_ok()
+								}
+							}
+							CheckResult::Error(err_lst) => {
+								for e in err_lst {
+									hashed_file_list.push_result_error(e);
+								}
+							}
+							CheckResult::None => {}
+						}
+					}
+
 					send_event_sync(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
+					send_event_sync(&tx, ExternalEvent::LoadingBarDelete);
 				}
 				Err(e) => error!("Unable to hash files: {e}"),
 			};
-			send_event_sync(&tx, ExternalEvent::ProgressBarDelete);
-
-			if let Some(rcpt) = receipt_opt {
-				info!("Checking fingerprints against the receipt");
-				// TODO
-			}
 
 			info!("File hashing thread done");
 		});
 	}
 
 	info!("File hashing async function done");
-}
-
-async fn check_fingerprints() {
-	info!("Data integrity check async function started");
-	// TODO
-	info!("Data integrity check async function done");
 }

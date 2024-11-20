@@ -23,8 +23,8 @@ impl Receipt {
 		})
 	}
 
-	pub fn get_files(&self) -> Vec<HashedFile> {
-		self.files.get_files()
+	pub fn get_files(&self, base_dir: &Path) -> Vec<HashedFile> {
+		self.files.get_files(base_dir)
 	}
 
 	pub fn get_main_hashing_function(&self) -> HashFunc {

@@ -16,7 +16,7 @@ pub fn ctn_file_cnil(ctn_file: &mut File, hashed_list: &HashedFileList) -> io::R
 		"Taille (octets)",
 		hashed_list.get_main_hashing_function()
 	);
-	for file in hashed_list.get_files() {
+	for file in hashed_list.get_files_no_base_dir() {
 		write_line!(
 			ctn_file,
 			file.get_relative_path().display(),
