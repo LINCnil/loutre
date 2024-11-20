@@ -54,9 +54,8 @@ fn parse_line(
 #[cfg(test)]
 mod tests {
 	use super::parse_line;
-	use crate::files::HashedFile;
 	use crate::hash::HashFunc;
-	use std::path::{Path, PathBuf};
+	use std::path::Path;
 
 	#[test]
 	fn simple_t() {
@@ -68,7 +67,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -85,7 +83,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -102,7 +99,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -119,7 +115,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -136,7 +131,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -153,7 +147,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test_file.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"1c527c669fdb2cdb8a7d3e75137bbb71b5e53ddad14e9fe6c0691f8fafb6893d"
@@ -170,7 +163,6 @@ mod tests {
 		assert!(res.is_ok());
 		let (_, file) = res.unwrap();
 		assert_eq!(file.get_relative_path(), Path::new("test file 01.txt"));
-		let hash = file.get_hash();
 		assert_eq!(
 			file.get_hash(),
 			"11586d2eb43b73e539caa3d158c883336c0e2c904b309c0c5ffe2c9b83d562a1"

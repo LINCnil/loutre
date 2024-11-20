@@ -52,7 +52,6 @@ pub struct NotificationProps {
 #[component]
 pub fn Notification(props: NotificationProps) -> Element {
 	let mut bl_sig = use_context::<Signal<NotificationBlackList>>();
-	let cfg = use_context::<Signal<Config>>()();
 
 	rsx! {
 		if !bl_sig().contains(&props.id) {
