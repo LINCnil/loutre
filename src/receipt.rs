@@ -1,6 +1,9 @@
 use crate::files::{HashedFile, HashedFileList};
 use crate::hash::HashFunc;
-use crate::parsers::{cksum_bsd_get_files, cksum_gnu_get_files, cnil_platform_email_get_files};
+use crate::parsers::{
+	cksum_bsd_get_files, cksum_gnu_get_files, cnil_content_file_get_files,
+	cnil_platform_email_get_files,
+};
 use std::fmt;
 use std::path::{Path, PathBuf};
 
@@ -9,6 +12,7 @@ type ReceiptParser = dyn Fn(&Path, HashFunc) -> Result<HashedFileList, ()>;
 const PARSERS: &[&ReceiptParser] = &[
 	&cksum_bsd_get_files,
 	&cksum_gnu_get_files,
+	&cnil_content_file_get_files,
 	&cnil_platform_email_get_files,
 ];
 
