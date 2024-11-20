@@ -32,6 +32,7 @@ view_config_main_msg_empty_files_warning = Display a warning when loading a dire
 view_config_main_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected.
 view_config_main_msg_include_hidden_files = Include hidden files.
 view_config_main_msg_include_system_files = Include system files.
+view_config_main_msg_set_files_readonly = Set files as read-only.
 
 ## Header
 

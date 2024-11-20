@@ -32,6 +32,7 @@ view_config_main_msg_empty_files_warning = Afficher un avertissement en cas de c
 view_config_main_msg_duplicated_files_warning = Afficher un avertissement lorsque des fichiers avec la même empreinte sont détectés.
 view_config_main_msg_include_hidden_files = Inclure les fichiers cachés.
 view_config_main_msg_include_system_files = Inclure les fichiers système.
+view_config_main_msg_set_files_readonly = Passer les fichiers en lecture seule.
 
 ## Header
 

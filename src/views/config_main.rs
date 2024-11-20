@@ -111,6 +111,30 @@ pub fn MainConfig() -> Element {
 						},
 					}
 				}
+
+				// Set files as read-only
+				p {
+					label {
+						r#for: "cfg_main_set_files_readonly",
+						{ t!("view_config_main_msg_set_files_readonly") }
+					}
+				}
+				div {
+					Checkbox {
+						id: "cfg_main_set_files_readonly",
+						checked: cfg_sig().set_files_as_readonly(),
+						onchange: move |event: FormEvent| {
+							let new_value = parse_bool(&event.data.value());
+							spawn(async move {
+								let mut cfg = cfg_sig();
+								cfg.set_files_as_readonly = Some(new_value);
+								cfg.write_to_file();
+								cfg_sig.set(cfg);
+							});
+						},
+					}
+				}
+
 			}
 		}
 	}
