@@ -7,6 +7,7 @@ use dioxus_i18n::t;
 #[derive(PartialEq, Clone, Copy)]
 pub enum ConfigMenuHighlight {
 	Main,
+	Hash,
 	Messages,
 	Clipboard,
 }
@@ -21,6 +22,12 @@ pub fn ConfigMenu(hl: ConfigMenuHighlight) -> Element {
 				target_str: "cpn_config_menu_main_title",
 				hl: hl,
 				current: ConfigMenuHighlight::Main
+			}
+			ConfigMenuElement {
+				target: Route::HashConfig {},
+				target_str: "cpn_config_menu_hash_title",
+				hl: hl,
+				current: ConfigMenuHighlight::Hash
 			}
 			ConfigMenuElement {
 				target: Route::MessagesConfig {},

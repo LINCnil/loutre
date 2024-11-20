@@ -26,15 +26,20 @@ cpn_notif_duplicated_files_text = Several files located in the selected director
 view_config_title = Configuration
 
 cpn_config_menu_main_title = General
+cpn_config_menu_hash_title = Fingerprints
 cpn_config_menu_messages_title = Messages
 cpn_config_menu_clipboard_title = Clipboard
 
-view_config_main_msg_include_hidden_files = Include hidden files.
-view_config_main_msg_include_system_files = Include system files.
-view_config_main_msg_set_files_readonly = Set files as read-only.
+view_config_main_msg_include_hidden_files = Include hidden files
+view_config_main_msg_include_system_files = Include system files
+view_config_main_msg_set_files_readonly = Set files as read-only
 
-view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files.
-view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected.
+view_config_hash_msg_hash_func = Hashing algorithm
+view_config_hash_msg_content_file_format = Content file format
+view_config_hash_msg_content_file_name = Content file name
+
+view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files
+view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected
 
 ## Header
 

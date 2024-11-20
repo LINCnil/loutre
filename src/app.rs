@@ -18,6 +18,8 @@ pub enum Route {
 	Main {},
 	#[route("/config/main")]
 	MainConfig {},
+	#[route("/config/hash")]
+	HashConfig {},
 	#[route("/config/messages")]
 	MessagesConfig {},
 	#[route("/config/clipboard")]

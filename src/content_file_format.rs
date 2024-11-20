@@ -5,8 +5,9 @@ use serde_derive::{Deserialize, Serialize};
 use std::fmt;
 use std::fs::File;
 use std::io;
+use strum::EnumIter;
 
-#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Copy, Debug, Default, EnumIter, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ContentFileFormat {
 	#[default]
@@ -28,7 +29,32 @@ impl fmt::Display for ContentFileFormat {
 	}
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseContentFileFormatError;
+
+impl std::str::FromStr for ContentFileFormat {
+	type Err = ParseContentFileFormatError;
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		match s.to_ascii_lowercase().as_str() {
+			"cksum-bsd" => Ok(Self::CksumBsd),
+			"cksum-gnu" => Ok(Self::CksumGnu),
+			"cnil" => Ok(Self::Cnil),
+			_ => Err(ParseContentFileFormatError),
+		}
+	}
+}
+
 impl ContentFileFormat {
+	pub fn get_value(&self) -> String {
+		match self {
+			Self::CksumBsd => "cksum-bsd",
+			Self::CksumGnu => "cksum-gnu",
+			Self::Cnil => "cnil",
+		}
+		.to_string()
+	}
+
 	pub fn default_content_file_name(&self, hash_func: HashFunc) -> String {
 		match self {
 			Self::CksumBsd => format!("CHECKSUM.{}.txt", hash_func),

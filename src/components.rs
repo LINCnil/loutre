@@ -15,7 +15,7 @@ pub use button::{Button, FileButton};
 pub use config_menu::{ConfigMenu, ConfigMenuHighlight};
 pub use dropzone::DropZone;
 pub use file_list::{FileListIndicator, FileListReceipt};
-pub use form::Checkbox;
+pub use form::{Checkbox, Select, SelectOption};
 pub use grid::Grid;
 pub use header::Header;
 pub use lang_switch::LangSwitch;
