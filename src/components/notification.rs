@@ -55,7 +55,7 @@ pub fn Notification(props: NotificationProps) -> Element {
 	let cfg = use_context::<Signal<Config>>()();
 
 	rsx! {
-		if cfg.is_empty_file_warning_enabled() && !bl_sig().contains(&props.id) {
+		if !bl_sig().contains(&props.id) {
 			div {
 				class: "component-notification component-notification-level-{props.level}",
 				div {
