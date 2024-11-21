@@ -43,7 +43,7 @@ pub enum ExternalEvent {
 impl ExternalEvent {
 	pub fn handle(
 		self,
-		mut cfg_sig: Signal<Config>,
+		cfg_sig: Signal<Config>,
 		mut clb_sig: Signal<Clipboard>,
 		mut fl_sig: Signal<FileList>,
 		mut lb_sig: Signal<LoadingBarStatus>,
