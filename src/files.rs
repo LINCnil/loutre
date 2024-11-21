@@ -96,6 +96,10 @@ impl FileList {
 macro_rules! common_lst_impl {
 	($lst_type: ty, $file_type: ty) => {
 		impl $lst_type {
+			pub fn len(&self) -> usize {
+				self.files.len()
+			}
+
 			pub fn get_id(&self) -> String {
 				self.id.to_string()
 			}
@@ -125,10 +129,6 @@ pub struct NonHashedFileList {
 common_lst_impl!(NonHashedFileList, NonHashedFile);
 
 impl NonHashedFileList {
-	pub fn len(&self) -> usize {
-		self.files.len()
-	}
-
 	pub fn total_size(&self) -> u64 {
 		self.files.values().fold(0, |acc, f| acc + f.size)
 	}

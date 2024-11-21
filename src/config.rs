@@ -1,3 +1,4 @@
+use crate::clipboard::ClipboardPersistence;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
 use crate::i18n::Lang;
@@ -66,6 +67,10 @@ impl Config {
 				.content_file_format
 				.default_content_file_name(self.hash_function),
 		}
+	}
+
+	pub fn get_clipboard_persistence(&self) -> ClipboardPersistence {
+		self.clipboard_persistence.into()
 	}
 
 	pub fn get_clipboard_threshold(&self) -> usize {

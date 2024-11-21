@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::clipboard::Clipboard;
 use crate::config::Config;
 use crate::events::{ExternalEventReceiver, ExternalEventSender};
 use crate::files::FileList;
@@ -45,6 +46,8 @@ pub fn App() -> Element {
 }
 
 fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
+	let cfg_sig = use_context::<Signal<Config>>();
+	let clb_sig = use_context::<Signal<Clipboard>>();
 	let fl_sig = use_context::<Signal<FileList>>();
 	let lb_sig = use_context::<Signal<LoadingBarStatus>>();
 	let pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
@@ -53,7 +56,7 @@ fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Cor
 		info!("Waiting for an external event…");
 		while let Some(event) = progress_rx.recv().await {
 			info!("External event received: {event}");
-			event.handle(fl_sig, lb_sig, pg_sig, rcpt_sig);
+			event.handle(cfg_sig, clb_sig, fl_sig, lb_sig, pg_sig, rcpt_sig);
 		}
 	})
 }
@@ -85,6 +88,9 @@ fn initialize_theme() {
 }
 
 fn initialize_global_context(config: Config, progress_tx: ExternalEventSender) {
+	// Clipboard
+	use_context_provider(|| Signal::new(Clipboard::new()));
+
 	// Configuration
 	use_context_provider(|| Signal::new(config));
 

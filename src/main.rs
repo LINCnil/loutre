@@ -2,6 +2,7 @@ mod analyse_hash;
 mod app;
 mod assets;
 mod check;
+mod clipboard;
 mod components;
 mod config;
 mod content_file_format;

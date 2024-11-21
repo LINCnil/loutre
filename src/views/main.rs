@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::check::{check, CheckResult, CheckResultError, CheckType};
+use crate::clipboard::Clipboard;
 use crate::components::{
 	Button, DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar,
 	Notification, NotificationList, ProgressBar,
@@ -28,6 +29,7 @@ pub fn Main() -> Element {
 	let config_sig = use_context::<Signal<Config>>();
 	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
+	let mut clipboard_sig = use_context::<Signal<Clipboard>>();
 
 	let has_progress_bar = pg_status_opt.is_some();
 	let has_loading_bar = lb_status == LoadingBarStatus::Displayed;
@@ -114,6 +116,35 @@ pub fn Main() -> Element {
 								level: NotificationLevel::Success,
 								title: t!("view_main_check_result_title"),
 								p { { t!("view_main_check_result_ok_text") } }
+							}
+							Button {
+								icon: "ri-clipboard-line",
+								onclick: move |_event| {
+									if let FileList::Hashed(lst) = file_list_sig() {
+										let mut clipboard = Clipboard::new();
+										clipboard.set_clipboard_list(
+											&config_sig(),
+											&lst,
+										);
+										clipboard_sig.set(clipboard);
+									}
+								},
+							}
+							Button {
+								icon: "ri-file-copy-2-line",
+								onclick: move |_event| {
+									if let FileList::Hashed(lst) = file_list_sig() {
+										let cfg = config_sig();
+										if let Ok(ctn_file_path) = lst.get_content_file_absolute_path(&cfg) {
+											let mut clipboard = Clipboard::new();
+											clipboard.set_clipboard_ctn_file(
+												&cfg,
+												&ctn_file_path,
+											);
+											clipboard_sig.set(clipboard);
+										}
+									}
+								},
 							}
 						}
 						if let CheckResult::Error(_) = lst.get_result() {
