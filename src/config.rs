@@ -2,7 +2,6 @@ use crate::clipboard::ClipboardPersistence;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
 use crate::i18n::Lang;
-use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
 use serde_derive::{Deserialize, Serialize};
 use std::fs::{create_dir_all, read_to_string, File};
@@ -12,19 +11,27 @@ use std::path::PathBuf;
 #[derive(Clone, Default, Deserialize, Serialize)]
 #[serde(default)]
 pub struct Config {
+	// Global
 	pub theme: Option<Theme>,
 	pub lang: Lang,
-	pub content_file_name: Option<String>,
-	pub content_file_format: ContentFileFormat,
-	pub number_representation: NbRepr,
-	pub hash_function: HashFunc,
-	pub clipboard_persistence: Option<bool>,
-	pub clipboard_threshold: Option<usize>,
-	pub enable_duplicate_file_warning: Option<bool>,
-	pub enable_empty_file_warning: Option<bool>,
+
+	// General
 	pub include_hidden_files: Option<bool>,
 	pub include_system_files: Option<bool>,
 	pub set_files_as_readonly: Option<bool>,
+
+	// Fingerprints
+	pub hash_function: HashFunc,
+	pub content_file_format: ContentFileFormat,
+	pub content_file_name: Option<String>,
+
+	// Messages
+	pub enable_duplicate_file_warning: Option<bool>,
+	pub enable_empty_file_warning: Option<bool>,
+
+	// Clipboard
+	pub clipboard_threshold: Option<usize>,
+	pub clipboard_persistence: Option<bool>,
 }
 
 impl Config {
@@ -60,31 +67,11 @@ impl Config {
 		path
 	}
 
-	pub fn get_content_file_name(&self) -> String {
-		match &self.content_file_name {
-			Some(name) => name.to_string(),
-			None => self
-				.content_file_format
-				.default_content_file_name(self.hash_function),
-		}
+	fn load_config(content: &str) -> Config {
+		toml::from_str(content).unwrap_or_default()
 	}
 
-	pub fn get_clipboard_persistence(&self) -> ClipboardPersistence {
-		self.clipboard_persistence.into()
-	}
-
-	pub fn get_clipboard_threshold(&self) -> usize {
-		self.clipboard_threshold
-			.unwrap_or(crate::DEFAULT_CLIPBOARD_THRESHOLD)
-	}
-
-	pub fn is_duplicate_file_warning_enabled(&self) -> bool {
-		self.enable_duplicate_file_warning.unwrap_or(true)
-	}
-
-	pub fn is_empty_file_warning_enabled(&self) -> bool {
-		self.enable_empty_file_warning.unwrap_or(true)
-	}
+	// General
 
 	pub fn include_hidden_files(&self) -> bool {
 		self.include_hidden_files.unwrap_or(false)
@@ -98,8 +85,36 @@ impl Config {
 		self.set_files_as_readonly.unwrap_or(true)
 	}
 
-	fn load_config(content: &str) -> Config {
-		toml::from_str(content).unwrap_or_default()
+	// Fingerprints
+
+	pub fn get_content_file_name(&self) -> String {
+		match &self.content_file_name {
+			Some(name) => name.to_string(),
+			None => self
+				.content_file_format
+				.default_content_file_name(self.hash_function),
+		}
+	}
+
+	// Messages
+
+	pub fn is_duplicate_file_warning_enabled(&self) -> bool {
+		self.enable_duplicate_file_warning.unwrap_or(true)
+	}
+
+	pub fn is_empty_file_warning_enabled(&self) -> bool {
+		self.enable_empty_file_warning.unwrap_or(true)
+	}
+
+	// Clipboard
+
+	pub fn get_clipboard_persistence(&self) -> ClipboardPersistence {
+		self.clipboard_persistence.into()
+	}
+
+	pub fn get_clipboard_threshold(&self) -> usize {
+		self.clipboard_threshold
+			.unwrap_or(crate::DEFAULT_CLIPBOARD_THRESHOLD)
 	}
 }
 
