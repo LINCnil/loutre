@@ -41,6 +41,14 @@ view_config_hash_msg_content_file_name = Content file name
 view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files
 view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected
 
+view_config_clipboard_msg_threshold = Clipboard threshold
+view_config_clipboard_msg_threshold_help = Number of files from which the clipboard contains, by default, the checksum of the checksum file instead of the checksum of each individual files.
+view_config_clipboard_msg_persistence = Clipboard persistence
+view_config_clipboard_msg_persistence_help = Defines whether or not the internal clipboard management object should be kept into memory. This parameter depends on your operating system. It is recommended to keep the default value unless you encounter troubles with the clipboard.
+view_config_clipboard_msg_persistence_default = Default
+view_config_clipboard_msg_persistence_activated = Activated
+view_config_clipboard_msg_persistence_deactivated = Deactivated
+
 ## Header
 
 cpn_header_config = Configuration

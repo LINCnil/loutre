@@ -1,5 +1,6 @@
 use crate::config::Config;
 use crate::files::HashedFileList;
+use std::fmt;
 use std::path::Path;
 
 #[derive(Clone, Copy, Debug)]
@@ -16,6 +17,29 @@ impl ClipboardPersistence {
 			Self::Deactivated => false,
 			Self::Default => cfg!(unix),
 		}
+	}
+}
+
+impl std::str::FromStr for ClipboardPersistence {
+	type Err = ();
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		match s.to_ascii_lowercase().as_str() {
+			"activated" => Ok(Self::Activated),
+			"deactivated" => Ok(Self::Deactivated),
+			_ => Ok(Self::Default),
+		}
+	}
+}
+
+impl fmt::Display for ClipboardPersistence {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let s = match self {
+			Self::Activated => "activated",
+			Self::Deactivated => "deactivated",
+			Self::Default => "default",
+		};
+		write!(f, "{s}")
 	}
 }
 
@@ -51,10 +75,8 @@ impl Clipboard {
 	pub fn set_clipboard(&mut self, config: &Config, file_list: &HashedFileList, threshold: usize) {
 		if file_list.len() < threshold {
 			self.set_clipboard_list(config, file_list);
-		} else {
-			if let Ok(path) = file_list.get_content_file_absolute_path(config) {
-				self.set_clipboard_ctn_file(config, &path);
-			}
+		} else if let Ok(path) = file_list.get_content_file_absolute_path(config) {
+			self.set_clipboard_ctn_file(config, &path);
 		}
 	}
 
