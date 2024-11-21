@@ -1,6 +1,6 @@
-use crate::files::HashedFile;
-use dioxus_logger::tracing::warn;
-use std::collections::HashSet;
+use crate::files::{HashedFile, HashedFileList};
+use dioxus_logger::tracing::{info, warn};
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::path::PathBuf;
 
@@ -55,59 +55,61 @@ impl CheckResult {
 	}
 }
 
-pub fn check(
-	calculated_set: &Vec<HashedFile>,
-	reference_set: &Vec<HashedFile>,
-	t: CheckType,
-) -> CheckResult {
-	let mut errors = HashSet::new();
-
-	for ref_file in reference_set {
-		// Get the canonical absolute path of the reference file.
-		match ref_file.get_absolute_path() {
-			Ok(ref_file_abs_path) => {
-				// We have the canonical absolute path of the reference file.
-				// Now, let's check if we can find it in the calculated set.
-				match get_calc_file(calculated_set, ref_file_abs_path) {
-					Ok(calc_file) => {
-						if ref_file.get_hash() != calc_file.get_hash() {
-							// The hashes from both files does not match.
-							add_non_matching_file(&mut errors, ref_file, t);
-						}
+macro_rules! populate_map {
+	($dest_map: ident, $from_lst: ident, $base_dir: ident, $errors: ident, $t: ident, $add_err: expr) => {
+		for ref_file in $from_lst.get_files() {
+			let hash = ref_file.get_hash();
+			let rel_path = ref_file.get_relative_path();
+			let ref_file =
+				HashedFile::new_base_dir($base_dir, rel_path, 0, hash, ref_file.get_hash_func());
+			match ref_file.get_absolute_path() {
+				Ok(absolute_path) => {
+					$dest_map.insert(absolute_path, ref_file);
+				}
+				Err(_) => {
+					if $add_err {
+						add_missing_file(&mut $errors, &ref_file, $t);
 					}
-					Err(_) => {
-						// No matching file found in the calculated set.
-						add_missing_file(&mut errors, ref_file, t);
-					}
-				};
-			}
-			Err(_) => {
-				// Unable to get the canonical path: the file does not exists on disk.
-				add_missing_file(&mut errors, ref_file, t);
-			}
-		};
-	}
-
-	// Return the result
-	if errors.is_empty() {
-		CheckResult::Ok
-	} else {
-		CheckResult::Error(errors.into_iter().collect())
-	}
+				}
+			};
+		}
+	};
 }
 
-fn get_calc_file(
-	calculated_set: &Vec<HashedFile>,
-	ref_file_abs_path: PathBuf,
-) -> Result<&HashedFile, ()> {
-	for calc_file in calculated_set {
-		if let Ok(calc_file_abs_path) = calc_file.get_absolute_path() {
-			if calc_file_abs_path == ref_file_abs_path {
-				return Ok(calc_file);
+pub fn check(
+	calculated_fl: &HashedFileList,
+	reference_fl: &HashedFileList,
+	t: CheckType,
+) -> CheckResult {
+	info!("Starting fingerprint check");
+	let mut errors = HashSet::new();
+	let base_dir = calculated_fl.get_base_dir();
+
+	let mut reference_map = HashMap::with_capacity(reference_fl.len());
+	populate_map!(reference_map, reference_fl, base_dir, errors, t, true);
+	let mut calculated_map = HashMap::with_capacity(calculated_fl.len());
+	populate_map!(calculated_map, calculated_fl, base_dir, errors, t, false);
+
+	for (path, ref_file) in reference_map.iter() {
+		match calculated_map.get(path) {
+			Some(calc_file) => {
+				if calc_file.get_hash() != ref_file.get_hash() {
+					add_non_matching_file(&mut errors, ref_file, t);
+				}
+			}
+			None => {
+				add_missing_file(&mut errors, ref_file, t);
 			}
 		}
 	}
-	Err(())
+
+	if errors.is_empty() {
+		info!("Fingerprint check done: ok");
+		CheckResult::Ok
+	} else {
+		warn!("Fingerprint check done: {} errors", errors.len());
+		CheckResult::Error(errors.into_iter().collect())
+	}
 }
 
 #[inline]

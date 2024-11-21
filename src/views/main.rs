@@ -291,7 +291,6 @@ async fn calc_fingerprints(
 
 					// Checking fingerprints against the content file
 					info!("Checking fingerprints against the content file");
-					let hashed_file_lst = hashed_file_list.get_files(base_dir);
 					if let Ok(ctn_file_path) =
 						hashed_file_list.get_content_file_absolute_path(&config)
 					{
@@ -302,8 +301,8 @@ async fn calc_fingerprints(
 						match Receipt::new(&ctn_file_path, default_hash) {
 							Ok(ctn_file) => {
 								match check(
-									&hashed_file_lst,
-									&ctn_file.get_files(base_dir),
+									&hashed_file_list,
+									ctn_file.get_file_list(),
 									CheckType::ContentFile,
 								) {
 									CheckResult::Ok => hashed_file_list.set_result_ok(),
@@ -325,11 +324,7 @@ async fn calc_fingerprints(
 					// Checking fingerprints against the receipt
 					if let Some(rcpt) = receipt_opt {
 						info!("Checking fingerprints against the receipt");
-						match check(
-							&hashed_file_lst,
-							&rcpt.get_files(base_dir),
-							CheckType::Receipt,
-						) {
+						match check(&hashed_file_list, rcpt.get_file_list(), CheckType::Receipt) {
 							CheckResult::Ok => {
 								if !hashed_file_list.get_result().is_err() {
 									hashed_file_list.set_result_ok()

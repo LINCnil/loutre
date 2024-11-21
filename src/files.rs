@@ -296,19 +296,8 @@ impl HashedFileList {
 		}
 	}
 
-	pub fn get_files(&self, base_dir: &Path) -> Vec<HashedFile> {
-		self.files
-			.values()
-			.map(|v| {
-				let mut f = v.clone();
-				f.base_dir = base_dir.to_path_buf();
-				f
-			})
-			.collect()
-	}
-
-	pub fn get_files_no_base_dir(&self) -> Vec<HashedFile> {
-		self.get_files(PathBuf::new().as_path())
+	pub fn get_files(&self) -> std::collections::hash_map::Values<FileId, HashedFile> {
+		self.files.values()
 	}
 
 	pub fn insert_file(&mut self, file: HashedFile) {
@@ -458,8 +447,23 @@ impl HashedFile {
 		P: AsRef<Path>,
 		S: AsRef<str>,
 	{
+		HashedFile::new_base_dir(PathBuf::new(), relative_path, size, hash, hash_func)
+	}
+
+	pub fn new_base_dir<P1, P2, S>(
+		base_dir: P1,
+		relative_path: P2,
+		size: u64,
+		hash: S,
+		hash_func: HashFunc,
+	) -> Self
+	where
+		P1: AsRef<Path>,
+		P2: AsRef<Path>,
+		S: AsRef<str>,
+	{
 		Self {
-			base_dir: PathBuf::new(),
+			base_dir: base_dir.as_ref().into(),
 			relative_path: relative_path.as_ref().to_path_buf(),
 			size,
 			hash: hash.as_ref().into(),

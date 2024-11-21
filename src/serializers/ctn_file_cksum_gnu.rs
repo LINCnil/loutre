@@ -3,8 +3,8 @@ use std::fs::File;
 use std::io::{self, Write};
 
 pub fn ctn_file_cksum_gnu(ctn_file: &mut File, hashed_list: &HashedFileList) -> io::Result<()> {
-	for file in hashed_list.get_files_no_base_dir() {
-		let line = format_line(&file);
+	for file in hashed_list.get_files() {
+		let line = format_line(file);
 		ctn_file.write_all(line.as_bytes())?;
 	}
 	Ok(())

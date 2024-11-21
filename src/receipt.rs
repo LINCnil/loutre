@@ -1,4 +1,4 @@
-use crate::files::{HashedFile, HashedFileList};
+use crate::files::HashedFileList;
 use crate::hash::HashFunc;
 use crate::parsers::{
 	cksum_bsd_get_files, cksum_gnu_get_files, cnil_content_file_get_files,
@@ -31,8 +31,8 @@ impl Receipt {
 		})
 	}
 
-	pub fn get_files(&self, base_dir: &Path) -> Vec<HashedFile> {
-		self.files.get_files(base_dir)
+	pub fn get_file_list(&self) -> &HashedFileList {
+		&self.files
 	}
 
 	pub fn get_main_hashing_function(&self) -> HashFunc {
