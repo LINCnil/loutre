@@ -115,6 +115,7 @@ pub fn Main() -> Element {
 						if !is_waiting {
 							if file_lst.content_file_exists(&config_sig()) {
 								Button {
+									icon: "ri-shield-check-line",
 									onclick: move |_event| {
 										spawn(async move {
 											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
@@ -124,6 +125,7 @@ pub fn Main() -> Element {
 								}
 							} else {
 								Button {
+									icon: "ri-shield-flash-line",
 									onclick: move |_event| {
 										spawn(async move {
 											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
