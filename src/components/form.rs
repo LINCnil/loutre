@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 #[derive(Clone, PartialEq, Props)]
 pub struct CheckboxProps {
 	id: String,
+	name: String,
 	#[props(default = false)]
 	checked: bool,
 	onchange: EventHandler<FormEvent>,
@@ -15,6 +16,7 @@ pub fn Checkbox(props: CheckboxProps) -> Element {
 	rsx! {
 		input {
 			id: props.id,
+			name: props.name,
 			class: "component-form-checkbox",
 			r#type: "checkbox",
 			checked: props.checked,
@@ -42,6 +44,7 @@ impl SelectOption {
 #[derive(Clone, PartialEq, Props)]
 pub struct SelectProps {
 	id: String,
+	name: String,
 	options: Vec<SelectOption>,
 	selected_option: String,
 	onchange: EventHandler<FormEvent>,
@@ -52,6 +55,7 @@ pub fn Select(props: SelectProps) -> Element {
 	rsx! {
 		select {
 			id: props.id,
+			name: props.name,
 			class: "component-form-select",
 			prevent_default: "onchange",
 			onchange: move |evt| props.onchange.call(evt),

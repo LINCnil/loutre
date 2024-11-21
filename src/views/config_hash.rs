@@ -41,6 +41,7 @@ pub fn HashConfig() -> Element {
 				div {
 					Select {
 						id: "cfg_hash_algorithm",
+						name: "cfg_hash_algorithm",
 						options: hash_func_opts,
 						selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
 						onchange: move |event: FormEvent| {
@@ -66,6 +67,7 @@ pub fn HashConfig() -> Element {
 				div {
 					Select {
 						id: "cfg_hash_content_file_format",
+						name: "cfg_hash_content_file_format",
 						options: ctn_file_format_opts,
 						selected_option: cfg_sig().content_file_format.get_value(),
 						onchange: move |event: FormEvent| {
@@ -91,6 +93,7 @@ pub fn HashConfig() -> Element {
 				}
 				div {
 					input {
+						id: "cfg_hash_content_file_name",
 						name: "cfg_hash_content_file_name",
 						value: cfg_sig().get_content_file_name(),
 						disabled: true,

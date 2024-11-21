@@ -30,6 +30,7 @@ pub fn MessagesConfig() -> Element {
 				div {
 					Checkbox {
 						id: "cfg_main_empty_files_warning",
+						name: "cfg_main_empty_files_warning",
 						checked: cfg_sig().is_empty_file_warning_enabled(),
 						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
@@ -53,6 +54,7 @@ pub fn MessagesConfig() -> Element {
 				div {
 					Checkbox {
 						id: "cfg_main_duplicated_files_warning",
+						name: "cfg_main_duplicated_files_warning",
 						checked: cfg_sig().is_duplicate_file_warning_enabled(),
 						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());

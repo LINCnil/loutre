@@ -30,6 +30,7 @@ pub fn MainConfig() -> Element {
 				div {
 					Checkbox {
 						id: "cfg_main_include_hidden_files",
+						name: "cfg_main_include_hidden_files",
 						checked: cfg_sig().include_hidden_files(),
 						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
@@ -53,6 +54,7 @@ pub fn MainConfig() -> Element {
 				div {
 					Checkbox {
 						id: "cfg_main_include_system_files",
+						name: "cfg_main_include_system_files",
 						checked: cfg_sig().include_system_files(),
 						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());
@@ -76,6 +78,7 @@ pub fn MainConfig() -> Element {
 				div {
 					Checkbox {
 						id: "cfg_main_set_files_readonly",
+						name: "cfg_main_set_files_readonly",
 						checked: cfg_sig().set_files_as_readonly(),
 						onchange: move |event: FormEvent| {
 							let new_value = parse_bool(&event.data.value());

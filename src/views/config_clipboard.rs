@@ -68,13 +68,14 @@ pub fn ClipboardConfig() -> Element {
 					// Cliboard persistence
 					p {
 						label {
-							r#for: "cfg_clipboard_threshold",
+							r#for: "cfg_clipboard_persistence",
 							{ t!("view_config_clipboard_msg_persistence") }
 						}
 					}
 					div {
 						Select {
 							id: "cfg_clipboard_persistence",
+							name: "cfg_clipboard_persistence",
 							options: cl_pers_opts,
 							selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
 							onchange: move |event: FormEvent| {
