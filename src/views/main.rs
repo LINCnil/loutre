@@ -9,7 +9,7 @@ use crate::config::Config;
 use crate::events::{send_event, send_event_sync, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
 use crate::notifications::NotificationLevel;
-use crate::progress::ProgressBarStatus;
+use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
@@ -24,9 +24,15 @@ use tokio::runtime::Handle;
 pub fn Main() -> Element {
 	let file_list_sig = use_context::<Signal<FileList>>();
 	let pg_status_opt = use_context::<Signal<Option<ProgressBarStatus>>>()();
+	let lb_status = use_context::<Signal<LoadingBarStatus>>()();
 	let config_sig = use_context::<Signal<Config>>();
 	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
+
+	let has_progress_bar = pg_status_opt.is_some();
+	let has_loading_bar = lb_status == LoadingBarStatus::Displayed;
+	let is_waiting = has_progress_bar || has_loading_bar;
+
 	rsx! {
 		DropZone {
 			ondrop: move |event: DragEvent| {
@@ -79,23 +85,25 @@ pub fn Main() -> Element {
 			if pg_status_opt.is_none() {
 				div {
 					if let FileList::NonHashed(file_lst) = file_list_sig() {
-						if file_lst.content_file_exists(&config_sig()) {
-							Button {
-								onclick: move |_event| {
-									spawn(async move {
-										calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
-									});
-								},
-								{ t!("view_main_check_fingerprints") }
-							}
-						} else {
-							Button {
-								onclick: move |_event| {
-									spawn(async move {
-										calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
-									});
-								},
-								{ t!("view_main_calc_fingerprints") }
+						if !is_waiting {
+							if file_lst.content_file_exists(&config_sig()) {
+								Button {
+									onclick: move |_event| {
+										spawn(async move {
+											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+										});
+									},
+									{ t!("view_main_check_fingerprints") }
+								}
+							} else {
+								Button {
+									onclick: move |_event| {
+										spawn(async move {
+											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+										});
+									},
+									{ t!("view_main_calc_fingerprints") }
+								}
 							}
 						}
 					}
