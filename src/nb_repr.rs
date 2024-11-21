@@ -1,14 +1,6 @@
 use dioxus_i18n::t;
 use serde::{Deserialize, Serialize};
 
-pub const AVAILABLE_NB_REPR: &[(NbRepr, &str)] = &[
-	(NbRepr::Letters, "cpn_nb_letters"),
-	(
-		NbRepr::WesternArabicNumerals,
-		"cpn_nb_western_arabic_numerals",
-	),
-];
-
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum NbRepr {
