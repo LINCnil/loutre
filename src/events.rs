@@ -1,4 +1,4 @@
-use crate::clipboard::Clipboard;
+use crate::clipboard::{Clipboard, ClipboardStart};
 use crate::config::Config;
 use crate::files::{FileList, HashedFileList, NonHashedFileList};
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
@@ -45,6 +45,7 @@ impl ExternalEvent {
 		self,
 		cfg_sig: Signal<Config>,
 		mut clb_sig: Signal<Clipboard>,
+		clb_start_sig: Signal<ClipboardStart>,
 		mut fl_sig: Signal<FileList>,
 		mut lb_sig: Signal<LoadingBarStatus>,
 		mut pg_sig: Signal<Option<ProgressBarStatus>>,
@@ -55,10 +56,17 @@ impl ExternalEvent {
 				fl_sig.set(FileList::None);
 			}
 			Self::HashedFileListSet(new_hfl) => {
-				let cfg = cfg_sig();
-				let mut clipboard = Clipboard::new();
-				clipboard.set_clipboard(&cfg, &new_hfl, cfg.get_clipboard_threshold());
-				clb_sig.set(clipboard);
+				if new_hfl.get_result().is_ok() {
+					let cfg = cfg_sig();
+					let mut clipboard = Clipboard::new();
+					clipboard.set_clipboard(
+						&cfg,
+						&new_hfl,
+						clb_start_sig(),
+						cfg.get_clipboard_threshold(),
+					);
+					clb_sig.set(clipboard);
+				}
 				fl_sig.set(FileList::Hashed(new_hfl));
 			}
 			Self::NonHashedFileListSet(new_fl) => {

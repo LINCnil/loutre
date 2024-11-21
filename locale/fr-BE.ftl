@@ -1,5 +1,7 @@
 ## Main view
 
+view_main_clipboard_start_msg = Numéro de la première pièce
+
 view_main_open_dir = Ouvrir un dossier
 view_main_open_receipt = Ouvrir un AR
 view_main_calc_fingerprints = Calculer les empreintes

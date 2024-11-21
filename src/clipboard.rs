@@ -4,6 +4,27 @@ use std::fmt;
 use std::path::Path;
 
 #[derive(Clone, Copy, Debug)]
+pub struct ClipboardStart(usize);
+
+impl Default for ClipboardStart {
+	fn default() -> Self {
+		Self(1)
+	}
+}
+
+impl fmt::Display for ClipboardStart {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, "{}", self.0)
+	}
+}
+
+impl From<usize> for ClipboardStart {
+	fn from(nb: usize) -> Self {
+		Self(nb)
+	}
+}
+
+#[derive(Clone, Copy, Debug)]
 pub enum ClipboardPersistence {
 	Default,
 	Activated,
@@ -72,24 +93,40 @@ impl Clipboard {
 		Self { internal: None }
 	}
 
-	pub fn set_clipboard(&mut self, config: &Config, file_list: &HashedFileList, threshold: usize) {
+	pub fn set_clipboard(
+		&mut self,
+		config: &Config,
+		file_list: &HashedFileList,
+		start: ClipboardStart,
+		threshold: usize,
+	) {
 		if file_list.len() < threshold {
-			self.set_clipboard_list(config, file_list);
+			self.set_clipboard_list(config, file_list, start);
 		} else if let Ok(path) = file_list.get_content_file_absolute_path(config) {
-			self.set_clipboard_ctn_file(config, &path);
+			self.set_clipboard_ctn_file(config, &path, start);
 		}
 	}
 
-	pub fn set_clipboard_list(&mut self, config: &Config, file_list: &HashedFileList) {
-		let content_txt = "Debug test list";
-		let content_html = "<h1>Debug</h1><p>test list</p>";
-		self.set_content(config, content_txt, content_html);
+	pub fn set_clipboard_list(
+		&mut self,
+		config: &Config,
+		file_list: &HashedFileList,
+		start: ClipboardStart,
+	) {
+		let content_txt = format!("Debug {start} test file list");
+		let content_html = format!("<h1>Debug {start}</h1><p>test file list</p>");
+		self.set_content(config, &content_txt, &content_html);
 	}
 
-	pub fn set_clipboard_ctn_file(&mut self, config: &Config, content_file_path: &Path) {
-		let content_txt = "Debug test content file";
-		let content_html = "<h1>Debug</h1><p>test content file</p>";
-		self.set_content(config, content_txt, content_html);
+	pub fn set_clipboard_ctn_file(
+		&mut self,
+		config: &Config,
+		content_file_path: &Path,
+		start: ClipboardStart,
+	) {
+		let content_txt = format!("Debug {start} test content file");
+		let content_html = format!("<h1>Debug {start}</h1><p>test content file</p>");
+		self.set_content(config, &content_txt, &content_html);
 	}
 
 	fn set_content(&mut self, config: &Config, txt: &str, html: &str) {

@@ -1,5 +1,7 @@
 ## Main view
 
+view_main_clipboard_start_msg = Number of the first evidence
+
 view_main_open_dir = Open a directory
 view_main_open_receipt = Open a notice of receipt
 view_main_calc_fingerprints = Checksum calculation
