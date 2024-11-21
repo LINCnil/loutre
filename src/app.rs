@@ -2,7 +2,7 @@
 
 use crate::clipboard::{Clipboard, ClipboardStart};
 use crate::config::Config;
-use crate::events::{ExternalEventReceiver, ExternalEventSender};
+use crate::events::{ExternalEventReceiver, ExternalEventSender, ExternalEventSignals};
 use crate::files::FileList;
 use crate::notifications::NotificationBlackList;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
@@ -46,26 +46,12 @@ pub fn App() -> Element {
 }
 
 fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
-	let cfg_sig = use_context::<Signal<Config>>();
-	let clb_sig = use_context::<Signal<Clipboard>>();
-	let clb_start_sig = use_context::<Signal<ClipboardStart>>();
-	let fl_sig = use_context::<Signal<FileList>>();
-	let lb_sig = use_context::<Signal<LoadingBarStatus>>();
-	let pg_sig = use_context::<Signal<Option<ProgressBarStatus>>>();
-	let rcpt_sig = use_context::<Signal<Option<Receipt>>>();
+	let mut signals = ExternalEventSignals::new();
 	use_coroutine(|_| async move {
 		info!("Waiting for an external event…");
 		while let Some(event) = progress_rx.recv().await {
 			info!("External event received: {event}");
-			event.handle(
-				cfg_sig,
-				clb_sig,
-				clb_start_sig,
-				fl_sig,
-				lb_sig,
-				pg_sig,
-				rcpt_sig,
-			);
+			event.handle(&mut signals);
 		}
 	})
 }

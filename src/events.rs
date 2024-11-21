@@ -26,6 +26,30 @@ pub fn send_event_sync(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
 	true
 }
 
+pub struct ExternalEventSignals {
+	config: Signal<Config>,
+	clipboard: Signal<Clipboard>,
+	clipboard_start: Signal<ClipboardStart>,
+	file_list: Signal<FileList>,
+	loading_bar: Signal<LoadingBarStatus>,
+	progress_bar: Signal<Option<ProgressBarStatus>>,
+	receipt: Signal<Option<Receipt>>,
+}
+
+impl ExternalEventSignals {
+	pub fn new() -> Self {
+		Self {
+			config: use_context::<Signal<Config>>(),
+			clipboard: use_context::<Signal<Clipboard>>(),
+			clipboard_start: use_context::<Signal<ClipboardStart>>(),
+			file_list: use_context::<Signal<FileList>>(),
+			loading_bar: use_context::<Signal<LoadingBarStatus>>(),
+			progress_bar: use_context::<Signal<Option<ProgressBarStatus>>>(),
+			receipt: use_context::<Signal<Option<Receipt>>>(),
+		}
+	}
+}
+
 #[derive(Clone, Debug)]
 pub enum ExternalEvent {
 	FileListReset,
@@ -41,63 +65,54 @@ pub enum ExternalEvent {
 }
 
 impl ExternalEvent {
-	pub fn handle(
-		self,
-		cfg_sig: Signal<Config>,
-		mut clb_sig: Signal<Clipboard>,
-		clb_start_sig: Signal<ClipboardStart>,
-		mut fl_sig: Signal<FileList>,
-		mut lb_sig: Signal<LoadingBarStatus>,
-		mut pg_sig: Signal<Option<ProgressBarStatus>>,
-		mut rcpt_sig: Signal<Option<Receipt>>,
-	) {
+	pub fn handle(self, signals: &mut ExternalEventSignals) {
 		match self {
 			Self::FileListReset => {
-				fl_sig.set(FileList::None);
+				signals.file_list.set(FileList::None);
 			}
 			Self::HashedFileListSet(new_hfl) => {
 				if new_hfl.get_result().is_ok() {
-					let cfg = cfg_sig();
+					let cfg = (signals.config)();
 					let mut clipboard = Clipboard::new();
 					clipboard.set_clipboard(
 						&cfg,
 						&new_hfl,
-						clb_start_sig(),
+						(signals.clipboard_start)(),
 						cfg.get_clipboard_threshold(),
 					);
-					clb_sig.set(clipboard);
+					signals.clipboard.set(clipboard);
 				}
-				fl_sig.set(FileList::Hashed(new_hfl));
+				signals.file_list.set(FileList::Hashed(new_hfl));
 			}
 			Self::NonHashedFileListSet(new_fl) => {
-				fl_sig.set(FileList::NonHashed(new_fl));
+				signals.file_list.set(FileList::NonHashed(new_fl));
 			}
 			Self::LoadingBarAdd => {
-				lb_sig.set(LoadingBarStatus::Displayed);
+				signals.loading_bar.set(LoadingBarStatus::Displayed);
 			}
 			Self::LoadingBarDelete => {
-				lb_sig.set(LoadingBarStatus::Hidden);
+				signals.loading_bar.set(LoadingBarStatus::Hidden);
 			}
-			Self::ProgressBarAdd(nb) => match pg_sig() {
+			Self::ProgressBarAdd(nb) => match (signals.progress_bar)() {
 				Some(mut status) => {
 					status.add_progress(nb);
-					pg_sig.set(Some(status));
+					signals.progress_bar.set(Some(status));
 				}
 				None => {
 					error!("No active progress bar for ProgressBarAdd({nb})");
 				}
 			},
 			Self::ProgressBarCreate(nb) => {
-				pg_sig.set(Some(ProgressBarStatus::new(nb)));
+				signals.progress_bar.set(Some(ProgressBarStatus::new(nb)));
 			}
 			Self::ProgressBarDelete => {
-				pg_sig.set(None);
+				signals.progress_bar.set(None);
 			}
 			Self::ReceiptReset => {
-				rcpt_sig.set(None);
+				signals.receipt.set(None);
 			}
 			Self::ReceiptSet(rcpt) => {
-				rcpt_sig.set(Some(rcpt));
+				signals.receipt.set(Some(rcpt));
 			}
 		}
 	}
