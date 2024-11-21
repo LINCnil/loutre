@@ -69,7 +69,7 @@ pub fn ClipboardConfig() -> Element {
 					p {
 						label {
 							r#for: "cfg_clipboard_threshold",
-							{ t!("view_config_clipboard_msg_threshold") }
+							{ t!("view_config_clipboard_msg_persistence") }
 						}
 					}
 					div {
