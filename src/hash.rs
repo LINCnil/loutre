@@ -23,15 +23,19 @@ macro_rules! alg_hash_file {
 		loop {
 			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
-				send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+				if let Some(ref tx) = $tx {
+					send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+				}
 				break;
 			}
 			hasher.update(&$buffer[..n]);
 			processed_bytes += (n as u64);
-			if last_notif.elapsed() >= ref_duration {
-				if send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
-					processed_bytes = 0;
-					last_notif = Instant::now();
+			if let Some(ref tx) = $tx {
+				if last_notif.elapsed() >= ref_duration {
+					if send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
+						processed_bytes = 0;
+						last_notif = Instant::now();
+					}
 				}
 			}
 		}
@@ -54,7 +58,9 @@ macro_rules! blake3_hash_file {
 		loop {
 			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
-				send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+				if let Some(ref tx) = $tx {
+					send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+				}
 				break;
 			}
 			if first_read {
@@ -67,10 +73,12 @@ macro_rules! blake3_hash_file {
 				hasher.update(&$buffer[..n]);
 			}
 			processed_bytes += (n as u64);
-			if last_notif.elapsed() >= ref_duration {
-				if send_event_sync(&$tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
-					processed_bytes = 0;
-					last_notif = Instant::now();
+			if let Some(ref tx) = $tx {
+				if last_notif.elapsed() >= ref_duration {
+					if send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
+						processed_bytes = 0;
+						last_notif = Instant::now();
+					}
 				}
 			}
 		}
@@ -149,7 +157,7 @@ impl HashFunc {
 	pub fn hash_file<P: AsRef<Path>>(
 		&self,
 		file: P,
-		tx: ExternalEventSender,
+		tx: Option<ExternalEventSender>,
 	) -> io::Result<String> {
 		let file = file.as_ref();
 		info!("Calculating the {self} hash of file: {}", file.display());

@@ -59,6 +59,18 @@ cpn_header_config = Configuration
 
 cpn_theme_change = Change the theme
 
+## Clipboard
+
+cpn_clipboard_ctn_file_msg =
+    { $nb_evidences ->
+        [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital evidence collected during the on-site investigation.
+        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital {"{{"} nb_evidences {"}}"} evidences collected during the on-site investigation.
+    }
+cpn_clipboard_ctn_file_full_txt = EVIDENCE #{"{{"} evidence.nb {"}}"}: { cpn_clipboard_ctn_file_msg }
+    {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} {"{{"} evidence.hash {"}}"}
+cpn_clipboard_ctn_file_full_html = <p><b>EVIDENCE #{"{{"} evidence.nb {"}}"}:</b> { cpn_clipboard_ctn_file_msg }<br>
+    <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} <i>{"{{"} evidence.hash {"}}"}</i></p>
+
 ## Numbers
 
 cpn_nb_letters = letters

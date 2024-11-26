@@ -419,7 +419,7 @@ impl NonHashedFile {
 
 	pub fn hash(&self, hash_func: HashFunc, tx: ExternalEventSender) -> io::Result<HashedFile> {
 		let path = self.get_absolute_path()?;
-		let hash = hash_func.hash_file(path, tx)?;
+		let hash = hash_func.hash_file(path, Some(tx))?;
 		Ok(HashedFile {
 			base_dir: self.base_dir.clone(),
 			relative_path: self.relative_path.clone(),

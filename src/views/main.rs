@@ -149,7 +149,7 @@ pub fn Main() -> Element {
 								onclick: move |_event| {
 									if let FileList::Hashed(lst) = file_list_sig() {
 										let mut clipboard = Clipboard::new();
-										clipboard.set_clipboard_list(
+										let _ = clipboard.set_clipboard_list(
 											&config_sig(),
 											&lst,
 											clipboard_start_sig(),
@@ -163,15 +163,13 @@ pub fn Main() -> Element {
 								onclick: move |_event| {
 									if let FileList::Hashed(lst) = file_list_sig() {
 										let cfg = config_sig();
-										if let Ok(ctn_file_path) = lst.get_content_file_absolute_path(&cfg) {
-											let mut clipboard = Clipboard::new();
-											clipboard.set_clipboard_ctn_file(
-												&cfg,
-												&ctn_file_path,
-												clipboard_start_sig(),
-											);
-											clipboard_sig.set(clipboard);
-										}
+										let mut clipboard = Clipboard::new();
+										let _ = clipboard.set_clipboard_ctn_file(
+											&cfg,
+											&lst,
+											clipboard_start_sig(),
+										);
+										clipboard_sig.set(clipboard);
 									}
 								},
 							}
@@ -278,7 +276,6 @@ async fn calc_fingerprints(
 		thread::spawn(move || {
 			info!("File hashing thread started");
 
-			let base_dir = file_list.get_base_dir();
 			let total_size = file_list.total_size();
 			send_event_sync(&tx, ExternalEvent::ProgressBarCreate(total_size));
 			info!("Total size to hash: {total_size} bytes");

@@ -74,7 +74,7 @@ impl ExternalEvent {
 				if new_hfl.get_result().is_ok() {
 					let cfg = (signals.config)();
 					let mut clipboard = Clipboard::new();
-					clipboard.set_clipboard(
+					let _ = clipboard.set_clipboard(
 						&cfg,
 						&new_hfl,
 						(signals.clipboard_start)(),

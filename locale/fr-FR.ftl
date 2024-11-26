@@ -59,6 +59,18 @@ cpn_header_config = Configuration
 
 cpn_theme_change = Modifier le thème
 
+## Clipboard
+
+cpn_clipboard_ctn_file =
+    { $nb_evidences ->
+        [one] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’intitulé, la taille et l’empreinte numérique au format {"{{"} hash_func {"}}"} de la pièce numérique copiée durant la mission de contrôle.
+        *[other] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’inventaire des {"{{"} nb_evidences {"}}"} pièces numériques copiées durant la mission de contrôle. Pour chaque pièce est précisé son intitulé, sa taille et son empreinte numérique au format {"{{"} hash_func {"}}"}.
+    }
+cpn_clipboard_ctn_file_full_txt = PIÈCE No {"{{"} evidence.nb {"}}"} : { cpn_clipboard_ctn_file }
+    {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} {"{{"} evidence.hash {"}}"}
+cpn_clipboard_ctn_file_full_html = <p><b>PIÈCE N<sup>o</sup> {"{{"} evidence.nb {"}}"} :</b> { cpn_clipboard_ctn_file }<br>
+    <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} <i>{"{{"} evidence.hash {"}}"}</i></p>
+
 ## Numbers
 
 cpn_nb_letters = lettres
