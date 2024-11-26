@@ -43,8 +43,13 @@ view_config_hash_msg_content_file_name = Nom du fichier de contenu
 view_config_messages_msg_empty_files_warning = Afficher un avertissement en cas de chargement d'un dossier comprenant des fichiers vides
 view_config_messages_msg_duplicated_files_warning = Afficher un avertissement lorsque des fichiers avec la même empreinte sont détectés
 
+view_config_clipboard_msg_numbers = Représentation des nombres
+view_config_clipboard_msg_letters = Lettres
+view_config_clipboard_msg_western_arabic_numerals = Chiffres arabes
+
 view_config_clipboard_msg_threshold = Seuil du presse-papier
 view_config_clipboard_msg_threshold_help = Nombre de fichiers à partir duquel le presse papier contient par défaut l'empreinte du fichier de contenu plutôt que les empreintes de chaque pièce.
+
 view_config_clipboard_msg_persistence = Persistance du presse-papier
 view_config_clipboard_msg_persistence_help = Indique si l’objet interne gérant le presse-papier soit être conservé en mémoire ou non. Ce paramètre dépends du système d’exploitation. En l'absence de problème avec le presse-papier, il est recommandé de conserver la valeur par défaut.
 view_config_clipboard_msg_persistence_default = Par défaut
@@ -77,7 +82,7 @@ cpn_nb_letters = lettres
 cpn_nb_western_arabic_numerals = chiffres arabes
 
 cpn_nb_main_sep = -
-cpn_nb_last_sep = { nb_main_sep }
+cpn_nb_last_sep = { cpn_nb_main_sep }
 
 cpn_nb_zero = zéro
 cpn_nb_one = un

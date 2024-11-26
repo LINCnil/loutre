@@ -2,6 +2,7 @@ use crate::clipboard::ClipboardPersistence;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
 use crate::i18n::Lang;
+use crate::nb_repr::NbRepr;
 use crate::theme::Theme;
 use serde_derive::{Deserialize, Serialize};
 use std::fs::{create_dir_all, read_to_string, File};
@@ -30,6 +31,7 @@ pub struct Config {
 	pub enable_empty_file_warning: Option<bool>,
 
 	// Clipboard
+	pub number_representation: NbRepr,
 	pub clipboard_threshold: Option<usize>,
 	pub clipboard_persistence: Option<bool>,
 }

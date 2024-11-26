@@ -181,7 +181,7 @@ impl Clipboard {
 		let nb_evidences = file_list.len();
 		let ctx = context!(
 			hash_func => hash_func.to_string(),
-			nb_evidences,
+			nb_evidences => config.number_representation.usize_to_string(nb_evidences),
 			evidence => context!(
 				nb => start.to_string(),
 				name,

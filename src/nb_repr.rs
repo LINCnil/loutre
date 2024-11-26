@@ -1,5 +1,6 @@
 use dioxus_i18n::t;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -17,12 +18,27 @@ impl NbRepr {
 			NbRepr::WesternArabicNumerals => nb.to_string(),
 		}
 	}
+}
 
-	pub fn display(&self) -> String {
-		match self {
-			NbRepr::Letters => t!("cpn_nb_letters"),
-			NbRepr::WesternArabicNumerals => t!("cpn_nb_western_arabic_numerals"),
+impl std::str::FromStr for NbRepr {
+	type Err = ();
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		match s.to_ascii_lowercase().as_str() {
+			"letters" => Ok(Self::Letters),
+			"western_arabic_numerals" => Ok(Self::WesternArabicNumerals),
+			_ => Err(()),
 		}
+	}
+}
+
+impl fmt::Display for NbRepr {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let s = match self {
+			NbRepr::Letters => "letters",
+			NbRepr::WesternArabicNumerals => "western_arabic_numerals",
+		};
+		write!(f, "{s}")
 	}
 }
 
@@ -30,25 +46,25 @@ fn format_letters(nb: usize, first: bool) -> String {
 	let mut parts = vec![];
 
 	// Billions
-	let (n, nb) = div_nb(nb, 1_000_000_000, "billion");
+	let (n, nb) = div_nb(nb, 1_000_000_000, "cpn_nb_billion");
 	if let Some(p) = n {
 		parts.push(p);
 	}
 
 	// Millions
-	let (n, nb) = div_nb(nb, 1_000_000, "million");
+	let (n, nb) = div_nb(nb, 1_000_000, "cpn_nb_million");
 	if let Some(p) = n {
 		parts.push(p);
 	}
 
 	// Thousands
-	let (n, nb) = div_nb(nb, 1_000, "thousand");
+	let (n, nb) = div_nb(nb, 1_000, "cpn_nb_thousand");
 	if let Some(p) = n {
 		parts.push(p);
 	}
 
 	// Hundreds
-	let (n, nb) = div_nb(nb, 100, "hundred");
+	let (n, nb) = div_nb(nb, 100, "cpn_nb_hundred");
 	if let Some(p) = n {
 		parts.push(p);
 	}
@@ -60,7 +76,7 @@ fn format_letters(nb: usize, first: bool) -> String {
 		return s;
 	}
 	if !parts.is_empty() && first {
-		s += &t!("nb_last_sep", space: " ");
+		s += &t!("cpn_nb_last_sep", space: " ");
 	} else if !parts.is_empty() {
 		s += &main_sep;
 	}
