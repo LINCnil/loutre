@@ -66,7 +66,7 @@ pub fn ClipboardConfig() -> Element {
 								if let Ok(new_value) = NbRepr::from_str(&event.data.value()) {
 									spawn(async move {
 										let mut cfg = cfg_sig();
-										cfg.number_representation = new_value.into();
+										cfg.number_representation = new_value;
 										cfg.write_to_file();
 										cfg_sig.set(cfg);
 									});
