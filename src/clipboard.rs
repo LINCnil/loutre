@@ -2,6 +2,7 @@ use crate::config::Config;
 use crate::files::HashedFileList;
 use dioxus_i18n::t;
 use minijinja::{context, Environment};
+use serde_derive::Serialize;
 use std::fmt;
 use std::path::Path;
 
@@ -88,6 +89,15 @@ impl From<ClipboardPersistence> for Option<bool> {
 			ClipboardPersistence::Deactivated => Some(false),
 		}
 	}
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct FileTemplate {
+	nb: usize,
+	name: String,
+	size: u64,
+	hash: String,
+	hash_func: String,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -182,13 +192,13 @@ impl Clipboard {
 		let ctx = context!(
 			hash_func => hash_func.to_string(),
 			nb_evidences => config.number_representation.usize_to_string(nb_evidences),
-			evidence => context!(
-				nb => start.to_string(),
+			evidence => FileTemplate {
+				nb: start.0,
 				name,
 				size,
 				hash,
-				hash_func => hash_func.to_string(),
-			),
+				hash_func: hash_func.to_string(),
+			},
 		);
 		let model_txt = t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences);
 		let model_html = t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences);
