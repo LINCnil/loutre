@@ -193,18 +193,18 @@ impl Clipboard {
 		let model_txt = t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences);
 		let model_html = t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences);
 		env.add_template("txt", &model_txt)
-			.map_err(|_| ClipboardError::ListTemplateText)?;
+			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
 		env.add_template("html", &model_html)
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+			.map_err(|_| ClipboardError::ContentFileTemplateHtml)?;
 		let tmpl_txt = env
 			.get_template("txt")
-			.map_err(|_| ClipboardError::ListTemplateText)?;
+			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
 		let html_html = env
 			.get_template("html")
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+			.map_err(|_| ClipboardError::ContentFileTemplateHtml)?;
 		let content_txt = tmpl_txt
 			.render(&ctx)
-			.map_err(|_| ClipboardError::ListTemplateText)?;
+			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
 		let content_html = html_html
 			.render(&ctx)
 			.map_err(|_| ClipboardError::ListTemplateHtml)?;
