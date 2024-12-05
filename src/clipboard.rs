@@ -1,14 +1,11 @@
 use crate::config::Config;
 use crate::files::HashedFileList;
+use crate::templates::{filter_add_dir_level, EntryTemplate};
 use dioxus_i18n::t;
+use dioxus_logger::tracing::error;
 use minijinja::{context, Environment};
-use serde_derive::Serialize;
 use std::fmt;
 use std::path::Path;
-
-const DEFAULT_TMPL_LIST_TXT: &str = r#"Debug {{ start }} test file list with MiniJinja"#;
-const DEFAULT_TMPL_LIST_HTML: &str = r#"<h1>Debug {{ start }}</h1>
-<p>test file list with MiniJinja</p>"#;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ClipboardStart(usize);
@@ -91,25 +88,32 @@ impl From<ClipboardPersistence> for Option<bool> {
 	}
 }
 
-#[derive(Clone, Debug, Serialize)]
-struct FileTemplate {
-	nb: usize,
-	name: String,
-	size: u64,
-	hash: String,
-	hash_func: String,
-}
-
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub enum ClipboardError {
-	ContentFileHash,
+	ContentFileHash(String),
 	ContentFileName,
 	ContentFilePath,
 	ContentFileSize,
-	ContentFileTemplateText,
-	ContentFileTemplateHtml,
-	ListTemplateText,
-	ListTemplateHtml,
+	ContentFileTemplateText(String),
+	ContentFileTemplateHtml(String),
+	ListTemplateText(String),
+	ListTemplateHtml(String),
+}
+
+impl fmt::Display for ClipboardError {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let s = match self {
+			Self::ContentFileHash(e) => format!("content file hash error: {e}"),
+			Self::ContentFileName => "content file hash error".to_string(),
+			Self::ContentFilePath => "content file path error".to_string(),
+			Self::ContentFileSize => "content file size error".to_string(),
+			Self::ContentFileTemplateText(e) => format!("content file text template error: {e}"),
+			Self::ContentFileTemplateHtml(e) => format!("content file HTML template error: {e}"),
+			Self::ListTemplateText(e) => format!("list text template error: {e}"),
+			Self::ListTemplateHtml(e) => format!("list HTML template error: {e}"),
+		};
+		write!(f, "{s}")
+	}
 }
 
 pub struct Clipboard {
@@ -141,29 +145,65 @@ impl Clipboard {
 		file_list: &HashedFileList,
 		start: ClipboardStart,
 	) -> Result<(), ClipboardError> {
+		let ret = self.inner_set_clipboard_list(config, file_list, start);
+		if let Err(ref e) = ret {
+			error!("{e}");
+		}
+		ret
+	}
+
+	pub fn set_clipboard_ctn_file(
+		&mut self,
+		config: &Config,
+		file_list: &HashedFileList,
+		start: ClipboardStart,
+	) -> Result<(), ClipboardError> {
+		let ret = self.inner_set_clipboard_ctn_file(config, file_list, start);
+		if let Err(ref e) = ret {
+			error!("{e}");
+		}
+		ret
+	}
+
+	fn inner_set_clipboard_list(
+		&mut self,
+		config: &Config,
+		file_list: &HashedFileList,
+		start: ClipboardStart,
+	) -> Result<(), ClipboardError> {
 		let mut env = Environment::new();
-		let ctx = context!(start => start.to_string());
-		env.add_template("txt", DEFAULT_TMPL_LIST_TXT)
-			.map_err(|_| ClipboardError::ListTemplateText)?;
-		env.add_template("html", DEFAULT_TMPL_LIST_HTML)
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+		env.add_filter("add_dir_level", filter_add_dir_level);
+		let mut evidences: Vec<EntryTemplate> =
+			file_list.get_files().map(|f| f.clone().into()).collect();
+		evidences.sort_by(|a, b| a.name.cmp(&b.name));
+		let ctx = context!(
+			hash_func => file_list.get_main_hashing_function().to_string(),
+			nb_start => start.0,
+			evidences,
+		);
+		let model_txt = t!("cpn_clipboard_list_full_txt");
+		let model_html = t!("cpn_clipboard_list_full_html");
+		env.add_template("txt", &model_txt)
+			.map_err(|e| ClipboardError::ListTemplateText(e.to_string()))?;
+		env.add_template("html", &model_html)
+			.map_err(|e| ClipboardError::ListTemplateHtml(e.to_string()))?;
 		let tmpl_txt = env
 			.get_template("txt")
-			.map_err(|_| ClipboardError::ListTemplateText)?;
+			.map_err(|e| ClipboardError::ListTemplateText(e.to_string()))?;
 		let html_html = env
 			.get_template("html")
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+			.map_err(|e| ClipboardError::ListTemplateHtml(e.to_string()))?;
 		let content_txt = tmpl_txt
 			.render(&ctx)
-			.map_err(|_| ClipboardError::ListTemplateText)?;
+			.map_err(|e| ClipboardError::ListTemplateText(e.to_string()))?;
 		let content_html = html_html
 			.render(&ctx)
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+			.map_err(|e| ClipboardError::ListTemplateHtml(e.to_string()))?;
 		self.set_content(config, &content_txt, &content_html);
 		Ok(())
 	}
 
-	pub fn set_clipboard_ctn_file(
+	fn inner_set_clipboard_ctn_file(
 		&mut self,
 		config: &Config,
 		file_list: &HashedFileList,
@@ -187,37 +227,38 @@ impl Clipboard {
 		let hash_func = file_list.get_main_hashing_function();
 		let hash = hash_func
 			.hash_file(content_file_path, None)
-			.map_err(|_| ClipboardError::ContentFileHash)?;
+			.map_err(|e| ClipboardError::ContentFileHash(e.to_string()))?;
 		let nb_evidences = file_list.len();
+		let hash_func = hash_func.to_string();
 		let ctx = context!(
-			hash_func => hash_func.to_string(),
+			hash_func,
 			nb_evidences => config.number_representation.usize_to_string(nb_evidences),
-			evidence => FileTemplate {
-				nb: start.0,
+			nb_start => start.0,
+			evidence => context!(
 				name,
 				size,
 				hash,
-				hash_func: hash_func.to_string(),
-			},
+				hash_func,
+			),
 		);
 		let model_txt = t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences);
 		let model_html = t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences);
 		env.add_template("txt", &model_txt)
-			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
+			.map_err(|e| ClipboardError::ContentFileTemplateText(e.to_string()))?;
 		env.add_template("html", &model_html)
-			.map_err(|_| ClipboardError::ContentFileTemplateHtml)?;
+			.map_err(|e| ClipboardError::ContentFileTemplateHtml(e.to_string()))?;
 		let tmpl_txt = env
 			.get_template("txt")
-			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
+			.map_err(|e| ClipboardError::ContentFileTemplateText(e.to_string()))?;
 		let html_html = env
 			.get_template("html")
-			.map_err(|_| ClipboardError::ContentFileTemplateHtml)?;
+			.map_err(|e| ClipboardError::ContentFileTemplateHtml(e.to_string()))?;
 		let content_txt = tmpl_txt
 			.render(&ctx)
-			.map_err(|_| ClipboardError::ContentFileTemplateText)?;
+			.map_err(|e| ClipboardError::ContentFileTemplateText(e.to_string()))?;
 		let content_html = html_html
 			.render(&ctx)
-			.map_err(|_| ClipboardError::ListTemplateHtml)?;
+			.map_err(|e| ClipboardError::ListTemplateHtml(e.to_string()))?;
 		self.set_content(config, &content_txt, &content_html);
 		Ok(())
 	}

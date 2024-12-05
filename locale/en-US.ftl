@@ -66,15 +66,36 @@ cpn_theme_change = Change the theme
 
 ## Clipboard
 
-cpn_clipboard_ctn_file_msg =
+-cpn_clipboard_ctn_file =
     { $nb_evidences ->
         [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital evidence collected during the on-site investigation.
         *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital {"{{"} nb_evidences {"}}"} evidences collected during the on-site investigation.
     }
-cpn_clipboard_ctn_file_full_txt = EVIDENCE #{"{{"} evidence.nb {"}}"}: { cpn_clipboard_ctn_file_msg }
-    {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} {"{{"} evidence.hash {"}}"}
-cpn_clipboard_ctn_file_full_html = <p><b>EVIDENCE #{"{{"} evidence.nb {"}}"}:</b> { cpn_clipboard_ctn_file_msg }<br>
-    <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} <i>{"{{"} evidence.hash {"}}"}</i></p>
+-cpn_clipboard_file_data_txt = {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"}: {"{{"} evidence.hash {"}}"}
+-cpn_clipboard_file_data_html = <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"}: <i>{"{{"} evidence.hash {"}}"}</i>
+
+cpn_clipboard_ctn_file_full_txt = EVIDENCE #{"{{"} nb_start {"}}"}: { -cpn_clipboard_ctn_file }
+    { -cpn_clipboard_file_data_txt }
+
+cpn_clipboard_ctn_file_full_html = <p><b>EVIDENCE #{"{{"} nb_start {"}}"}:</b> { -cpn_clipboard_ctn_file }<br>
+    { -cpn_clipboard_file_data_html }</p>
+
+cpn_clipboard_list_full_txt = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
+    EVIDENCE #{"{{"} nb {"}}"}: copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size {"}}"} files:{"{"}% endif %{"}"}
+    {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
+    “{"{{"} sub_entry.name {"}}"}” {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
+    {"{"}%- endfor %{"}"}{"{"}% endif -%{"}"}
+    {"{"}% if entry.is_file %{"}"}{"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
+    {"{"}% set nb = nb + 1 %{"}"}
+    {"{"}% endfor %{"}"}
+
+cpn_clipboard_list_full_html = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences %{"}"}<p>
+    <b>EVIDENCE #{"{{"} nb {"}}"}:</b> copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size {"}}"} files:{"{"}% else %{"}"}<br>{"{"}% endif %{"}"}
+    {"{"}% if entry.is_dir %{"}"}<ul>{"{"}% for sub_entry in entry.evidences %{"}"}
+    <li>“{"{{"} sub_entry.name {"}}"}”<br>{"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_html }{"{"}% endwith %{"}"}</li>
+    {"{"}% endfor %{"}"}</ul>{"{"}% endif %{"}"}
+    {"{"}% if entry.is_file %{"}"}{"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_html }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
+    </p>{"{"}% set nb = nb + 1 %{"}"}{"{"}% endfor %{"}"}
 
 ## Numbers
 

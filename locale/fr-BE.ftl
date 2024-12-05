@@ -66,15 +66,36 @@ cpn_theme_change = Modifier le thème
 
 ## Clipboard
 
-cpn_clipboard_ctn_file =
+-cpn_clipboard_ctn_file =
     { $nb_evidences ->
         [one] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’intitulé, la taille et l’empreinte numérique au format {"{{"} hash_func {"}}"} de la pièce numérique copiée durant la mission de contrôle.
         *[other] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’inventaire des {"{{"} nb_evidences {"}}"} pièces numériques copiées durant la mission de contrôle. Pour chaque pièce est précisé son intitulé, sa taille et son empreinte numérique au format {"{{"} hash_func {"}}"}.
     }
-cpn_clipboard_ctn_file_full_txt = PIÈCE No {"{{"} evidence.nb {"}}"} : { cpn_clipboard_ctn_file }
-    {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} {"{{"} evidence.hash {"}}"}
-cpn_clipboard_ctn_file_full_html = <p><b>PIÈCE N<sup>o</sup> {"{{"} evidence.nb {"}}"} :</b> { cpn_clipboard_ctn_file }<br>
-    <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} <i>{"{{"} evidence.hash {"}}"}</i></p>
+-cpn_clipboard_file_data_txt = {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} : {"{{"} evidence.hash {"}}"}
+-cpn_clipboard_file_data_html = <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} : <i>{"{{"} evidence.hash {"}}"}</i>
+
+cpn_clipboard_ctn_file_full_txt = PIÈCE No {"{{"} nb_start {"}}"} : { -cpn_clipboard_ctn_file }
+    { -cpn_clipboard_file_data_txt }
+
+cpn_clipboard_ctn_file_full_html = <p><b>PIÈCE N<sup>o</sup> {"{{"} nb_start {"}}"} :</b> { -cpn_clipboard_ctn_file }<br>
+    { -cpn_clipboard_file_data_html }</p>
+
+cpn_clipboard_list_full_txt = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
+    PIÈCE No {"{{"} nb {"}}"} : copie sur support informatique d’un {"{"}% if entry.is_file %{"}"}document{"{"}% else %{"}"}dossier{"{"}% endif %{"}"} intitulé « {"{{"} entry.name {"}}"} »{"{"}% if entry.is_dir %{"}"} contenant {"{{"} entry.size {"}}"} documents :{"{"}% endif %{"}"}
+    {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
+    « {"{{"} sub_entry.name {"}}"} » {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
+    {"{"}%- endfor %{"}"}{"{"}% endif -%{"}"}
+    {"{"}% if entry.is_file %{"}"}{"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
+    {"{"}% set nb = nb + 1 %{"}"}
+    {"{"}% endfor %{"}"}
+
+cpn_clipboard_list_full_html = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences %{"}"}<p>
+    <b>PIÈCE N<sup>o</sup> {"{{"} nb {"}}"} :</b> copie sur support informatique d’un {"{"}% if entry.is_file %{"}"}document{"{"}% else %{"}"}dossier{"{"}% endif %{"}"} intitulé « {"{{"} entry.name {"}}"} »{"{"}% if entry.is_dir %{"}"} contenant {"{{"} entry.size {"}}"} documents :{"{"}% else %{"}"}<br>{"{"}% endif %{"}"}
+    {"{"}% if entry.is_dir %{"}"}<ul>{"{"}% for sub_entry in entry.evidences %{"}"}
+    <li>« {"{{"} sub_entry.name {"}}"} »<br>{"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_html }{"{"}% endwith %{"}"}</li>
+    {"{"}% endfor %{"}"}</ul>{"{"}% endif %{"}"}
+    {"{"}% if entry.is_file %{"}"}{"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_html }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
+    </p>{"{"}% set nb = nb + 1 %{"}"}{"{"}% endfor %{"}"}
 
 ## Numbers
 

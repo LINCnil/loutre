@@ -16,6 +16,7 @@ mod parsers;
 mod progress;
 mod receipt;
 mod serializers;
+mod templates;
 mod theme;
 mod views;
 

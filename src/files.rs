@@ -10,7 +10,7 @@ use std::fs::{self, File};
 use std::io;
 #[cfg(windows)]
 use std::os::windows::prelude::*;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use uuid::Uuid;
 
 // Microsoft Windows File Attribute Constants
@@ -469,6 +469,27 @@ impl HashedFile {
 			hash: hash.as_ref().into(),
 			hash_func,
 		}
+	}
+
+	pub fn move_path(&mut self) {
+		let mut new_relative_path = PathBuf::with_capacity(self.relative_path.capacity());
+		let components: Vec<Component> = self
+			.relative_path
+			.components()
+			.filter(|e| matches!(e, Component::Normal(_)))
+			.collect();
+		let mut components_it = components.iter();
+		if let Some(cpn) = components_it.next() {
+			self.base_dir.push(cpn);
+		}
+		for cpn in components_it {
+			new_relative_path.push(cpn);
+		}
+		self.relative_path = new_relative_path;
+	}
+
+	pub fn get_base_dir(&self) -> PathBuf {
+		self.base_dir.clone()
 	}
 
 	pub fn get_size(&self) -> u64 {
