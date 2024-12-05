@@ -11,14 +11,14 @@ pub fn ThemeSwitch() -> Element {
 	let theme_sig = use_context::<Signal<Theme>>();
 	let theme = use_context::<Signal<Theme>>()();
 	let (class, target) = match theme {
-		Theme::Dark => ("ri-moon-line", Theme::Light),
-		Theme::Light => ("ri-sun-line", Theme::Dark),
+		Theme::Dark => ("ri-sun-line", Theme::Light),
+		Theme::Light => ("ri-moon-line", Theme::Dark),
 	};
 	rsx! {
 		span {
-			class: "effect-rotate-click-wrapper",
+			class: "component-header-menu-item",
 			i {
-				class: "{class} effect-rotate-click",
+				class: "{class}",
 				title: t!("cpn_theme_change"),
 				onclick: move |_| {
 					spawn(async move {

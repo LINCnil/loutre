@@ -26,8 +26,11 @@ pub fn LangSwitch() -> Element {
 	rsx! {
 		div {
 			class: "component-lang-switch",
-			i {
-				class: "ri-translate-2"
+			span {
+				class: "component-header-menu-item",
+				i {
+					class: "ri-translate-2"
+				}
 			}
 			ul {
 				class: "component-lang-switch-list",

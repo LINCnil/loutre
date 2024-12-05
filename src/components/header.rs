@@ -38,9 +38,9 @@ pub fn Header(props: HeaderProps) -> Element {
 					}
 					li {
 						span {
-							class: "effect-rotate-click-wrapper",
+							class: "component-header-menu-item",
 							Link {
-								class: "ri-settings-3-line effect-rotate-click component-theme-config",
+								class: "ri-settings-3-line",
 								to: if props.is_config_view {
 									Main {}
 								} else {
@@ -72,9 +72,9 @@ fn DebugLink(is_debug_view: bool) -> Element {
 	rsx! {
 		li {
 			span {
-				class: "effect-rotate-click-wrapper",
+				class: "component-header-menu-item",
 				Link {
-					class: "ri-bug-line effect-rotate-click component-theme-config",
+					class: "ri-bug-line",
 					to: if is_debug_view {
 						Main {}
 					} else {

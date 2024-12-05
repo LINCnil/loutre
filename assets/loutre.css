@@ -2,7 +2,13 @@
 
 :root {
 	--main-bg-color: #F8F8F8;
+	--main-section-bg-color: #24243A;
 	--main-color: #414141;
+
+	--menu-bg-color: #414259;
+	--menu-item-bg-color: #181830;
+	--menu-item-color: #E5EAFF;
+
 	--config-menu-tab-color: #414141;
 
 	--button-bg-color: #E5EAFF;
@@ -42,8 +48,14 @@
 }
 
 [data-theme="dark"] {
-	--main-bg-color: #17172F;
+	--main-bg-color: #181830;
+	--main-section-bg-color: #24243A;
 	--main-color: #E5EAFF;
+
+	--menu-bg-color: #414259;
+	--menu-item-bg-color: #181830;
+	--menu-item-color: #E5EAFF;
+
 	--config-menu-tab-color: #E5EAFF;
 
 	--button-bg-color: #E5EAFF;
@@ -137,29 +149,6 @@ progress[value]::-webkit-progress-value {
 	border-radius: 16px;
 }
 
-/* Rotation effect */
-
-.effect-rotate-click-wrapper {
-	padding-left: 8px;
-}
-
-.effect-rotate-click:hover {
-	cursor: pointer;
-	display: inline-block;
-	transition-duration: 500ms;
-	transition-property: transform;
-	transform: rotate(25deg);
-	-webkit-transform: rotate(25deg);
-}
-
-.effect-rotate-click:link,
-.effect-rotate-click:visited,
-.effect-rotate-click:hover,
-.effect-rotate-click:active {
-	color: var(--main-color);
-	text-decoration: none;
-}
-
 /* Button component */
 
 .component-button {
@@ -241,7 +230,7 @@ progress[value]::-webkit-progress-value {
 .component-dropzone {
 	height: 100vh;
 	box-sizing: border-box;
-	padding: 32px;
+	padding: 48px 72px 0 72px;
 }
 
 /* File list component */
@@ -295,25 +284,44 @@ progress[value]::-webkit-progress-value {
 
 .component-header-right {
 	flex-grow: 1;
-}
-
-.component-header-right-content {
-	padding: 16px 0 0 32px;
+	text-align: right;
+	padding-top: 14px;
 }
 
 .component-header-menu {
-	text-align: right;
+	display: inline-block;
+	padding: 2px 16px 2px 16px;
+	background-color: var(--menu-bg-color);
+	color: var(--menu-item-color);
+	font-size: 1.6em;
+	border-radius: 30px;
 }
 
 .component-header-menu > li {
 	display: inline-block;
 }
 
+.component-header-menu-item {
+	border-radius: 45px;
+	padding: 0 6px 0 6px;
+}
+
+.component-header-menu-item:hover {
+	background-color: var(--menu-item-bg-color);
+}
+
+.component-header-menu-item a:link,
+.component-header-menu-item a:visited,
+.component-header-menu-item a:hover,
+.component-header-menu-item a:active {
+	color: var(--menu-item-color);
+	text-decoration: none;
+}
+
 /* Language switch component */
 
 .component-lang-switch {
 	display: inline-block;
-	padding-left: 8px;
 }
 
 .component-lang-switch:hover > .component-lang-switch-list, .component-lang-switch-list:hover {
