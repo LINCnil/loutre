@@ -60,16 +60,16 @@ pub struct EntryTemplate {
 
 impl From<HashedFile> for EntryTemplate {
 	fn from(hf: HashedFile) -> Self {
-		let base_dir_os = hf.get_base_dir().into_os_string();
-		let relpath_os = hf.get_relative_path().as_os_str().to_os_string();
+		let base_dir_os = hf.get_base_dir();
+		let relpath_os = hf.get_relative_path().as_os_str();
 		#[cfg(unix)]
-		let base_dir = base_dir_os.into_vec();
+		let base_dir = base_dir_os.to_os_string().into_vec();
 		#[cfg(not(unix))]
-		let base_dir = base_dir_os.to_string();
+		let base_dir = base_dir_os.to_str().unwrap().to_string();
 		#[cfg(unix)]
-		let relative_path = relpath_os.into_vec();
+		let relative_path = relpath_os.into_os_string().into_vec();
 		#[cfg(not(unix))]
-		let relative_path = relpath_os.to_string();
+		let relative_path = relpath_os.to_str().unwrap().to_string();
 		Self {
 			base_dir,
 			relative_path,
@@ -137,17 +137,16 @@ pub fn filter_add_dir_level(lst: Vec<Value>) -> Vec<Value> {
 					new_relative_path.push(cpn);
 				}
 
-				let base_dir_os = base_dir.into_os_string();
 				#[cfg(unix)]
-				let base_dir = base_dir_os.into_vec();
+				let base_dir = base_dir.into_os_string().into_vec();
 				#[cfg(not(unix))]
-				let base_dir = base_dir_os.to_string();
+				let base_dir = base_dir.display().to_string();
 
-				let relpath_os = new_relative_path.as_os_str().to_os_string();
+				let relpath_os = new_relative_path.as_os_str();
 				#[cfg(unix)]
-				let relative_path = relpath_os.into_vec();
+				let relative_path = relpath_os.to_os_string().into_vec();
 				#[cfg(not(unix))]
-				let relative_path = relpath_os.to_string();
+				let relative_path = relpath_os.to_str().unwrap().to_string();
 
 				let new_entry = context!(
 					base_dir => base_dir.clone(),
