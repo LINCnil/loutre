@@ -13,9 +13,20 @@ You can compile a production version using the following command:
 cargo build --release
 ```
 
+[dioxus_doc]: https://dioxuslabs.com/learn/0.5/getting_started
+
+### Development
+
 For a debug version, remove the `--release` flag.
 
-[dioxus_doc]: https://dioxuslabs.com/learn/0.5/getting_started
+When developing, be sure to:
+- format the code using `cargo fmt`
+- fix all warnings detected by `cargo clippy`
+- detect outdated dependencies using `cargo outdated` (requires [cargo-outdated][cargo-outdated])
+- check the dependencies using `cargo deny check` (requires [cargo-deny][cargo-deny])
+
+[cargo-outdated]: https://github.com/kbknapp/cargo-outdated
+[cargo-deny]: https://github.com/EmbarkStudios/cargo-deny
 
 
 ## Licence
