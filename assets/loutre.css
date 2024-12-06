@@ -209,15 +209,17 @@ progress[value]::-webkit-progress-value {
 
 .component-config-menu {
 	margin: 8px 0 16px 0;
+	border-bottom: 1px solid var(--config-menu-tab-color);
 }
 
 .component-config-menu-elem {
 	display: inline-block;
-	padding: 5px;
+	padding: 8px;
+	margin-right: 16px;
 }
 
 .component-config-menu-elem-hl {
-	border-bottom: 2px solid var(--config-menu-tab-color);
+	border-bottom: 4px solid var(--config-menu-tab-color);
 }
 
 .component-config-menu-elem a,
