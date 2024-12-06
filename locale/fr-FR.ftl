@@ -1,7 +1,5 @@
 ## Main view
 
-view_main_clipboard_start_msg = Numéro de la première pièce
-
 view_main_open_dir = Ouvrir un dossier
 view_main_open_receipt = Ouvrir un AR
 view_main_calc_fingerprints = Calculer les empreintes
@@ -46,6 +44,8 @@ view_config_messages_msg_duplicated_files_warning = Afficher un avertissement lo
 view_config_clipboard_msg_numbers = Représentation des nombres
 view_config_clipboard_msg_letters = Lettres
 view_config_clipboard_msg_western_arabic_numerals = Chiffres arabes
+
+view_config_clipboard_start_msg = Numéro de la première pièce
 
 view_config_clipboard_msg_threshold = Seuil du presse-papier
 view_config_clipboard_msg_threshold_help = Nombre de fichiers à partir duquel le presse papier contient par défaut l'empreinte du fichier de contenu plutôt que les empreintes de chaque pièce.

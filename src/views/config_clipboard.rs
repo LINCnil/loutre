@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::clipboard::ClipboardPersistence;
+use crate::clipboard::{ClipboardPersistence, ClipboardStart};
 use crate::components::{
 	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
 };
@@ -13,6 +13,7 @@ use std::str::FromStr;
 #[component]
 pub fn ClipboardConfig() -> Element {
 	let mut cfg_sig = use_context::<Signal<Config>>();
+	let mut clipboard_start_sig = use_context::<Signal<ClipboardStart>>();
 	let numbers_opts = vec![
 		SelectOption::new(
 			t!("view_config_clipboard_msg_letters"),
@@ -50,6 +51,30 @@ pub fn ClipboardConfig() -> Element {
 				ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
 				form {
 					Grid {
+						// First evidence number
+						p {
+							label {
+								r#for: "cfg_clipboard_clipboard_start",
+								{ t!("view_config_clipboard_start_msg") }
+							}
+						}
+						div {
+							input {
+								id: "cfg_clipboard_clipboard_start",
+								name: "cfg_clipboard_clipboard_start",
+								value: clipboard_start_sig().to_string(),
+								r#type: "number",
+								min: 1,
+								onchange: move |event: FormEvent| {
+									if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
+										spawn(async move {
+											clipboard_start_sig.set(nb.into());
+										});
+									}
+								}
+							}
+						}
+
 						// Cliboard persistence
 						p {
 							label {

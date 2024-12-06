@@ -30,7 +30,7 @@ pub fn Main() -> Element {
 	let receipt_opt_sig = use_context::<Signal<Option<Receipt>>>();
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 	let mut clipboard_sig = use_context::<Signal<Clipboard>>();
-	let mut clipboard_start_sig = use_context::<Signal<ClipboardStart>>();
+	let clipboard_start_sig = use_context::<Signal<ClipboardStart>>();
 
 	let has_progress_bar = pg_status_opt.is_some();
 	let has_loading_bar = lb_status == LoadingBarStatus::Displayed;
@@ -48,30 +48,6 @@ pub fn Main() -> Element {
 			},
 			Header {}
 			MainSection {
-				form {
-					p {
-						label {
-							r#for: "view-main-clipboard-start",
-							{ t!("view_main_clipboard_start_msg") }
-						}
-					}
-					div {
-						input {
-							id: "view-main-clipboard-start",
-							name: "view-main-clipboard-start",
-							value: clipboard_start_sig().to_string(),
-							r#type: "number",
-							min: 1,
-							onchange: move |event: FormEvent| {
-								if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
-									spawn(async move {
-										clipboard_start_sig.set(nb.into());
-									});
-								}
-							}
-						}
-					}
-				}
 				div {
 					FileButton {
 						icon: "ri-folder-5-line",
@@ -150,6 +126,7 @@ pub fn Main() -> Element {
 									onclick: move |_event| {
 										if let FileList::Hashed(lst) = file_list_sig() {
 											let mut clipboard = Clipboard::new();
+											println!("- debug: clipboard_start_sig: {}", clipboard_start_sig());
 											let _ = clipboard.set_clipboard_list(
 												&config_sig(),
 												&lst,

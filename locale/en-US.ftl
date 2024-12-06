@@ -1,7 +1,5 @@
 ## Main view
 
-view_main_clipboard_start_msg = Number of the first evidence
-
 view_main_open_dir = Open a directory
 view_main_open_receipt = Open a notice of receipt
 view_main_calc_fingerprints = Checksum calculation
@@ -46,6 +44,8 @@ view_config_messages_msg_duplicated_files_warning = Display a warning when files
 view_config_clipboard_msg_numbers = Number representation
 view_config_clipboard_msg_letters = Letters
 view_config_clipboard_msg_western_arabic_numerals = Western Arabic numerals
+
+view_config_clipboard_start_msg = Number of the first evidence
 
 view_config_clipboard_msg_threshold = Clipboard threshold
 view_config_clipboard_msg_threshold_help = Number of files from which the clipboard contains, by default, the checksum of the checksum file instead of the checksum of each individual files.
