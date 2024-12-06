@@ -1,9 +1,8 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::{
-	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
-};
+use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
+use crate::components::{DropZone, Grid, Header, MainSection, Select, SelectOption};
 use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;

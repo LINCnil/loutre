@@ -2,9 +2,8 @@
 
 use crate::app::Route;
 use crate::clipboard::{ClipboardPersistence, ClipboardStart};
-use crate::components::{
-	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
-};
+use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
+use crate::components::{DropZone, Grid, Header, MainSection, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
