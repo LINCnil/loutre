@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn Logo() -> Element {
-	let logo = include_str!("../../assets/logo.svg");
+	let logo = include_str!("../../../assets/logo.svg");
 	let logo = match logo.find("<svg") {
 		Some(i) => logo.split_at(i).1,
 		None => logo,

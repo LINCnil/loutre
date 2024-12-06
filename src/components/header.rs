@@ -1,7 +1,13 @@
 #![allow(non_snake_case)]
 
+mod lang_switch;
+mod logo;
+mod theme_switch;
+
+use self::lang_switch::LangSwitch;
+use self::logo::Logo;
+use self::theme_switch::ThemeSwitch;
 use crate::app::Route::{FilesConfig, Main};
-use crate::components::{LangSwitch, Logo, ThemeSwitch};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
 
