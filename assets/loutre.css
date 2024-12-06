@@ -205,6 +205,20 @@ progress[value]::-webkit-progress-value {
 	display: none;
 }
 
+/* Configuration element component */
+
+.component-config-element {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 16px 0 16px 0;
+	border-bottom: 1px solid var(--config-menu-tab-color);
+}
+
+.component-config-element > * {
+	margin-right: 16px;
+}
+
 /* Configuration menu component */
 
 .component-config-menu {
@@ -273,19 +287,6 @@ progress[value]::-webkit-progress-value {
 	padding: 0 8px 0 8px;
 	flex-grow: 1;
 	word-break: break-all;
-}
-
-/* Grid component */
-
-.component-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 16px;
-	align-items: center;
-}
-
-.component-grid > *:nth-child(odd) {
-	text-align: right;
 }
 
 /* Header component */

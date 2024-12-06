@@ -3,15 +3,15 @@
 use dioxus::prelude::*;
 
 #[derive(Clone, PartialEq, Props)]
-pub struct GridProps {
+pub struct ConfigElementProps {
 	children: Element,
 }
 
 #[component]
-pub fn Grid(props: GridProps) -> Element {
+pub fn ConfigElement(props: ConfigElementProps) -> Element {
 	rsx! {
 		div {
-			class: "component-grid",
+			class: "component-config-element",
 			{ props.children }
 		}
 	}

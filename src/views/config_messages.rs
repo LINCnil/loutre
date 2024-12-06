@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
-use crate::components::{Checkbox, DropZone, Grid, Header, MainSection};
+use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
+use crate::components::{Checkbox, DropZone, Header, MainSection};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
@@ -23,7 +23,7 @@ pub fn MessagesConfig() -> Element {
 					{ t!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Messages }
-				Grid {
+				ConfigElement {
 					// Empty files warning
 					p {
 						label {
@@ -47,7 +47,8 @@ pub fn MessagesConfig() -> Element {
 							},
 						}
 					}
-
+				}
+				ConfigElement {
 					// Duplicated files warning
 					p {
 						label {

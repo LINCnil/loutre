@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
-use crate::components::{Checkbox, DropZone, Grid, Header, MainSection};
+use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
+use crate::components::{Checkbox, DropZone, Header, MainSection};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
@@ -23,7 +23,7 @@ pub fn FilesConfig() -> Element {
 					{ t!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Files }
-				Grid {
+				ConfigElement {
 					// Include hidden files
 					p {
 						label {
@@ -47,7 +47,8 @@ pub fn FilesConfig() -> Element {
 							},
 						}
 					}
-
+				}
+				ConfigElement {
 					// Include system files
 					p {
 						label {
@@ -71,7 +72,8 @@ pub fn FilesConfig() -> Element {
 							},
 						}
 					}
-
+				}
+				ConfigElement {
 					// Set files as read-only
 					p {
 						label {

@@ -1,8 +1,8 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
-use crate::components::{DropZone, Grid, Header, MainSection, Select, SelectOption};
+use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
+use crate::components::{DropZone, Header, MainSection, Select, SelectOption};
 use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
@@ -32,7 +32,7 @@ pub fn HashConfig() -> Element {
 					{ t!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Hash }
-				Grid {
+				ConfigElement {
 					// Hashing function
 					p {
 						label {
@@ -58,7 +58,8 @@ pub fn HashConfig() -> Element {
 							},
 						}
 					}
-
+				}
+				ConfigElement {
 					// Content file format
 					p {
 						label {
@@ -84,7 +85,8 @@ pub fn HashConfig() -> Element {
 							},
 						}
 					}
-
+				}
+				ConfigElement {
 					// Content file name
 					// TODO
 					p {

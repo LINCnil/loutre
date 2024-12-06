@@ -2,8 +2,8 @@
 
 use crate::app::Route;
 use crate::clipboard::{ClipboardPersistence, ClipboardStart};
-use crate::components::config::{ConfigMenu, ConfigMenuHighlight};
-use crate::components::{DropZone, Grid, Header, MainSection, Select, SelectOption};
+use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
+use crate::components::{DropZone, Header, MainSection, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -40,7 +40,7 @@ pub fn ClipboardConfig() -> Element {
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
 				form {
-					Grid {
+					ConfigElement {
 						// First evidence number
 						p {
 							label {
@@ -64,7 +64,8 @@ pub fn ClipboardConfig() -> Element {
 								}
 							}
 						}
-
+					}
+					ConfigElement {
 						// Cliboard threshold
 						p {
 							label {
@@ -91,7 +92,8 @@ pub fn ClipboardConfig() -> Element {
 								}
 							}
 						}
-
+					}
+					ConfigElement {
 						// Cliboard persistence
 						p {
 							label {
