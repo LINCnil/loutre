@@ -39,6 +39,19 @@ macro_rules! get_bytes_or_ret {
 	}};
 }
 
+#[cfg(not(unix))]
+macro_rules! get_string_or_ret {
+	($ret: ident, $entry: ident, $key: expr) => {{
+		let value = get_attr_or_ret!($ret, $entry, $key);
+		if let Some(s) = value.as_str() {
+			std::ffi::OsStr::new(s).to_os_string()
+		} else {
+			warn!("unable to get string: {:?}", value);
+			return $ret;
+		}
+	}};
+}
+
 #[derive(Clone, Debug, Serialize)]
 pub struct EntryTemplate {
 	#[cfg(unix)]
