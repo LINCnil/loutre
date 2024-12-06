@@ -13,14 +13,14 @@ pub fn MessagesConfig() -> Element {
 	let mut cfg_sig = use_context::<Signal<Config>>();
 
 	rsx! {
-			DropZone {
-				Header {
-					is_config_view: true,
+		DropZone {
+			Header {
+				is_config_view: true,
+			}
+			MainSection {
+				h1 {
+					{ t!("view_config_title") }
 				}
-				MainSection {
-					h1 {
-						{ t!("view_config_title") }
-					}
 				ConfigMenu { hl: ConfigMenuHighlight::Messages }
 				Grid {
 					// Empty files warning

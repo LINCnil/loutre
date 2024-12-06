@@ -22,11 +22,11 @@ pub fn Debug() -> Element {
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 
 	rsx! {
-			DropZone {
-				Header {
-					is_debug_view: true,
-				}
-				MainSection {
+		DropZone {
+			Header {
+				is_debug_view: true,
+			}
+			MainSection {
 				h1 { "Debug" }
 				form {
 					onsubmit: move |event| {

@@ -37,17 +37,17 @@ pub fn Main() -> Element {
 	let is_waiting = has_progress_bar || has_loading_bar;
 
 	rsx! {
-			DropZone {
-				ondrop: move |event: DragEvent| {
-					info!("DragEvent received: {event:?}");
-					spawn(async move {
-						if let Some(file_engine) = event.files() {
-							load_file(&config_sig(), tx_sig(), file_engine).await;
-						}
-					});
-				},
-				Header {}
-				MainSection {
+		DropZone {
+			ondrop: move |event: DragEvent| {
+				info!("DragEvent received: {event:?}");
+				spawn(async move {
+					if let Some(file_engine) = event.files() {
+						load_file(&config_sig(), tx_sig(), file_engine).await;
+					}
+				});
+			},
+			Header {}
+			MainSection {
 				form {
 					p {
 						label {
