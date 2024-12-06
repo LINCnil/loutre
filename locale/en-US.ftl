@@ -27,7 +27,7 @@ cpn_notif_duplicated_files_text = Several files located in the selected director
 
 view_config_title = Configuration
 
-cpn_config_menu_main_title = General
+cpn_config_menu_files_title = Files
 cpn_config_menu_hash_title = Fingerprints
 cpn_config_menu_messages_title = Messages
 cpn_config_menu_clipboard_title = Clipboard

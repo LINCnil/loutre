@@ -27,7 +27,7 @@ cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier s�
 
 view_config_title = Configuration
 
-cpn_config_menu_main_title = Général
+cpn_config_menu_files_title = Fichiers
 cpn_config_menu_hash_title = Empreintes
 cpn_config_menu_messages_title = Messages
 cpn_config_menu_clipboard_title = Presse-papier

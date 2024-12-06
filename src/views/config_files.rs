@@ -9,19 +9,19 @@ use dioxus::prelude::*;
 use dioxus_i18n::t;
 
 #[component]
-pub fn MainConfig() -> Element {
+pub fn FilesConfig() -> Element {
 	let mut cfg_sig = use_context::<Signal<Config>>();
 
 	rsx! {
-			DropZone {
-				Header {
-					is_config_view: true,
+		DropZone {
+			Header {
+				is_config_view: true,
+			}
+			MainSection {
+				h1 {
+					{ t!("view_config_title") }
 				}
-				MainSection {
-					h1 {
-						{ t!("view_config_title") }
-					}
-				ConfigMenu { hl: ConfigMenuHighlight::Main }
+				ConfigMenu { hl: ConfigMenuHighlight::Files }
 				Grid {
 					// Include hidden files
 					p {

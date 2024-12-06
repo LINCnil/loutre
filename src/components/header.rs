@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::app::Route::{Main, MainConfig};
+use crate::app::Route::{FilesConfig, Main};
 use crate::components::{LangSwitch, Logo, ThemeSwitch};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -43,7 +43,7 @@ pub fn Header(props: HeaderProps) -> Element {
 								to: if props.is_config_view {
 									Main {}
 								} else {
-									MainConfig {}
+									FilesConfig {}
 								},
 								title: t!("cpn_header_config"),
 							}

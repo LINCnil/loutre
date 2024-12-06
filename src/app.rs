@@ -17,8 +17,8 @@ use tokio::sync::mpsc::channel;
 pub enum Route {
 	#[route("/")]
 	Main {},
-	#[route("/config/main")]
-	MainConfig {},
+	#[route("/config/files")]
+	FilesConfig {},
 	#[route("/config/hash")]
 	HashConfig {},
 	#[route("/config/messages")]
