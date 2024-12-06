@@ -80,7 +80,7 @@ cpn_clipboard_ctn_file_full_txt = EVIDENCE #{"{{"} nb_start {"}}"}: { -cpn_clipb
 cpn_clipboard_ctn_file_full_html = <p><b>EVIDENCE #{"{{"} nb_start {"}}"}:</b> { -cpn_clipboard_ctn_file }<br>
     { -cpn_clipboard_file_data_html }</p>
 
-cpn_clipboard_list_full_txt = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
+cpn_clipboard_list_full_txt = {"{"}% set nb = nb_start %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
     EVIDENCE #{"{{"} nb {"}}"}: copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size {"}}"} files:{"{"}% endif %{"}"}
     {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
     “{"{{"} sub_entry.name {"}}"}” {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
@@ -89,7 +89,7 @@ cpn_clipboard_list_full_txt = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evi
     {"{"}% set nb = nb + 1 %{"}"}
     {"{"}% endfor %{"}"}
 
-cpn_clipboard_list_full_html = {"{"}% set nb = 1 %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences %{"}"}<p>
+cpn_clipboard_list_full_html = {"{"}% set nb = nb_start %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences %{"}"}<p>
     <b>EVIDENCE #{"{{"} nb {"}}"}:</b> copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size {"}}"} files:{"{"}% else %{"}"}<br>{"{"}% endif %{"}"}
     {"{"}% if entry.is_dir %{"}"}<ul>{"{"}% for sub_entry in entry.evidences %{"}"}
     <li>“{"{{"} sub_entry.name {"}}"}”<br>{"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_html }{"{"}% endwith %{"}"}</li>
