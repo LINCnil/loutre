@@ -4,7 +4,7 @@ use crate::check::{check, CheckResult, CheckResultError, CheckType};
 use crate::clipboard::{Clipboard, ClipboardStart};
 use crate::components::{
 	Button, DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar,
-	Notification, NotificationList, ProgressBar,
+	MainSection, Notification, NotificationList, ProgressBar,
 };
 use crate::config::Config;
 use crate::events::{send_event, send_event_sync, ExternalEvent, ExternalEventSender};
@@ -37,149 +37,151 @@ pub fn Main() -> Element {
 	let is_waiting = has_progress_bar || has_loading_bar;
 
 	rsx! {
-		DropZone {
-			ondrop: move |event: DragEvent| {
-				info!("DragEvent received: {event:?}");
-				spawn(async move {
-					if let Some(file_engine) = event.files() {
-						load_file(&config_sig(), tx_sig(), file_engine).await;
+			DropZone {
+				ondrop: move |event: DragEvent| {
+					info!("DragEvent received: {event:?}");
+					spawn(async move {
+						if let Some(file_engine) = event.files() {
+							load_file(&config_sig(), tx_sig(), file_engine).await;
+						}
+					});
+				},
+				Header {}
+				MainSection {
+				form {
+					p {
+						label {
+							r#for: "view-main-clipboard-start",
+							{ t!("view_main_clipboard_start_msg") }
+						}
 					}
-				});
-			},
-			Header {}
-			form {
-				p {
-					label {
-						r#for: "view-main-clipboard-start",
-						{ t!("view_main_clipboard_start_msg") }
+					div {
+						input {
+							id: "view-main-clipboard-start",
+							name: "view-main-clipboard-start",
+							value: clipboard_start_sig().to_string(),
+							r#type: "number",
+							min: 1,
+							onchange: move |event: FormEvent| {
+								if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
+									spawn(async move {
+										clipboard_start_sig.set(nb.into());
+									});
+								}
+							}
+						}
 					}
 				}
 				div {
-					input {
-						id: "view-main-clipboard-start",
-						name: "view-main-clipboard-start",
-						value: clipboard_start_sig().to_string(),
-						r#type: "number",
-						min: 1,
+					FileButton {
+						icon: "ri-folder-5-line",
+						accept: "",
+						multiple: false,
+						directory: true,
+						name: "view-main-btn-select-directory",
 						onchange: move |event: FormEvent| {
-							if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
-								spawn(async move {
-									clipboard_start_sig.set(nb.into());
-								});
-							}
-						}
+							spawn(async move {
+								if let Some(file_engine) = event.files() {
+									load_file(&config_sig(), tx_sig(), file_engine).await;
+								}
+							});
+						},
+						{ t!("view_main_open_dir") }
+					}
+					FileButton {
+						icon: "ri-mail-check-line",
+						accept: ".msg,.txt",
+						multiple: false,
+						directory: false,
+						name: "view-main-btn-select-receipt",
+						onchange: move |event: FormEvent| {
+							spawn(async move {
+								if let Some(file_engine) = event.files() {
+									load_file(&config_sig(), tx_sig(), file_engine).await;
+								}
+							});
+						},
+						{ t!("view_main_open_receipt") }
 					}
 				}
-			}
-			div {
-				FileButton {
-					icon: "ri-folder-5-line",
-					accept: "",
-					multiple: false,
-					directory: true,
-					name: "view-main-btn-select-directory",
-					onchange: move |event: FormEvent| {
-						spawn(async move {
-							if let Some(file_engine) = event.files() {
-								load_file(&config_sig(), tx_sig(), file_engine).await;
-							}
-						});
-					},
-					{ t!("view_main_open_dir") }
-				}
-				FileButton {
-					icon: "ri-mail-check-line",
-					accept: ".msg,.txt",
-					multiple: false,
-					directory: false,
-					name: "view-main-btn-select-receipt",
-					onchange: move |event: FormEvent| {
-						spawn(async move {
-							if let Some(file_engine) = event.files() {
-								load_file(&config_sig(), tx_sig(), file_engine).await;
-							}
-						});
-					},
-					{ t!("view_main_open_receipt") }
-				}
-			}
-			FileListIndicator {}
-			FileListReceipt {}
-			NotificationList {}
-			ProgressBar {}
-			LoadingBar {}
+				FileListIndicator {}
+				FileListReceipt {}
+				NotificationList {}
+				ProgressBar {}
+				LoadingBar {}
 
-			if pg_status_opt.is_none() {
-				div {
-					if let FileList::NonHashed(file_lst) = file_list_sig() {
-						if !is_waiting {
-							if file_lst.content_file_exists(&config_sig()) {
-								Button {
-									icon: "ri-shield-check-line",
-									onclick: move |_event| {
-										spawn(async move {
-											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
-										});
-									},
-									{ t!("view_main_check_fingerprints") }
-								}
-							} else {
-								Button {
-									icon: "ri-shield-flash-line",
-									onclick: move |_event| {
-										spawn(async move {
-											calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
-										});
-									},
-									{ t!("view_main_calc_fingerprints") }
+				if pg_status_opt.is_none() {
+					div {
+						if let FileList::NonHashed(file_lst) = file_list_sig() {
+							if !is_waiting {
+								if file_lst.content_file_exists(&config_sig()) {
+									Button {
+										icon: "ri-shield-check-line",
+										onclick: move |_event| {
+											spawn(async move {
+												calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+											});
+										},
+										{ t!("view_main_check_fingerprints") }
+									}
+								} else {
+									Button {
+										icon: "ri-shield-flash-line",
+										onclick: move |_event| {
+											spawn(async move {
+												calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
+											});
+										},
+										{ t!("view_main_calc_fingerprints") }
+									}
 								}
 							}
 						}
-					}
-					if let FileList::Hashed(lst) = file_list_sig() {
-						if let CheckResult::Ok = lst.get_result() {
-							Notification {
-								id: "view-main-file-check-ok",
-								level: NotificationLevel::Success,
-								title: t!("view_main_check_result_title"),
-								p { { t!("view_main_check_result_ok_text") } }
+						if let FileList::Hashed(lst) = file_list_sig() {
+							if let CheckResult::Ok = lst.get_result() {
+								Notification {
+									id: "view-main-file-check-ok",
+									level: NotificationLevel::Success,
+									title: t!("view_main_check_result_title"),
+									p { { t!("view_main_check_result_ok_text") } }
+								}
+								Button {
+									icon: "ri-clipboard-line",
+									onclick: move |_event| {
+										if let FileList::Hashed(lst) = file_list_sig() {
+											let mut clipboard = Clipboard::new();
+											let _ = clipboard.set_clipboard_list(
+												&config_sig(),
+												&lst,
+												clipboard_start_sig(),
+											);
+											clipboard_sig.set(clipboard);
+										}
+									},
+								}
+								Button {
+									icon: "ri-file-copy-2-line",
+									onclick: move |_event| {
+										if let FileList::Hashed(lst) = file_list_sig() {
+											let cfg = config_sig();
+											let mut clipboard = Clipboard::new();
+											let _ = clipboard.set_clipboard_ctn_file(
+												&cfg,
+												&lst,
+												clipboard_start_sig(),
+											);
+											clipboard_sig.set(clipboard);
+										}
+									},
+								}
 							}
-							Button {
-								icon: "ri-clipboard-line",
-								onclick: move |_event| {
-									if let FileList::Hashed(lst) = file_list_sig() {
-										let mut clipboard = Clipboard::new();
-										let _ = clipboard.set_clipboard_list(
-											&config_sig(),
-											&lst,
-											clipboard_start_sig(),
-										);
-										clipboard_sig.set(clipboard);
-									}
-								},
-							}
-							Button {
-								icon: "ri-file-copy-2-line",
-								onclick: move |_event| {
-									if let FileList::Hashed(lst) = file_list_sig() {
-										let cfg = config_sig();
-										let mut clipboard = Clipboard::new();
-										let _ = clipboard.set_clipboard_ctn_file(
-											&cfg,
-											&lst,
-											clipboard_start_sig(),
-										);
-										clipboard_sig.set(clipboard);
-									}
-								},
-							}
-						}
-						if let CheckResult::Error(_) = lst.get_result() {
-							Notification {
-								id: "view-main-file-check-err",
-								level: NotificationLevel::Error,
-								title: t!("view_main_check_result_title"),
-								p { { t!("view_main_check_result_err_text") } }
+							if let CheckResult::Error(_) = lst.get_result() {
+								Notification {
+									id: "view-main-file-check-err",
+									level: NotificationLevel::Error,
+									title: t!("view_main_check_result_title"),
+									p { { t!("view_main_check_result_err_text") } }
+								}
 							}
 						}
 					}

@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::components::{DropZone, Header, LoadingBar, Notification, ProgressBar};
+use crate::components::{DropZone, Header, LoadingBar, MainSection, Notification, ProgressBar};
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
@@ -22,105 +22,106 @@ pub fn Debug() -> Element {
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 
 	rsx! {
-		DropZone {
-			Header {
-				is_debug_view: true,
-				h1 { "Debug" }
-			}
-
-			form {
-				onsubmit: move |event| {
-					info!("Notification form event: {event:?}");
-					let data = event.data.values();
-					info!("Notification form event data: {data:?}");
-					let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
-					let nb: usize = form_value_str!(data, "nb").parse().unwrap();
-					notifs.push((level, nb));
-				},
-				fieldset {
-					legend { "Notifications" }
-					select {
-						name: "notif_level",
-						option { "error" }
-						option { "warning" }
-						option { "success" }
-						option { "info" }
-					}
-					input {
-						name: "nb",
-						r#type: "number",
-						value: 1,
-						min: 1,
-					}
-					input { r#type: "submit" }
+			DropZone {
+				Header {
+					is_debug_view: true,
 				}
-			}
-
-			form {
-				onsubmit: move |event| {
-					info!("Progress bar form event: {event:?}");
-					let data = event.data.values();
-					info!("Progress bar form event data: {data:?}");
-					let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
-					let tx = tx_sig();
-					spawn(async move {
-						send_event(&tx, ExternalEvent::ProgressBarDelete).await;
-						send_event(&tx, ExternalEvent::ProgressBarCreate(100)).await;
-						send_event(&tx, ExternalEvent::ProgressBarAdd(nb)).await;
-					});
-				},
-				fieldset {
-					legend { "Progress bar" }
-					input {
-						name: "nb",
-						r#type: "number",
-						value: 42,
-						min: 0,
+				MainSection {
+				h1 { "Debug" }
+				form {
+					onsubmit: move |event| {
+						info!("Notification form event: {event:?}");
+						let data = event.data.values();
+						info!("Notification form event data: {data:?}");
+						let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
+						let nb: usize = form_value_str!(data, "nb").parse().unwrap();
+						notifs.push((level, nb));
+					},
+					fieldset {
+						legend { "Notifications" }
+						select {
+							name: "notif_level",
+							option { "error" }
+							option { "warning" }
+							option { "success" }
+							option { "info" }
+						}
+						input {
+							name: "nb",
+							r#type: "number",
+							value: 1,
+							min: 1,
+						}
+						input { r#type: "submit" }
 					}
-					input { r#type: "submit" }
+				}
+
+				form {
+					onsubmit: move |event| {
+						info!("Progress bar form event: {event:?}");
+						let data = event.data.values();
+						info!("Progress bar form event data: {data:?}");
+						let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
+						let tx = tx_sig();
+						spawn(async move {
+							send_event(&tx, ExternalEvent::ProgressBarDelete).await;
+							send_event(&tx, ExternalEvent::ProgressBarCreate(100)).await;
+							send_event(&tx, ExternalEvent::ProgressBarAdd(nb)).await;
+						});
+					},
+					fieldset {
+						legend { "Progress bar" }
+						input {
+							name: "nb",
+							r#type: "number",
+							value: 42,
+							min: 0,
+						}
+						input { r#type: "submit" }
+						button {
+							prevent_default: "onclick",
+							onclick: move |_event| {
+								info!("Debug: Progress bar button onclick");
+								let tx = tx_sig();
+								spawn(async move {
+									send_event(&tx, ExternalEvent::ProgressBarDelete).await;
+								});
+							},
+							"Reset"
+						}
+					}
+				}
+
+				fieldset {
+					legend { "Loading bar" }
 					button {
 						prevent_default: "onclick",
 						onclick: move |_event| {
-							info!("Debug: Progress bar button onclick");
+							info!("Debug: Loading bar button onclick");
 							let tx = tx_sig();
 							spawn(async move {
-								send_event(&tx, ExternalEvent::ProgressBarDelete).await;
+								let new_status_evt = match loading_bar {
+									LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
+									LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
+								};
+								send_event(&tx, new_status_evt).await;
 							});
 						},
-						"Reset"
+						"Toogle"
 					}
 				}
-			}
 
-			fieldset {
-				legend { "Loading bar" }
-				button {
-					prevent_default: "onclick",
-					onclick: move |_event| {
-						info!("Debug: Loading bar button onclick");
-						let tx = tx_sig();
-						spawn(async move {
-							let new_status_evt = match loading_bar {
-								LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
-								LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
-							};
-							send_event(&tx, new_status_evt).await;
-						});
-					},
-					"Toogle"
-				}
-			}
+				ProgressBar {}
+				LoadingBar {}
 
-			ProgressBar {}
-			LoadingBar {}
-
-			for (i, (level, nb)) in notifs().iter().enumerate() {
-				Notification {
-					id: "debug_{i}",
-					level: *level,
-					title: "Debug notification ({level})",
-					for _ in 0..*nb {
-						p { "{LOREM_LIPSUM}" }
+				for (i, (level, nb)) in notifs().iter().enumerate() {
+					Notification {
+						id: "debug_{i}",
+						level: *level,
+						title: "Debug notification ({level})",
+						for _ in 0..*nb {
+							p { "{LOREM_LIPSUM}" }
+						}
 					}
 				}
 			}

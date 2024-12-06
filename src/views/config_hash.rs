@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::components::{
-	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, Select, SelectOption,
+	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
 };
 use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
@@ -25,10 +25,11 @@ pub fn HashConfig() -> Element {
 		DropZone {
 			Header {
 				is_config_view: true,
+			}
+			MainSection {
 				h1 {
 					{ t!("view_config_title") }
 				}
-			}
 			ConfigMenu { hl: ConfigMenuHighlight::Hash }
 			Grid {
 				// Hashing function
@@ -101,5 +102,6 @@ pub fn HashConfig() -> Element {
 				}
 			}
 		}
+	}
 	}
 }

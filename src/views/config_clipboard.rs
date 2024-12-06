@@ -2,7 +2,7 @@
 
 use crate::clipboard::ClipboardPersistence;
 use crate::components::{
-	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, Select, SelectOption,
+	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
 };
 use crate::config::Config;
 use crate::nb_repr::NbRepr;
@@ -42,10 +42,11 @@ pub fn ClipboardConfig() -> Element {
 		DropZone {
 			Header {
 				is_config_view: true,
+			}
+			MainSection {
 				h1 {
 					{ t!("view_config_title") }
 				}
-			}
 			ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
 			form {
 				Grid {
@@ -127,6 +128,7 @@ pub fn ClipboardConfig() -> Element {
 							},
 						}
 					}
+				}
 				}
 			}
 		}

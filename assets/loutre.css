@@ -3,6 +3,7 @@
 :root {
 	--main-bg-color: #F8F8F8;
 	--main-section-bg-color: #24243A;
+	--main-section-border-color: #E5EAFF;
 	--main-color: #414141;
 
 	--menu-bg-color: #414259;
@@ -50,6 +51,7 @@
 [data-theme="dark"] {
 	--main-bg-color: #181830;
 	--main-section-bg-color: #24243A;
+	--main-section-border-color: #E5EAFF;
 	--main-color: #E5EAFF;
 
 	--menu-bg-color: #414259;
@@ -100,7 +102,6 @@
 }
 
 html, body {
-	height: 100%;
 	background-color: var(--main-bg-color);
 	color: var(--main-color);
 	font-family: "Open Sans", sans-serif;
@@ -110,7 +111,7 @@ html, body {
 }
 
 #main {
-	height: 100vh;
+	min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5 {
@@ -228,9 +229,11 @@ progress[value]::-webkit-progress-value {
 /* Drop zone component */
 
 .component-dropzone {
-	height: 100vh;
+	min-height: 100vh;
 	box-sizing: border-box;
 	padding: 48px 72px 0 72px;
+	display: flex;
+	flex-direction: column;
 }
 
 /* File list component */
@@ -352,6 +355,18 @@ progress[value]::-webkit-progress-value {
 /* Logo component */
 
 .component-logo {}
+
+/* Main section component */
+
+.component-main-section {
+	margin-top: 32px;
+	padding: 44px 44px 8px 44px;
+	background-color: var(--main-section-bg-color);
+	border: 1px solid var(--main-section-border-color);
+	border-bottom-style: none;
+	border-radius: 20px 20px 0 0;
+	flex-grow: 1;
+}
 
 /* Notification component */
 

@@ -11,7 +11,6 @@ pub struct HeaderProps {
 	is_config_view: bool,
 	#[props(default = false)]
 	is_debug_view: bool,
-	children: Element,
 }
 
 #[component]
@@ -50,10 +49,6 @@ pub fn Header(props: HeaderProps) -> Element {
 							}
 						}
 					}
-				}
-				div {
-					class: "component-header-right-content",
-					{props.children}
 				}
 			}
 		}
