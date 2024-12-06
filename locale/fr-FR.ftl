@@ -41,10 +41,6 @@ view_config_hash_msg_content_file_name = Nom du fichier de contenu
 view_config_messages_msg_empty_files_warning = Afficher un avertissement en cas de chargement d'un dossier comprenant des fichiers vides
 view_config_messages_msg_duplicated_files_warning = Afficher un avertissement lorsque des fichiers avec la même empreinte sont détectés
 
-view_config_clipboard_msg_numbers = Représentation des nombres
-view_config_clipboard_msg_letters = Lettres
-view_config_clipboard_msg_western_arabic_numerals = Chiffres arabes
-
 view_config_clipboard_start_msg = Numéro de la première pièce
 
 view_config_clipboard_msg_threshold = Seuil du presse-papier
@@ -69,7 +65,7 @@ cpn_theme_change = Modifier le thème
 -cpn_clipboard_ctn_file =
     { $nb_evidences ->
         [one] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’intitulé, la taille et l’empreinte numérique au format {"{{"} hash_func {"}}"} de la pièce numérique copiée durant la mission de contrôle.
-        *[other] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’inventaire des {"{{"} nb_evidences {"}}"} pièces numériques copiées durant la mission de contrôle. Pour chaque pièce est précisé son intitulé, sa taille et son empreinte numérique au format {"{{"} hash_func {"}}"}.
+        *[other] copie sur support informatique d’un document remis au responsable des lieux, intitulé « {"{{"} evidence.name {"}}"} » contenant l’inventaire des {"{{"} nb_evidences|nb_letters {"}}"} pièces numériques copiées durant la mission de contrôle. Pour chaque pièce est précisé son intitulé, sa taille et son empreinte numérique au format {"{{"} hash_func {"}}"}.
     }
 -cpn_clipboard_file_data_txt = {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"} : {"{{"} evidence.hash {"}}"}
 -cpn_clipboard_file_data_html = <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"} : <i>{"{{"} evidence.hash {"}}"}</i>
@@ -81,7 +77,7 @@ cpn_clipboard_ctn_file_full_html = <p><b>PIÈCE N<sup>o</sup> {"{{"} nb_start {"
     { -cpn_clipboard_file_data_html }</p>
 
 cpn_clipboard_list_full_txt = {"{"}% set nb = nb_start %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
-    PIÈCE No {"{{"} nb {"}}"} : copie sur support informatique d’un {"{"}% if entry.is_file %{"}"}document{"{"}% else %{"}"}dossier{"{"}% endif %{"}"} intitulé « {"{{"} entry.name {"}}"} »{"{"}% if entry.is_dir %{"}"} contenant {"{{"} entry.size {"}}"} documents :{"{"}% endif %{"}"}
+    PIÈCE No {"{{"} nb {"}}"} : copie sur support informatique d’un {"{"}% if entry.is_file %{"}"}document{"{"}% else %{"}"}dossier{"{"}% endif %{"}"} intitulé « {"{{"} entry.name {"}}"} »{"{"}% if entry.is_dir %{"}"} contenant {"{{"} entry.size|nb_letters {"}}"} documents :{"{"}% endif %{"}"}
     {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
     « {"{{"} sub_entry.name {"}}"} » {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
     {"{"}%- endfor %{"}"}{"{"}% endif -%{"}"}

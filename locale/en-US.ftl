@@ -41,10 +41,6 @@ view_config_hash_msg_content_file_name = Content file name
 view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files
 view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected
 
-view_config_clipboard_msg_numbers = Number representation
-view_config_clipboard_msg_letters = Letters
-view_config_clipboard_msg_western_arabic_numerals = Western Arabic numerals
-
 view_config_clipboard_start_msg = Number of the first evidence
 
 view_config_clipboard_msg_threshold = Clipboard threshold
@@ -69,7 +65,7 @@ cpn_theme_change = Change the theme
 -cpn_clipboard_ctn_file =
     { $nb_evidences ->
         [one] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital evidence collected during the on-site investigation.
-        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital {"{{"} nb_evidences {"}}"} evidences collected during the on-site investigation.
+        *[other] copy on a digital media of a document given to the person in charge of the premises for the mission, named “{"{{"} evidence.name {"}}"}” containing name, size and checksum ({"{{"} hash_func {"}}"}) of the digital {"{{"} nb_evidences|nb_letters {"}}"} evidences collected during the on-site investigation.
     }
 -cpn_clipboard_file_data_txt = {"{{"} evidence.size {"}}"} octets, {"{{"} evidence.hash_func {"}}"}: {"{{"} evidence.hash {"}}"}
 -cpn_clipboard_file_data_html = <i>{"{{"} evidence.size {"}}"}</i> octets, {"{{"} evidence.hash_func {"}}"}: <i>{"{{"} evidence.hash {"}}"}</i>
@@ -81,7 +77,7 @@ cpn_clipboard_ctn_file_full_html = <p><b>EVIDENCE #{"{{"} nb_start {"}}"}:</b> {
     { -cpn_clipboard_file_data_html }</p>
 
 cpn_clipboard_list_full_txt = {"{"}% set nb = nb_start %{"}"}{"{"}% set evidences = evidences|add_dir_level %{"}"}{"{"}% for entry in evidences -%{"}"}
-    EVIDENCE #{"{{"} nb {"}}"}: copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size {"}}"} files:{"{"}% endif %{"}"}
+    EVIDENCE #{"{{"} nb {"}}"}: copy on a digital media of a {"{"}% if entry.is_file %{"}"}file{"{"}% else %{"}"}directory{"{"}% endif %{"}"} named “{"{{"} entry.name {"}}"}”{"{"}% if entry.is_dir %{"}"} containing {"{{"} entry.size|nb_letters {"}}"} files:{"{"}% endif %{"}"}
     {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
     “{"{{"} sub_entry.name {"}}"}” {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
     {"{"}%- endfor %{"}"}{"{"}% endif -%{"}"}

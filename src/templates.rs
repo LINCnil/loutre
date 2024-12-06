@@ -1,4 +1,5 @@
 use crate::files::HashedFile;
+use crate::nb_repr::usize_to_string;
 use dioxus_logger::tracing::warn;
 use minijinja::context;
 use minijinja::value::{Value, ValueKind};
@@ -208,4 +209,8 @@ pub fn filter_add_dir_level(lst: Vec<Value>) -> Vec<Value> {
 		}
 	}
 	new_lst
+}
+
+pub fn filter_nb_letters(nb: usize) -> String {
+	usize_to_string(nb)
 }

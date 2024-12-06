@@ -1,6 +1,6 @@
 use crate::config::Config;
 use crate::files::HashedFileList;
-use crate::templates::{filter_add_dir_level, EntryTemplate};
+use crate::templates::{filter_add_dir_level, filter_nb_letters, EntryTemplate};
 use dioxus_i18n::t;
 use dioxus_logger::tracing::error;
 use minijinja::{context, Environment};
@@ -173,6 +173,7 @@ impl Clipboard {
 	) -> Result<(), ClipboardError> {
 		let mut env = Environment::new();
 		env.add_filter("add_dir_level", filter_add_dir_level);
+		env.add_filter("nb_letters", filter_nb_letters);
 		let mut evidences: Vec<EntryTemplate> =
 			file_list.get_files().map(|f| f.clone().into()).collect();
 		evidences.sort_by(|a, b| a.name.cmp(&b.name));
@@ -210,6 +211,7 @@ impl Clipboard {
 		start: ClipboardStart,
 	) -> Result<(), ClipboardError> {
 		let mut env = Environment::new();
+		env.add_filter("nb_letters", filter_nb_letters);
 		let content_file_path = file_list
 			.get_content_file_absolute_path(config)
 			.map_err(|_| ClipboardError::ContentFilePath)?;
@@ -232,7 +234,7 @@ impl Clipboard {
 		let hash_func = hash_func.to_string();
 		let ctx = context!(
 			hash_func,
-			nb_evidences => config.number_representation.usize_to_string(nb_evidences),
+			nb_evidences => nb_evidences,
 			nb_start => start.0,
 			evidence => context!(
 				name,

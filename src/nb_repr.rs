@@ -1,45 +1,7 @@
 use dioxus_i18n::t;
-use serde::{Deserialize, Serialize};
-use std::fmt;
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum NbRepr {
-	Letters,
-	#[serde(rename = "western arabic numerals")]
-	#[default]
-	WesternArabicNumerals,
-}
-
-impl NbRepr {
-	pub fn usize_to_string(&self, nb: usize) -> String {
-		match self {
-			NbRepr::Letters => format_letters(nb, true),
-			NbRepr::WesternArabicNumerals => nb.to_string(),
-		}
-	}
-}
-
-impl std::str::FromStr for NbRepr {
-	type Err = ();
-
-	fn from_str(s: &str) -> Result<Self, Self::Err> {
-		match s.to_ascii_lowercase().as_str() {
-			"letters" => Ok(Self::Letters),
-			"western_arabic_numerals" => Ok(Self::WesternArabicNumerals),
-			_ => Err(()),
-		}
-	}
-}
-
-impl fmt::Display for NbRepr {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		let s = match self {
-			NbRepr::Letters => "letters",
-			NbRepr::WesternArabicNumerals => "western_arabic_numerals",
-		};
-		write!(f, "{s}")
-	}
+pub fn usize_to_string(nb: usize) -> String {
+	format_letters(nb, true)
 }
 
 fn format_letters(nb: usize, first: bool) -> String {
