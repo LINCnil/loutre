@@ -60,16 +60,18 @@ pub struct EntryTemplate {
 
 impl From<HashedFile> for EntryTemplate {
 	fn from(hf: HashedFile) -> Self {
-		let base_dir_os = hf.get_base_dir();
+		let base_dir = hf.get_base_dir();
+		#[cfg(unix)]
+		let base_dir = base_dir.into_os_string().into_vec();
+		#[cfg(not(unix))]
+		let base_dir = base_dir.to_str().unwrap().to_string();
+
 		let relpath_os = hf.get_relative_path().as_os_str();
 		#[cfg(unix)]
-		let base_dir = base_dir_os.to_os_string().into_vec();
-		#[cfg(not(unix))]
-		let base_dir = base_dir_os.to_str().unwrap().to_string();
-		#[cfg(unix)]
-		let relative_path = relpath_os.into_os_string().into_vec();
+		let relative_path = relpath_os.to_os_string().into_vec();
 		#[cfg(not(unix))]
 		let relative_path = relpath_os.to_str().unwrap().to_string();
+
 		Self {
 			base_dir,
 			relative_path,
