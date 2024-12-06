@@ -119,6 +119,11 @@ h1, h2, h3, h4, h5 {
 	overflow-wrap: break-word;
 }
 
+h1 {
+	font-size: 1.4rem;
+	margin-bottom: 24px;
+}
+
 p {
 	overflow-wrap: break-word;
 	hyphens: auto;
