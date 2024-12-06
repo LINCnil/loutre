@@ -296,7 +296,7 @@ progress[value]::-webkit-progress-value {
 	padding: 2px 16px 2px 16px;
 	background-color: var(--menu-bg-color);
 	color: var(--menu-item-color);
-	font-size: 1.6em;
+	font-size: 1.5rem;
 	border-radius: 30px;
 }
 
@@ -342,6 +342,7 @@ progress[value]::-webkit-progress-value {
 
 .component-lang-switch-list {
 	display: none;
+	font-size: 1rem;
 }
 
 .component-lang-switch-list > li {
