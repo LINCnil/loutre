@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::app::Route;
 use crate::clipboard::{ClipboardPersistence, ClipboardStart};
 use crate::components::{
 	ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection, Select, SelectOption,
@@ -34,6 +35,7 @@ pub fn ClipboardConfig() -> Element {
 				is_config_view: true,
 			}
 			MainSection {
+				close_view: Some(Route::Main {}),
 				h1 {
 					{ t!("view_config_title") }
 				}

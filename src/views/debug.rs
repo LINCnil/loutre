@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::app::Route;
 use crate::components::{DropZone, Header, LoadingBar, MainSection, Notification, ProgressBar};
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
@@ -27,6 +28,7 @@ pub fn Debug() -> Element {
 				is_debug_view: true,
 			}
 			MainSection {
+				close_view: Some(Route::Main {}),
 				h1 { "Debug" }
 				form {
 					onsubmit: move |event| {

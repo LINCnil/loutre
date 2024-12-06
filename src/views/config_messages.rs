@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::app::Route;
 use crate::components::{
 	Checkbox, ConfigMenu, ConfigMenuHighlight, DropZone, Grid, Header, MainSection,
 };
@@ -18,6 +19,7 @@ pub fn MessagesConfig() -> Element {
 				is_config_view: true,
 			}
 			MainSection {
+				close_view: Some(Route::Main {}),
 				h1 {
 					{ t!("view_config_title") }
 				}
