@@ -178,7 +178,9 @@ progress[value]::-webkit-progress-value {
 	border: 1px solid var(--button-hover-border-color);
 }
 
-.component-button-icon {}
+.component-button-icon {
+	font-size: 1.4rem;
+}
 
 .component-button-sep {
 	margin: 0 0 0 8px;
@@ -486,4 +488,13 @@ progress[value]::-webkit-progress-value {
 
 .component-progress-bar {
 	padding: 8px 0 8px 0;
+}
+
+/* Main view */
+
+.view-main-top-buttons {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 8px;
+	text-align: center;
 }

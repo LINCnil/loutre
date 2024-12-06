@@ -49,8 +49,9 @@ pub fn Main() -> Element {
 			Header {}
 			MainSection {
 				div {
+					class: "view-main-top-buttons",
 					FileButton {
-						icon: "ri-folder-5-line",
+						icon: "ri-folder-3-fill",
 						accept: "",
 						multiple: false,
 						directory: true,
@@ -65,7 +66,7 @@ pub fn Main() -> Element {
 						{ t!("view_main_open_dir") }
 					}
 					FileButton {
-						icon: "ri-mail-check-line",
+						icon: "ri-file-check-line",
 						accept: ".msg,.txt",
 						multiple: false,
 						directory: false,

@@ -61,7 +61,7 @@ pub fn FileButton(props: FileButtonProps) -> Element {
 			class: "component-button-file-label",
 			r#for: "{id}",
 			span {
-				class: "{props.icon}",
+				class: "{props.icon} component-button-icon",
 			}
 			" "
 			{props.children}
