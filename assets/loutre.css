@@ -217,6 +217,11 @@ progress[value]::-webkit-progress-value {
 
 .component-config-element > * {
 	margin-right: 16px;
+	margin-left: auto;
+}
+
+.component-config-element >*:first-child {
+	margin-left: 0;
 }
 
 /* Configuration menu component */
