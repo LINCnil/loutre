@@ -36,7 +36,6 @@ const CONFIG_FILE_SUBDIR: &str = "loutre";
 const CONFIG_FILE_NAME: &str = "config.toml";
 
 const DEFAULT_CLIPBOARD_THRESHOLD: usize = 42;
-const PROGRESS_BAR_CHANNEL_CAPACITY: usize = 1024;
 
 const WIN_WIDTH: u32 = 820;
 const WIN_HEIGHT: u32 = 560;
