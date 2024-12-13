@@ -174,63 +174,14 @@ fn div_nb(nb: usize, d: usize, ds: &str) -> (Option<String>, usize) {
 
 #[cfg(test)]
 mod tests {
-	use super::NbRepr;
+	use super::*;
 	use unic_langid::langid;
-
-	#[test]
-	fn test_wab() {
-		let nb_repr = NbRepr::WesternArabicNumerals;
-		let tests = [
-			(0, "0"),
-			(1, "1"),
-			(5, "5"),
-			(10, "10"),
-			(21, "21"),
-			(42, "42"),
-			(70, "70"),
-			(85, "85"),
-			(92, "92"),
-			(100, "100"),
-			(101, "101"),
-			(139, "139"),
-			(400, "400"),
-			(501, "501"),
-			(673, "673"),
-			(1000, "1000"),
-			(1001, "1001"),
-			(2000, "2000"),
-			(2155, "2155"),
-			(3200, "3200"),
-			(10_000, "10000"),
-			(10_008, "10008"),
-			(12_108, "12108"),
-			(345_678, "345678"),
-			(1_000_000, "1000000"),
-			(1_234_567, "1234567"),
-			(123_456_789, "123456789"),
-			(234_567_890, "234567890"),
-			(1_000_000_000, "1000000000"),
-			(1_234_567_890, "1234567890"),
-			(98_123_456_789, "98123456789"),
-			(798_123_456_789, "798123456789"),
-			(6_798_123_456_789, "6798123456789"),
-			(56_798_123_456_789, "56798123456789"),
-			(456_798_123_456_789, "456798123456789"),
-			(3_456_798_123_456_789, "3456798123456789"),
-			(23_456_798_123_456_789, "23456798123456789"),
-			(123_456_798_123_456_789, "123456798123456789"),
-		];
-		for (nb, nb_str) in tests {
-			assert_eq!(nb_repr.usize_to_string(nb), nb_str);
-		}
-	}
 
 	#[ignore] // FIXME
 	#[test]
 	fn test_letters_en_us() {
 		//crate::i18n::init_raw(langid!("en-US"));
 
-		let nb_repr = NbRepr::Letters;
 		let tests = [
 			(0, "zero"),
 			(1, "one"),
@@ -272,7 +223,7 @@ mod tests {
 			(123_456_798_123_456_789, "one hundred twenty-three million four hundred fifty-six thousand seven hundred ninety-eight billion one hundred twenty-three million four hundred fifty-six thousand seven hundred and eighty-nine"),
 		];
 		for (nb, nb_str) in tests {
-			assert_eq!(nb_repr.usize_to_string(nb), nb_str);
+			assert_eq!(usize_to_string(nb), nb_str);
 		}
 	}
 
@@ -281,7 +232,6 @@ mod tests {
 	fn test_letters_fr_fr() {
 		//crate::i18n::init_raw(langid!("fr-FR"));
 
-		let nb_repr = NbRepr::Letters;
 		let tests = [
 			(0, "zéro"),
 			(1, "un"),
@@ -325,7 +275,7 @@ mod tests {
 			(123_456_798_123_456_789, "cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-quatre-vingt-dix-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-quatre-vingt-neuf"),
 		];
 		for (nb, nb_str) in tests {
-			assert_eq!(nb_repr.usize_to_string(nb), nb_str);
+			assert_eq!(usize_to_string(nb), nb_str);
 		}
 	}
 
@@ -334,7 +284,6 @@ mod tests {
 	fn test_letters_fr_be() {
 		//crate::i18n::init_raw(langid!("fr-BE"));
 
-		let nb_repr = NbRepr::Letters;
 		let tests = [
 			(0, "zéro"),
 			(1, "un"),
@@ -378,7 +327,7 @@ mod tests {
 			(123_456_798_123_456_789, "cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-nonante-huit-milliards-cent-vingt-trois-millions-quatre-cent-cinquante-six-mille-sept-cent-octante-neuf"),
 		];
 		for (nb, nb_str) in tests {
-			assert_eq!(nb_repr.usize_to_string(nb), nb_str);
+			assert_eq!(usize_to_string(nb), nb_str);
 		}
 	}
 }

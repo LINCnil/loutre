@@ -135,7 +135,6 @@ hash_function = "sha-512"
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Some(Theme::Dark));
 		assert_eq!(cfg.lang, langid!("fr").into());
-		assert_eq!(cfg.number_representation, NbRepr::Letters);
 		assert_eq!(cfg.hash_function, HashFunc::Sha512);
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::CksumGnu);
@@ -154,7 +153,6 @@ hash_function = "sha-256"
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, Some(Theme::Dark));
 		assert_eq!(cfg.lang, langid!("fr").into());
-		assert_eq!(cfg.number_representation, NbRepr::Letters);
 		assert_eq!(cfg.hash_function, HashFunc::Sha256);
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::Cnil);
@@ -166,7 +164,6 @@ hash_function = "sha-256"
 		let cfg = Config::load_config("");
 		assert_eq!(cfg.theme, None);
 		assert_eq!(cfg.lang, Lang::default());
-		assert_eq!(cfg.number_representation, NbRepr::default());
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
@@ -188,7 +185,6 @@ hash_function = "also invalid"
 		let cfg = Config::load_config(s);
 		assert_eq!(cfg.theme, None);
 		assert_eq!(cfg.lang, Lang::default());
-		assert_eq!(cfg.number_representation, NbRepr::default());
 		assert_eq!(cfg.hash_function, HashFunc::default());
 		assert_eq!(cfg.content_file_name, None);
 		assert_eq!(cfg.content_file_format, ContentFileFormat::default());
