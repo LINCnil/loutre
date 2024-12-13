@@ -1,0 +1,60 @@
+/* LOgiciel Unique de TRaitement des Empreintes (LOUTRE) */
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html, body {
+	background-color: var(--main-bg-color);
+	color: var(--main-color);
+	font-family: "Open Sans", sans-serif;
+	font-size: 1rem;
+	/* https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html */
+	line-height: 1.5;
+}
+
+#main {
+	min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5 {
+	line-height: 1.2;
+	overflow-wrap: break-word;
+}
+
+h1 {
+	font-size: 1.4rem;
+	margin-bottom: 24px;
+}
+
+p {
+	overflow-wrap: break-word;
+	hyphens: auto;
+}
+
+fieldset {
+	padding: 8px;
+}
+
+input, button, textarea, select {
+	font: inherit;
+}
+
+progress[value] {
+	-webkit-appearance: none;
+	appearance: none;
+	border: none;
+	width: 100%;
+	height: 20px;
+}
+
+progress[value]::-webkit-progress-bar {
+	border-radius: 16px;
+	background-color: var(--progress-bar-bg-color);
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: var(--progress-bar-value-color);
+	border-radius: 16px;
+}

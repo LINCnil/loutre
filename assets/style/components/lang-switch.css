@@ -1,0 +1,29 @@
+.component-lang-switch {
+	display: inline-block;
+}
+
+.component-lang-switch:hover > .component-lang-switch-list, .component-lang-switch-list:hover {
+	display: block;
+	position: fixed;
+	right: 0;
+	margin-right: 10px;
+	text-align: left;
+	background-color: var(--main-bg-color);
+	border: 1px solid var(--main-color);
+	border-radius: 10px;
+	padding: 10px 0 10px 0;
+	list-style-type: none;
+}
+
+.component-lang-switch-list {
+	display: none;
+	font-size: 1rem;
+}
+
+.component-lang-switch-list > li {
+	padding: 4px 16px 4px 18px;
+}
+
+.component-lang-switch-list > li:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}

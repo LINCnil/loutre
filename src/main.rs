@@ -1,6 +1,5 @@
 mod analyse_hash;
 mod app;
-pub mod assets;
 mod check;
 mod clipboard;
 mod components;

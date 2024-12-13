@@ -1,0 +1,99 @@
+:root {
+	--main-bg-color: #F8F8F8;
+	--main-section-bg-color: #24243A;
+	--main-section-border-color: #E5EAFF;
+	--main-color: #414141;
+
+	--menu-bg-color: #414259;
+	--menu-item-bg-color: #181830;
+	--menu-item-color: #E5EAFF;
+
+	--area-bg-color: #414259;
+
+	--config-menu-tab-color: #414141;
+
+	--button-bg-color: #E5EAFF;
+	--button-border-color: #001D96;
+	--button-text-color: #001D96;
+	--button-hover-bg-color: #6045FF;
+	--button-hover-border-color: #001D96;
+	--button-hover-text-color: #FFFFFF;
+
+	--file-list-bg-color: #F0F2FB;
+	--file-list-border-color: #001D96;
+	--file-list-icon-color: #001D96;
+	--file-list-text-color: #001D96;
+
+	--label-info-bg-color: #BBE4FF;
+	--label-info-border-color: #348CFF;
+	--label-info-icon-color: #348CFF;
+	--label-info-text-color: #414141;
+
+	--label-warning-bg-color: #FFF8E5;
+	--label-warning-border-color: #FFD151;
+	--label-warning-icon-color: #FFD151;
+	--label-warning-text-color: #414141;
+
+	--label-error-bg-color: #FFF0F0;
+	--label-error-border-color: #AC2121;
+	--label-error-icon-color: #AC2121;
+	--label-error-text-color: #AC2121;
+
+	--label-success-bg-color: #E5FFF0;
+	--label-success-border-color: #21AC59;
+	--label-success-icon-color: #21AC59;
+	--label-success-text-color: #21AC59;
+
+	--progress-bar-bg-color: #E5EAFF;
+	--progress-bar-value-color: #001D96;
+}
+
+[data-theme="dark"] {
+	--main-bg-color: #181830;
+	--main-section-bg-color: #24243A;
+	--main-section-border-color: #E5EAFF;
+	--main-color: #E5EAFF;
+
+	--menu-bg-color: #414259;
+	--menu-item-bg-color: #181830;
+	--menu-item-color: #E5EAFF;
+
+	--area-bg-color: #414259;
+
+	--config-menu-tab-color: #E5EAFF;
+
+	--button-bg-color: #E5EAFF;
+	--button-border-color: #001D96;
+	--button-text-color: #001D96;
+	--button-hover-bg-color: #6045FF;
+	--button-hover-border-color: #001D96;
+	--button-hover-text-color: #FFFFFF;
+
+	--file-list-bg-color: #4F5D76;
+	--file-list-border-color: #FFF8E6;
+	--file-list-icon-color: #FFF8E6;
+	--file-list-text-color: #FFF8E6;
+
+	--label-info-bg-color: #1D2F59;
+	--label-info-border-color: #348CFF;
+	--label-info-icon-color: #348CFF;
+	--label-info-text-color: #E6F1FF;
+
+	--label-warning-bg-color: #4C3F2B;
+	--label-warning-border-color: #FFD151;
+	--label-warning-icon-color: #FFD151;
+	--label-warning-text-color: #FFF8E6;
+
+	--label-error-bg-color: #840000;
+	--label-error-border-color: #FF7575;
+	--label-error-icon-color: #FF7575;
+	--label-error-text-color: #FFF0F0;
+
+	--label-success-bg-color: #144132;
+	--label-success-border-color: #34FF86;
+	--label-success-icon-color: #34FF86;
+	--label-success-text-color: #DEFFEB;
+
+	--progress-bar-bg-color: #4F5D76;
+	--progress-bar-value-color: #BBE4FF;
+}

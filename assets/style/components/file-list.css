@@ -1,0 +1,27 @@
+.component-file-list {
+	display: flex;
+	margin: 8px 0 8px 0;
+	padding: 8px;
+	background-color: var(--file-list-bg-color);
+	border: 1px solid var(--file-list-border-color);
+	border-radius: 8px;
+}
+
+.component-file-list > span {
+	display: inline-block;
+}
+
+.component-file-list-icon, .component-file-list-delete {
+	color: var(--file-list-icon-color);
+}
+
+.component-file-list-delete {
+	cursor: pointer;
+}
+
+.component-file-list-content {
+	color: var(--file-list-text-color);
+	padding: 0 8px 0 8px;
+	flex-grow: 1;
+	word-break: break-all;
+}

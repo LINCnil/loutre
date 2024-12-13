@@ -1,0 +1,9 @@
+.view-duplicated-files-list {
+	margin-top: 16px;
+	padding: 14px;
+	background-color: var(--area-bg-color);
+}
+
+.view-duplicated-files-list > ul {
+	list-style-type: none;
+}

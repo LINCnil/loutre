@@ -1,12 +1,8 @@
 use base64::prelude::*;
 use std::env;
 use std::fs::File;
-use std::io::{Read, Write};
-use std::path::PathBuf;
-
-// BUFF_SIZE must be a multiple of 3 since the data will be encoded in base64 by chucks of this
-// size concatenated to each others.
-const BUFF_SIZE: usize = 4002;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 
 fn is_nightly() -> bool {
 	match std::env::var("PROFILE") {
@@ -36,22 +32,61 @@ fn set_windows_metadata() {
 	res.compile().unwrap();
 }
 
-fn file_to_b64(src_path: &str, dest_path: &str, file_type: &str) {
+fn push_font_content<P: AsRef<Path>>(
+	src: P,
+	dest: &mut File,
+	font_family: &str,
+	font_format: &str,
+) {
+	let raw_data: &[u8] = &std::fs::read(src.as_ref()).unwrap();
+	let b64_str = BASE64_STANDARD.encode(raw_data);
+	let font_type = format!("font/{font_format}");
+	let url = format!("data:{font_type};base64,{b64_str}");
+	let css_str = format!("\n@font-face {{ font-family: \"{font_family}\"; src: url({url}) format(\"{font_format}\"); }}\n");
+	let _ = dest.write(css_str.as_bytes()).unwrap();
+}
+
+fn push_file_content<P: AsRef<Path>>(src: P, dest: &mut File) {
+	let src = src.as_ref();
+	let mut reader: &[u8] = &std::fs::read(src)
+		.map_err(|e| format!("{}: {e}", src.display()))
+		.unwrap();
+	std::io::copy(&mut reader, dest).unwrap();
+}
+
+fn build_css(dest_path: &str) {
+	// Create the final CSS file.
 	let mut dest = PathBuf::from(env::var("OUT_DIR").unwrap());
 	dest.push(dest_path);
 	let mut dest_file = File::create(dest).expect("unable to create {dest_path}");
-	let _ = dest_file
-		.write(format!("data:{file_type};base64,").as_bytes())
-		.unwrap();
-	let mut src_file = File::open(src_path).expect("unable to open {src_path}");
-	let mut buffer = [0; BUFF_SIZE];
-	loop {
-		let n = src_file.read(&mut buffer).unwrap();
-		if n == 0 {
-			break;
-		}
-		let b64_data = BASE64_STANDARD.encode(&buffer[..n]);
-		let _ = dest_file.write(b64_data.as_bytes()).unwrap();
+
+	// Push the fonts.
+	push_file_content("assets/fonts/remixicon.css", &mut dest_file);
+	push_font_content(
+		"assets/fonts/OpenSans.woff2",
+		&mut dest_file,
+		"Open Sans",
+		"woff2",
+	);
+	push_font_content(
+		"assets/fonts/remixicon.woff2",
+		&mut dest_file,
+		"remixicon",
+		"woff2",
+	);
+
+	// Push the base style.
+	push_file_content("assets/style/colors.css", &mut dest_file);
+	push_file_content("assets/style/main.css", &mut dest_file);
+
+	// Push the style of every component.
+	for entry in std::fs::read_dir("assets/style/components").unwrap() {
+		push_file_content(entry.unwrap().path(), &mut dest_file);
+	}
+
+	// Push the style of every view.
+	for entry in std::fs::read_dir("assets/style/views").unwrap() {
+		push_file_content(entry.unwrap().path(), &mut dest_file);
 	}
 }
 
@@ -59,16 +94,7 @@ fn main() {
 	if is_nightly() {
 		println!("cargo:rustc-cfg=feature=\"nightly\"");
 	}
-	file_to_b64(
-		"assets/fonts/OpenSans.woff2",
-		"OpenSans.woff2.b64",
-		"font/truetype",
-	);
-	file_to_b64(
-		"assets/fonts/remixicon.woff2",
-		"remixicon.woff2.b64",
-		"font/woff2",
-	);
+	build_css("loutre.css");
 	#[cfg(windows)]
 	set_windows_metadata();
 }

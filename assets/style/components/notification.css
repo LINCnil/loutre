@@ -1,0 +1,86 @@
+.component-notification {
+	display: flex;
+	margin: 8px 0 8px 0;
+	border-radius: 8px;
+	border-width: 1px 1px 1px 16px;
+	border-style: solid;
+}
+
+.component-notification h3 {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.component-notification-level-info {
+	border-color: var(--label-info-border-color);
+	background-color: var(--label-info-bg-color);
+}
+
+.component-notification-level-info > .component-notification-icon {
+	color: var(--label-info-icon-color);
+}
+
+.component-notification-level-info > .component-notification-content {
+	color: var(--label-info-text-color);
+}
+
+.component-notification-level-warning {
+	border-color: var(--label-warning-border-color);
+	background-color: var(--label-warning-bg-color);
+}
+
+.component-notification-level-warning > .component-notification-icon {
+	color: var(--label-warning-icon-color);
+}
+
+.component-notification-level-warning > .component-notification-content {
+	color: var(--label-warning-text-color);
+}
+
+.component-notification-level-error {
+	border-color: var(--label-error-border-color);
+	background-color: var(--label-error-bg-color);
+}
+
+.component-notification-level-error > .component-notification-icon {
+	color: var(--label-error-icon-color);
+}
+
+.component-notification-level-error > .component-notification-content {
+	color: var(--label-error-text-color);
+}
+
+.component-notification-level-success {
+	border-color: var(--label-success-border-color);
+	background-color: var(--label-success-bg-color);
+}
+
+.component-notification-level-success > .component-notification-icon {
+	color: var(--label-success-icon-color);
+}
+
+.component-notification-level-success > .component-notification-content {
+	color: var(--label-success-text-color);
+}
+
+.component-notification-icon {
+	padding: 8px;
+	font-size: 1.5rem;
+}
+
+.component-notification-content {
+	padding: 8px 8px 8px 0;
+	flex-grow: 1;
+}
+
+.component-notification-content p, .component-notification-content h3 {
+	margin: 8px 0 8px 0;
+}
+
+.component-notification-close {
+	padding: 8px;
+}
+
+.component-notification-close > span {
+	cursor: pointer;
+}

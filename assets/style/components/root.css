@@ -1,0 +1,7 @@
+.component-root {
+	min-height: 100vh;
+	box-sizing: border-box;
+	padding: 48px 72px 0 72px;
+	display: flex;
+	flex-direction: column;
+}

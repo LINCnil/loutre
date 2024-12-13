@@ -1,0 +1,27 @@
+.component-config-menu {
+	margin: 8px 0 16px 0;
+	border-bottom: 1px solid var(--config-menu-tab-color);
+}
+
+.component-config-menu-elem {
+	display: inline-block;
+	padding: 8px;
+	margin-right: 16px;
+}
+
+.component-config-menu-elem-hl {
+	border-bottom: 4px solid var(--config-menu-tab-color);
+}
+
+.component-config-menu-elem a,
+.component-config-menu-elem a:link,
+.component-config-menu-elem a:visited,
+.component-config-menu-elem a:hover,
+.component-config-menu-elem a:active {
+	color: var(--main-color);
+	text-decoration: none;
+}
+
+.component-config-menu-elem a:hover {
+	cursor: pointer;
+}

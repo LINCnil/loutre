@@ -3,6 +3,8 @@
 use dioxus::document::Style;
 use dioxus::prelude::*;
 
+pub const STYLE: &str = include_str!(concat!(env!("OUT_DIR"), "/loutre.css"));
+
 #[derive(PartialEq, Clone, Props)]
 pub struct RootProps {
 	#[props(default = EventHandler::default())]
@@ -15,10 +17,9 @@ pub struct RootProps {
 #[component]
 pub fn Root(props: RootProps) -> Element {
 	rsx! {
-		Style {{ get_style() }}
+		Style {{ STYLE }}
 		div {
-			class: "component-dropzone",
-			id: "component-dropzone-main-area",
+			class: "component-root",
 			ondrop: move |event| {
 				props.ondrop.call(event)
 			},
@@ -28,19 +29,4 @@ pub fn Root(props: RootProps) -> Element {
 			{ props.children }
 		}
 	}
-}
-
-fn get_style() -> String {
-	let mut style = include_str!("../../assets/fonts/remixicon.css").to_string();
-	style += include_str!("../../assets/loutre.css");
-	style += &get_css_font(crate::assets::FONT_REMIXICON_B64, "remixicon", "woff2");
-	style += &get_css_font(crate::assets::FONT_OPEN_SANS_B64, "Open Sans", "woff2");
-	style
-}
-
-fn get_css_font(b64: &str, family: &str, format: &str) -> String {
-	format!(
-		"\n@font-face {{ font-family: '{}'; src: url({}) format('{}'); }}",
-		family, b64, format
-	)
 }

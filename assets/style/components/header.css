@@ -1,0 +1,39 @@
+.component-header {
+	display: flex;
+}
+
+.component-header-right {
+	flex-grow: 1;
+	text-align: right;
+	padding-top: 14px;
+}
+
+.component-header-menu {
+	display: inline-block;
+	padding: 2px 16px 2px 16px;
+	background-color: var(--menu-bg-color);
+	color: var(--menu-item-color);
+	font-size: 1.5rem;
+	border-radius: 30px;
+}
+
+.component-header-menu > li {
+	display: inline-block;
+}
+
+.component-header-menu-item {
+	border-radius: 45px;
+	padding: 0 6px 0 6px;
+}
+
+.component-header-menu-item:hover {
+	background-color: var(--menu-item-bg-color);
+}
+
+.component-header-menu-item a:link,
+.component-header-menu-item a:visited,
+.component-header-menu-item a:hover,
+.component-header-menu-item a:active {
+	color: var(--menu-item-color);
+	text-decoration: none;
+}
