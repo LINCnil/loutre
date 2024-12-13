@@ -69,7 +69,7 @@ impl FileList {
 
 	pub fn excluded_files(&self) -> Vec<NonHashedFile> {
 		match self {
-			Self::NonHashed(lst) => lst.excluded_files.iter().map(|e| e.clone()).collect(),
+			Self::NonHashed(lst) => lst.excluded_files.iter().cloned().collect(),
 			Self::Hashed(_) | Self::None => Vec::new(),
 		}
 	}
