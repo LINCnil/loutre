@@ -10,6 +10,8 @@
 	--menu-item-bg-color: #181830;
 	--menu-item-color: #E5EAFF;
 
+	--area-bg-color: #414259;
+
 	--config-menu-tab-color: #414141;
 
 	--button-bg-color: #E5EAFF;
@@ -57,6 +59,8 @@
 	--menu-bg-color: #414259;
 	--menu-item-bg-color: #181830;
 	--menu-item-color: #E5EAFF;
+
+	--area-bg-color: #414259;
 
 	--config-menu-tab-color: #E5EAFF;
 
@@ -505,4 +509,16 @@ progress[value]::-webkit-progress-value {
 	grid-template-columns: 1fr 1fr;
 	column-gap: 8px;
 	text-align: center;
+}
+
+/* Duplicated files view */
+
+.view-duplicated-files-list {
+	margin-top: 16px;
+	padding: 14px;
+	background-color: var(--area-bg-color);
+}
+
+.view-duplicated-files-list > ul {
+	list-style-type: none;
 }

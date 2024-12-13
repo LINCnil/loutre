@@ -17,6 +17,8 @@ use futures_util::StreamExt;
 pub enum Route {
 	#[route("/")]
 	Main {},
+	#[route("/duplicated_files")]
+	DuplicatedFiles {},
 	#[route("/empty_files")]
 	EmptyFiles {},
 	#[route("/config/files")]

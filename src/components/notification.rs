@@ -47,6 +47,14 @@ pub fn NotificationList() -> Element {
 				level: NotificationLevel::Warning,
 				title: t!("cpn_notif_duplicated_files_title"),
 				p { { t!("cpn_notif_duplicated_files_text") } }
+				p {
+					Button {
+						onclick: move |_event| {
+							navigator().replace(Route::DuplicatedFiles {});
+						},
+						{ t!("cpn_notif_duplicated_files_link", nb: nb_empty_files) }
+					}
+				}
 			}
 		}
 	}

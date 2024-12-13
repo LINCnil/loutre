@@ -33,6 +33,7 @@ cpn_notif_excluded_files_text = Des fichiers cachés ou des fichiers système on
 
 cpn_notif_duplicated_files_title = Fichiers dupliqués détectés
 cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier sélectionné sont identiques.
+cpn_notif_duplicated_files_link = Voir la liste
 
 ## Empty files view
 
@@ -41,6 +42,10 @@ view_empty_files_title =
         [one] Fichier vide
         *[other] Fichiers vides
     }
+
+## Duplicated files view
+
+view_duplicated_files_title = Fichiers dupliqués
 
 ## Configuration
 

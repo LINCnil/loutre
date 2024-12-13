@@ -33,6 +33,7 @@ cpn_notif_excluded_files_text = Hidden or system files has automatically been ig
 
 cpn_notif_duplicated_files_title = Duplicated files detected
 cpn_notif_duplicated_files_text = Several files located in the selected directory are identical.
+cpn_notif_duplicated_files_link = See list
 
 ## Empty files view
 
@@ -41,6 +42,10 @@ view_empty_files_title =
         [one] Empty file
         *[other] Empty files
     }
+
+## Duplicated files view
+
+view_duplicated_files_title = Duplicated files
 
 ## Configuration
 

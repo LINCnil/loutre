@@ -44,13 +44,6 @@ impl FileList {
 		}
 	}
 
-	pub fn has_duplicated_files(&self) -> bool {
-		match self {
-			Self::Hashed(lst) => !lst.duplicated_files.is_empty(),
-			Self::NonHashed(_) | Self::None => false,
-		}
-	}
-
 	pub fn nb_empty_files(&self) -> usize {
 		match self {
 			Self::NonHashed(lst) => lst.empty_files.len(),
@@ -71,6 +64,13 @@ impl FileList {
 				})
 				.collect(),
 			Self::Hashed(_) | Self::None => Vec::new(),
+		}
+	}
+
+	pub fn has_duplicated_files(&self) -> bool {
+		match self {
+			Self::Hashed(lst) => !lst.duplicated_files.is_empty(),
+			Self::NonHashed(_) | Self::None => false,
 		}
 	}
 
