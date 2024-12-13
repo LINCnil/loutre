@@ -1,4 +1,4 @@
-use crate::events::{send_event_sync, ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use blake2::{Blake2b512, Blake2s256};
 use blake3::Hasher as Blake3;
 use dioxus_logger::tracing::info;
@@ -24,7 +24,7 @@ macro_rules! alg_hash_file {
 			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
 				if let Some(ref tx) = $tx {
-					send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+					send_event(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
 				}
 				break;
 			}
@@ -32,7 +32,7 @@ macro_rules! alg_hash_file {
 			processed_bytes += (n as u64);
 			if let Some(ref tx) = $tx {
 				if last_notif.elapsed() >= ref_duration {
-					if send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
+					if send_event(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
 						processed_bytes = 0;
 						last_notif = Instant::now();
 					}
@@ -59,7 +59,7 @@ macro_rules! blake3_hash_file {
 			let n = $f.read(&mut $buffer)?;
 			if n == 0 {
 				if let Some(ref tx) = $tx {
-					send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
+					send_event(tx, ExternalEvent::ProgressBarAdd(processed_bytes));
 				}
 				break;
 			}
@@ -75,7 +75,7 @@ macro_rules! blake3_hash_file {
 			processed_bytes += (n as u64);
 			if let Some(ref tx) = $tx {
 				if last_notif.elapsed() >= ref_duration {
-					if send_event_sync(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
+					if send_event(tx, ExternalEvent::ProgressBarAdd(processed_bytes)) {
 						processed_bytes = 0;
 						last_notif = Instant::now();
 					}

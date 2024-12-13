@@ -66,9 +66,9 @@ pub fn Debug() -> Element {
 						let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
 						let tx = tx_sig();
 						spawn(async move {
-							send_event(&tx, ExternalEvent::ProgressBarDelete).await;
-							send_event(&tx, ExternalEvent::ProgressBarCreate(100)).await;
-							send_event(&tx, ExternalEvent::ProgressBarAdd(nb)).await;
+							send_event(&tx, ExternalEvent::ProgressBarDelete);
+							send_event(&tx, ExternalEvent::ProgressBarCreate(100));
+							send_event(&tx, ExternalEvent::ProgressBarAdd(nb));
 						});
 					},
 					fieldset {
@@ -81,12 +81,12 @@ pub fn Debug() -> Element {
 						}
 						input { r#type: "submit" }
 						button {
-							prevent_default: "onclick",
-							onclick: move |_event| {
+							onclick: move |evt| {
+								evt.prevent_default();
 								info!("Debug: Progress bar button onclick");
 								let tx = tx_sig();
 								spawn(async move {
-									send_event(&tx, ExternalEvent::ProgressBarDelete).await;
+									send_event(&tx, ExternalEvent::ProgressBarDelete);
 								});
 							},
 							"Reset"
@@ -97,8 +97,8 @@ pub fn Debug() -> Element {
 				fieldset {
 					legend { "Loading bar" }
 					button {
-						prevent_default: "onclick",
-						onclick: move |_event| {
+						onclick: move |evt| {
+							evt.prevent_default();
 							info!("Debug: Loading bar button onclick");
 							let tx = tx_sig();
 							spawn(async move {
@@ -106,7 +106,7 @@ pub fn Debug() -> Element {
 									LoadingBarStatus::Displayed => ExternalEvent::LoadingBarDelete,
 									LoadingBarStatus::Hidden => ExternalEvent::LoadingBarAdd,
 								};
-								send_event(&tx, new_status_evt).await;
+								send_event(&tx, new_status_evt);
 							});
 						},
 						"Toogle"

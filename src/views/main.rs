@@ -7,7 +7,7 @@ use crate::components::{
 	MainSection, Notification, NotificationList, ProgressBar,
 };
 use crate::config::Config;
-use crate::events::{send_event, send_event_sync, ExternalEvent, ExternalEventSender};
+use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::files::{FileList, NonHashedFileList};
 use crate::notifications::NotificationLevel;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
@@ -189,23 +189,23 @@ async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
 	);
 	let include_hidden_files = config.include_hidden_files();
 	let include_system_files = config.include_system_files();
-	send_event(&tx, ExternalEvent::FileListReset).await;
+	send_event(&tx, ExternalEvent::FileListReset);
 	let handle = Handle::current();
 	let path = path.to_path_buf();
 
 	thread::spawn(move || {
 		handle.spawn(async move {
 			info!("Directory loading thread started");
-			send_event(&tx, ExternalEvent::LoadingBarAdd).await;
+			send_event(&tx, ExternalEvent::LoadingBarAdd);
 			match NonHashedFileList::from_dir(&path, include_hidden_files, include_system_files)
 				.await
 			{
 				Ok(new_lst) => {
-					send_event(&tx, ExternalEvent::NonHashedFileListSet(new_lst)).await;
+					send_event(&tx, ExternalEvent::NonHashedFileListSet(new_lst));
 				}
 				Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
 			};
-			send_event(&tx, ExternalEvent::LoadingBarDelete).await;
+			send_event(&tx, ExternalEvent::LoadingBarDelete);
 			info!("Directory loading thread done");
 		});
 	});
@@ -218,21 +218,21 @@ async fn load_receipt(config: &Config, tx: ExternalEventSender, path: &Path) {
 		Some(h) => h,
 		None => config.hash_function,
 	};
-	send_event(&tx, ExternalEvent::ReceiptReset).await;
+	send_event(&tx, ExternalEvent::ReceiptReset);
 	let handle = Handle::current();
 	let path = path.to_path_buf();
 
 	thread::spawn(move || {
 		handle.spawn(async move {
 			info!("Receipt loading thread started");
-			send_event(&tx, ExternalEvent::LoadingBarAdd).await;
+			send_event(&tx, ExternalEvent::LoadingBarAdd);
 			match Receipt::new(&path, default_hash) {
 				Ok(new_receipt) => {
-					send_event(&tx, ExternalEvent::ReceiptSet(new_receipt)).await;
+					send_event(&tx, ExternalEvent::ReceiptSet(new_receipt));
 				}
 				Err(_) => error!("Unable to load receipt: {}", path.display()),
 			};
-			send_event(&tx, ExternalEvent::LoadingBarDelete).await;
+			send_event(&tx, ExternalEvent::LoadingBarDelete);
 			info!("Receipt loading thread done");
 		});
 	});
@@ -257,14 +257,14 @@ async fn calc_fingerprints(
 			info!("File hashing thread started");
 
 			let total_size = file_list.total_size();
-			send_event_sync(&tx, ExternalEvent::ProgressBarCreate(total_size));
+			send_event(&tx, ExternalEvent::ProgressBarCreate(total_size));
 			info!("Total size to hash: {total_size} bytes");
 
 			// Calculating fingerprints
 			match file_list.hash(&config, hash_func, tx.clone()) {
 				Ok(mut hashed_file_list) => {
-					send_event_sync(&tx, ExternalEvent::ProgressBarDelete);
-					send_event_sync(&tx, ExternalEvent::LoadingBarAdd);
+					send_event(&tx, ExternalEvent::ProgressBarDelete);
+					send_event(&tx, ExternalEvent::LoadingBarAdd);
 
 					// Checking fingerprints against the content file
 					info!("Checking fingerprints against the content file");
@@ -316,8 +316,8 @@ async fn calc_fingerprints(
 						}
 					}
 
-					send_event_sync(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
-					send_event_sync(&tx, ExternalEvent::LoadingBarDelete);
+					send_event(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
+					send_event(&tx, ExternalEvent::LoadingBarDelete);
 				}
 				Err(e) => error!("Unable to hash files: {e}"),
 			};

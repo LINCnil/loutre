@@ -20,7 +20,7 @@ pub fn Checkbox(props: CheckboxProps) -> Element {
 			class: "component-form-checkbox",
 			r#type: "checkbox",
 			checked: props.checked,
-			prevent_default: "onchange",
+			onclick: move |evt| evt.prevent_default(),
 			onchange: move |evt| props.onchange.call(evt),
 		}
 	}
@@ -57,8 +57,10 @@ pub fn Select(props: SelectProps) -> Element {
 			id: props.id,
 			name: props.name,
 			class: "component-form-select",
-			prevent_default: "onchange",
-			onchange: move |evt| props.onchange.call(evt),
+			onchange: move |evt| {
+				evt.prevent_default();
+				props.onchange.call(evt)
+			},
 			for opt in props.options {
 				option {
 					value: "{opt.value}",

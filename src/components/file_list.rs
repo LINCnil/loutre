@@ -73,11 +73,11 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 					let txc = tx.clone();
 					spawn(async move {
 						if is_receipt {
-							send_event(&txc, ExternalEvent::ReceiptReset).await;
+							send_event(&txc, ExternalEvent::ReceiptReset);
 							info!("Removing receipt");
 						} else {
 							info!("Removing file list");
-							send_event(&txc, ExternalEvent::FileListReset).await;
+							send_event(&txc, ExternalEvent::FileListReset);
 						}
 					});
 				},

@@ -5,27 +5,19 @@ use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::error;
-use tokio::sync::mpsc::{Receiver, Sender};
 
-pub type ExternalEventReceiver = Receiver<ExternalEvent>;
-pub type ExternalEventSender = Sender<ExternalEvent>;
+pub type ExternalEventReceiver = UnboundedReceiver<ExternalEvent>;
+pub type ExternalEventSender = UnboundedSender<ExternalEvent>;
 
-pub async fn send_event(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
-	if let Err(e) = tx.send(event).await {
+pub fn send_event(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
+	if let Err(e) = tx.unbounded_send(event) {
 		error!("Error sending event: {e}");
 		return false;
 	}
 	true
 }
 
-pub fn send_event_sync(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
-	if let Err(e) = tx.blocking_send(event) {
-		error!("Error sending event: {e}");
-		return false;
-	}
-	true
-}
-
+#[derive(Clone)]
 pub struct ExternalEventSignals {
 	config: Signal<Config>,
 	clipboard: Signal<Clipboard>,
@@ -106,6 +98,7 @@ impl ExternalEvent {
 				signals.progress_bar.set(Some(ProgressBarStatus::new(nb)));
 			}
 			Self::ProgressBarDelete => {
+				println!("- debug: ProgressBarDelete");
 				signals.progress_bar.set(None);
 			}
 			Self::ReceiptReset => {

@@ -40,7 +40,7 @@ impl FromStr for Theme {
 pub async fn get_default_theme() -> Theme {
 	let js =
 		"return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;";
-	let rsp = eval(js).await.unwrap();
+	let rsp = document::eval(js).await.unwrap();
 	if let Some(is_dark) = rsp.as_bool() {
 		if is_dark {
 			return Theme::Dark;
@@ -52,7 +52,7 @@ pub async fn get_default_theme() -> Theme {
 pub async fn set_theme(mut config_sig: Signal<Config>, mut theme_sig: Signal<Theme>, theme: Theme) {
 	// Set the theme context
 	let js = format!("document.documentElement.setAttribute('data-theme', '{theme}');");
-	let _ = eval(&js).await;
+	let _ = document::eval(&js).await;
 	theme_sig.set(theme);
 
 	// Write it to the configuration

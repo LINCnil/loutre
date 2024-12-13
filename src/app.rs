@@ -11,7 +11,7 @@ use crate::theme::{get_default_theme, set_theme, Theme};
 use crate::views::*;
 use dioxus::prelude::*;
 use dioxus_logger::tracing::info;
-use tokio::sync::mpsc::channel;
+use futures_util::StreamExt;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
@@ -33,27 +33,23 @@ pub enum Route {
 #[component]
 pub fn App() -> Element {
 	let config = Config::init();
-	let (progress_tx, progress_rx) = channel(crate::PROGRESS_BAR_CHANNEL_CAPACITY);
-
 	crate::i18n::init(&config);
-	initialize_global_context(config, progress_tx);
+
+	let handle = use_coroutine(|mut evt_rx: ExternalEventReceiver| async move {
+		let mut signals = ExternalEventSignals::new();
+		info!("Waiting for an external event…");
+		while let Some(event) = evt_rx.next().await {
+			info!("External event received: {event}");
+			event.handle(&mut signals);
+		}
+	});
+
+	initialize_global_context(config, handle.tx());
 	initialize_theme();
-	listen_to_progress_bar_changes(progress_rx);
 
 	rsx! {
 		Router::<Route> {}
 	}
-}
-
-fn listen_to_progress_bar_changes(mut progress_rx: ExternalEventReceiver) -> Coroutine<()> {
-	let mut signals = ExternalEventSignals::new();
-	use_coroutine(|_| async move {
-		info!("Waiting for an external event…");
-		while let Some(event) = progress_rx.recv().await {
-			info!("External event received: {event}");
-			event.handle(&mut signals);
-		}
-	})
 }
 
 fn initialize_theme() {

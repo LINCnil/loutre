@@ -26,12 +26,12 @@ pub fn Button(props: ButtonProps) -> Element {
 						}
 					}
 				}
-				if !props.icon.is_empty() && props.children.is_some() {
+				if !props.icon.is_empty() && props.children.is_ok() {
 					div {
 						class: "component-button-sep",
 					}
 				}
-				if props.children.is_some() {
+				if props.children.is_ok() {
 					div {
 						class: "component-button-text",
 						{props.children}
