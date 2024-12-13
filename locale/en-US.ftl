@@ -12,14 +12,35 @@ cpn_file_list_delete = Reset
 
 cpn_progress_bar_status = Progress: { $done } / { $total } ({ $percent } %)
 
-cpn_notif_empty_files_title = Empty files detected
-cpn_notif_empty_files_text = One or more files located in the selected directory are empty.
+cpn_notif_empty_files_title =
+    { $nb ->
+        [one] Empty file detected
+        *[other] Empty files detected
+    }
+cpn_notif_empty_files_text =
+    { $nb ->
+        [one] A file located in the selected directory is empty.
+        *[other] { $nb } files located in the selected directory are empty.
+    }
+cpn_notif_empty_files_link =
+    { $nb ->
+        [one] See file
+        *[other] See list
+    }
 
 cpn_notif_excluded_files_title = Ignored files
 cpn_notif_excluded_files_text = Hidden or system files has automatically been ignored.
 
 cpn_notif_duplicated_files_title = Duplicated files detected
 cpn_notif_duplicated_files_text = Several files located in the selected directory are identical.
+
+## Empty files view
+
+view_empty_files_title =
+    { $nb ->
+        [one] Empty file
+        *[other] Empty files
+    }
 
 ## Configuration
 

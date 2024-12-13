@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use crate::app::Route;
+use crate::components::Button;
 use crate::config::Config;
 use crate::files::FileList;
 use crate::notifications::{NotificationBlackList, NotificationLevel};
@@ -10,14 +12,23 @@ use dioxus_i18n::t;
 pub fn NotificationList() -> Element {
 	let fl = use_context::<Signal<FileList>>()();
 	let cfg = use_context::<Signal<Config>>()();
+	let nb_empty_files = fl.nb_empty_files();
 
 	rsx! {
-		if cfg.is_empty_file_warning_enabled() && fl.has_empty_files() {
+		if cfg.is_empty_file_warning_enabled() && nb_empty_files != 0 {
 			Notification {
 				id: "empty_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
-				title: t!("cpn_notif_empty_files_title"),
-				p { { t!("cpn_notif_empty_files_text") } }
+				title: t!("cpn_notif_empty_files_title", nb: nb_empty_files),
+				p { { t!("cpn_notif_empty_files_text", nb: nb_empty_files) } }
+				p {
+					Button {
+						onclick: move |_event| {
+							navigator().replace(Route::EmptyFiles {});
+						},
+						{ t!("cpn_notif_empty_files_link", nb: nb_empty_files) }
+					}
+				}
 			}
 		}
 

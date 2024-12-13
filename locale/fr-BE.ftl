@@ -12,14 +12,35 @@ cpn_file_list_delete = Réinitialiser
 
 cpn_progress_bar_status = Réalisé : { $done } / { $total } ({ $percent } %)
 
-cpn_notif_empty_files_title = Fichiers vides détectés
-cpn_notif_empty_files_text = Un ou plusieurs fichiers contenus dans le dossier sélectionné sont vides.
+cpn_notif_empty_files_title =
+    { $nb ->
+        [one] Fichier vide détecté
+        *[other] Fichiers vides détectés
+    }
+cpn_notif_empty_files_text =
+    { $nb ->
+        [one] Un fichier contenu dans le dossier sélectionné est vide.
+        *[other] { $nb } fichiers contenus dans le dossier sélectionné sont vides.
+    }
+cpn_notif_empty_files_link =
+    { $nb ->
+        [one] Voir le fichier
+        *[other] Voir la liste
+    }
 
 cpn_notif_excluded_files_title = Fichiers ignoré
 cpn_notif_excluded_files_text = Des fichiers cachés ou des fichiers système ont été automatiquement ignorés.
 
 cpn_notif_duplicated_files_title = Fichiers dupliqués détectés
 cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier sélectionné sont identiques.
+
+## Empty files view
+
+view_empty_files_title =
+    { $nb ->
+        [one] Fichier vide
+        *[other] Fichiers vides
+    }
 
 ## Configuration
 

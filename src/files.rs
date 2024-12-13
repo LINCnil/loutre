@@ -37,14 +37,6 @@ impl FileList {
 		}
 	}
 
-	pub fn has_empty_files(&self) -> bool {
-		match self {
-			Self::NonHashed(lst) => !lst.empty_files.is_empty(),
-			Self::Hashed(lst) => !lst.empty_files.is_empty(),
-			Self::None => false,
-		}
-	}
-
 	pub fn has_excluded_files(&self) -> bool {
 		match self {
 			Self::NonHashed(lst) => !lst.excluded_files.is_empty(),
@@ -56,6 +48,13 @@ impl FileList {
 		match self {
 			Self::Hashed(lst) => !lst.duplicated_files.is_empty(),
 			Self::NonHashed(_) | Self::None => false,
+		}
+	}
+
+	pub fn nb_empty_files(&self) -> usize {
+		match self {
+			Self::NonHashed(lst) => lst.empty_files.len(),
+			Self::Hashed(_) | Self::None => 0,
 		}
 	}
 
@@ -259,7 +258,6 @@ impl NonHashedFileList {
 			id: Uuid::new_v4(),
 			base_dir: self.base_dir.clone(),
 			files,
-			empty_files: self.empty_files.clone(),
 			duplicated_files,
 			result: CheckResult::None,
 		};
@@ -277,7 +275,6 @@ pub struct HashedFileList {
 	id: Uuid,
 	base_dir: PathBuf,
 	files: HashMap<FileId, HashedFile>,
-	empty_files: HashSet<FileId>,
 	duplicated_files: HashMap<String, HashSet<FileId>>,
 	result: CheckResult,
 }
@@ -290,7 +287,6 @@ impl HashedFileList {
 			id: Uuid::new_v4(),
 			base_dir: PathBuf::new(),
 			files: HashMap::new(),
-			empty_files: HashSet::new(),
 			duplicated_files: HashMap::new(),
 			result: CheckResult::None,
 		}
@@ -381,6 +377,10 @@ macro_rules! common_file_impl {
 				let mut path = self.base_dir.clone();
 				path.push(self.relative_path.clone());
 				path.canonicalize()
+			}
+
+			pub fn get_relative_path(&self) -> &Path {
+				self.relative_path.as_path()
 			}
 		}
 	};
@@ -485,10 +485,6 @@ impl HashedFile {
 
 	pub fn get_hash_func(&self) -> HashFunc {
 		self.hash_func
-	}
-
-	pub fn get_relative_path(&self) -> &Path {
-		self.relative_path.as_path()
 	}
 }
 
