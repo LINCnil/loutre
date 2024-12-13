@@ -1,6 +1,6 @@
 mod analyse_hash;
 mod app;
-mod assets;
+pub mod assets;
 mod check;
 mod clipboard;
 mod components;
@@ -49,31 +49,11 @@ fn main() {
 	// WindowBuilder: https://docs.rs/tao/latest/tao/window/struct.WindowBuilder.html
 	LaunchBuilder::desktop()
 		.with_cfg(
-			Config::new()
-				.with_custom_head(get_custom_head())
-				.with_menu(None)
-				.with_window(
-					WindowBuilder::new()
-						.with_title(APP_NAME)
-						.with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT)),
-				),
+			Config::new().with_menu(None).with_window(
+				WindowBuilder::new()
+					.with_title(APP_NAME)
+					.with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT)),
+			),
 		)
 		.launch(app::App)
-}
-
-fn get_custom_head() -> String {
-	let mut ret = String::from("<style>");
-	ret += include_str!("../assets/fonts/remixicon.css");
-	ret += include_str!("../assets/loutre.css");
-	ret += &get_css_font(assets::FONT_REMIXICON_B64, "remixicon", "woff2");
-	ret += &get_css_font(assets::FONT_OPEN_SANS_B64, "Open Sans", "woff2");
-	ret += "</style>";
-	ret
-}
-
-fn get_css_font(b64: &str, family: &str, format: &str) -> String {
-	format!(
-		"\n@font-face {{ font-family: '{}'; src: url({}) format('{}'); }}",
-		family, b64, format
-	)
 }

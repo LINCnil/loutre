@@ -3,8 +3,8 @@
 use crate::check::{check, CheckResult, CheckResultError, CheckType};
 use crate::clipboard::{Clipboard, ClipboardStart};
 use crate::components::{
-	Button, DropZone, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar,
-	MainSection, Notification, NotificationList, ProgressBar,
+	Button, FileButton, FileListIndicator, FileListReceipt, Header, LoadingBar, MainSection,
+	Notification, NotificationList, ProgressBar, Root,
 };
 use crate::config::Config;
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
@@ -37,7 +37,7 @@ pub fn Main() -> Element {
 	let is_waiting = has_progress_bar || has_loading_bar;
 
 	rsx! {
-		DropZone {
+		Root {
 			ondrop: move |event: DragEvent| {
 				info!("DragEvent received: {event:?}");
 				spawn(async move {

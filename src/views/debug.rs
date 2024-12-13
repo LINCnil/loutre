@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::{DropZone, Header, LoadingBar, MainSection, Notification, ProgressBar};
+use crate::components::{Header, LoadingBar, MainSection, Notification, ProgressBar, Root};
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
@@ -23,7 +23,7 @@ pub fn Debug() -> Element {
 	let tx_sig = use_context::<Signal<ExternalEventSender>>();
 
 	rsx! {
-		DropZone {
+		Root {
 			Header {
 				is_debug_view: true,
 			}

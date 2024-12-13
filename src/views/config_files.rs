@@ -2,7 +2,7 @@
 
 use crate::app::Route;
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{Checkbox, DropZone, Header, MainSection};
+use crate::components::{Checkbox, Header, MainSection, Root};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
@@ -13,7 +13,7 @@ pub fn FilesConfig() -> Element {
 	let mut cfg_sig = use_context::<Signal<Config>>();
 
 	rsx! {
-		DropZone {
+		Root {
 			Header {
 				is_config_view: true,
 			}

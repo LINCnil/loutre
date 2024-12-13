@@ -3,7 +3,7 @@
 use crate::app::Route;
 use crate::clipboard::{ClipboardPersistence, ClipboardStart};
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{DropZone, Header, MainSection, Select, SelectOption};
+use crate::components::{Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -29,7 +29,7 @@ pub fn ClipboardConfig() -> Element {
 	];
 
 	rsx! {
-		DropZone {
+		Root {
 			Header {
 				is_config_view: true,
 			}
