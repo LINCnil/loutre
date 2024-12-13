@@ -6,6 +6,7 @@ mod config_messages;
 mod debug;
 mod duplicated_files;
 mod empty_files;
+mod excluded_files;
 mod main;
 
 pub use config_clipboard::ClipboardConfig;
@@ -16,4 +17,5 @@ pub use config_messages::MessagesConfig;
 pub use debug::Debug;
 pub use duplicated_files::DuplicatedFiles;
 pub use empty_files::EmptyFiles;
+pub use excluded_files::ExcludedFiles;
 pub use main::Main;

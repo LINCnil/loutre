@@ -37,13 +37,6 @@ impl FileList {
 		}
 	}
 
-	pub fn has_excluded_files(&self) -> bool {
-		match self {
-			Self::NonHashed(lst) => !lst.excluded_files.is_empty(),
-			Self::Hashed(_) | Self::None => false,
-		}
-	}
-
 	pub fn nb_empty_files(&self) -> usize {
 		match self {
 			Self::NonHashed(lst) => lst.empty_files.len(),
@@ -63,6 +56,20 @@ impl FileList {
 					None
 				})
 				.collect(),
+			Self::Hashed(_) | Self::None => Vec::new(),
+		}
+	}
+
+	pub fn nb_excluded_files(&self) -> usize {
+		match self {
+			Self::NonHashed(lst) => lst.excluded_files.len(),
+			Self::Hashed(_) | Self::None => 0,
+		}
+	}
+
+	pub fn excluded_files(&self) -> Vec<NonHashedFile> {
+		match self {
+			Self::NonHashed(lst) => lst.excluded_files.iter().map(|e| e.clone()).collect(),
 			Self::Hashed(_) | Self::None => Vec::new(),
 		}
 	}
@@ -147,7 +154,8 @@ impl NonHashedFileList {
 		let dir_path = dir_path.as_ref().to_path_buf();
 		let mut empty_files = HashSet::new();
 		let mut excluded_files = HashSet::new();
-		let mut excluded_prefixes = HashSet::new();
+		let mut system_prefixes = HashSet::new();
+		let mut hidden_prefixes = HashSet::new();
 		let files = walkdir::WalkDir::new(&dir_path)
 			.follow_links(false)
 			.into_iter()
@@ -156,7 +164,7 @@ impl NonHashedFileList {
 					let path = entry.clone().into_path();
 					if path.is_file() {
 						match NonHashedFile::new(&dir_path, &entry.clone().into_path()) {
-							Ok(file) => {
+							Ok(mut file) => {
 								if !include_system_files && file.is_system {
 									info!("System file excluded: {}", file.relative_path.display());
 									excluded_files.insert(file);
@@ -167,12 +175,24 @@ impl NonHashedFileList {
 									excluded_files.insert(file);
 									return None;
 								}
-								for exl_p in &excluded_prefixes {
+								for exl_p in &system_prefixes {
+									if path.starts_with(exl_p) {
+										info!(
+											"File in system directory excluded: {}",
+											file.relative_path.display()
+										);
+										file.is_system = true;
+										excluded_files.insert(file);
+										return None;
+									}
+								}
+								for exl_p in &hidden_prefixes {
 									if path.starts_with(exl_p) {
 										info!(
 											"File in hidden directory excluded: {}",
 											file.relative_path.display()
 										);
+										file.is_hidden = true;
 										excluded_files.insert(file);
 										return None;
 									}
@@ -191,9 +211,12 @@ impl NonHashedFileList {
 						}
 					}
 					if path.is_dir() {
-						if let Ok(true) = is_hidden_file(&path) {
+						if let Ok(true) = is_system_file(&path) {
+							info!("System directory excluded: {}", path.display());
+							system_prefixes.insert(path.clone());
+						} else if let Ok(true) = is_hidden_file(&path) {
 							info!("Hidden directory excluded: {}", path.display());
-							excluded_prefixes.insert(path.clone());
+							hidden_prefixes.insert(path.clone());
 						}
 					}
 					None
@@ -400,6 +423,14 @@ common_file_impl!(NonHashedFile);
 impl NonHashedFile {
 	pub fn is_empty(&self) -> bool {
 		self.size == 0
+	}
+
+	pub fn is_hidden(&self) -> bool {
+		self.is_hidden
+	}
+
+	pub fn is_system(&self) -> bool {
+		self.is_system
 	}
 
 	pub fn new<P: AsRef<Path>>(base_dir: P, path: P) -> io::Result<Self> {

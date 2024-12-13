@@ -28,8 +28,17 @@ cpn_notif_empty_files_link =
         *[other] Voir la liste
     }
 
-cpn_notif_excluded_files_title = Fichiers ignoré
+cpn_notif_excluded_files_title =
+    { $nb ->
+        [one] Fichier ignoré
+        *[other] Fichiers ignoré
+    }
 cpn_notif_excluded_files_text = Des fichiers cachés ou des fichiers système ont été automatiquement ignorés.
+    { $nb ->
+        [one] Un fichier caché ou système a été automatiquement ignoré.
+        *[other] Des fichiers cachés ou des fichiers système ont été automatiquement ignorés.
+    }
+cpn_notif_excluded_files_link = { cpn_notif_empty_files_link }
 
 cpn_notif_duplicated_files_title = Fichiers dupliqués détectés
 cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier sélectionné sont identiques.
@@ -42,6 +51,10 @@ view_empty_files_title =
         [one] Fichier vide
         *[other] Fichiers vides
     }
+
+## Excluded files view
+
+view_excluded_files_title = { cpn_notif_excluded_files_title }
 
 ## Duplicated files view
 

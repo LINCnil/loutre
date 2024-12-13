@@ -13,6 +13,7 @@ pub fn NotificationList() -> Element {
 	let fl = use_context::<Signal<FileList>>()();
 	let cfg = use_context::<Signal<Config>>()();
 	let nb_empty_files = fl.nb_empty_files();
+	let nb_excluded_files = fl.nb_excluded_files();
 
 	rsx! {
 		if cfg.is_empty_file_warning_enabled() && nb_empty_files != 0 {
@@ -32,12 +33,20 @@ pub fn NotificationList() -> Element {
 			}
 		}
 
-		if fl.has_excluded_files() {
+		if nb_excluded_files != 0 {
 			Notification {
 				id: "excluded_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
-				title: t!("cpn_notif_excluded_files_title"),
-				p { { t!("cpn_notif_excluded_files_text") } }
+				title: t!("cpn_notif_excluded_files_title", nb: nb_excluded_files),
+				p { { t!("cpn_notif_excluded_files_text", nb: nb_excluded_files) } }
+				p {
+					Button {
+						onclick: move |_event| {
+							navigator().replace(Route::ExcludedFiles {});
+						},
+						{ t!("cpn_notif_excluded_files_link", nb: nb_excluded_files) }
+					}
+				}
 			}
 		}
 

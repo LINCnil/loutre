@@ -28,8 +28,17 @@ cpn_notif_empty_files_link =
         *[other] See list
     }
 
-cpn_notif_excluded_files_title = Ignored files
-cpn_notif_excluded_files_text = Hidden or system files has automatically been ignored.
+cpn_notif_excluded_files_title =
+    { $nb ->
+        [one] Ignored file
+        *[other] Ignored files
+    }
+cpn_notif_excluded_files_text =
+    { $nb ->
+        [one] A hidden or system file has automatically been ignored.
+        *[other] Hidden or system files has automatically been ignored.
+    }
+cpn_notif_excluded_files_link = { cpn_notif_empty_files_link }
 
 cpn_notif_duplicated_files_title = Duplicated files detected
 cpn_notif_duplicated_files_text = Several files located in the selected directory are identical.
@@ -42,6 +51,10 @@ view_empty_files_title =
         [one] Empty file
         *[other] Empty files
     }
+
+## Excluded files view
+
+view_excluded_files_title = { cpn_notif_excluded_files_title }
 
 ## Duplicated files view
 
