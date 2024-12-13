@@ -14,9 +14,7 @@ pub fn FilesConfig() -> Element {
 
 	rsx! {
 		Root {
-			Header {
-				is_config_view: true,
-			}
+			Header {}
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {

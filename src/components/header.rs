@@ -7,20 +7,12 @@ mod theme_switch;
 use self::lang_switch::LangSwitch;
 use self::logo::Logo;
 use self::theme_switch::ThemeSwitch;
-use crate::app::Route::{FilesConfig, Main};
+use crate::app::Route::FilesConfig;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
 
-#[derive(PartialEq, Clone, Props)]
-pub struct HeaderProps {
-	#[props(default = false)]
-	is_config_view: bool,
-	#[props(default = false)]
-	is_debug_view: bool,
-}
-
 #[component]
-pub fn Header(props: HeaderProps) -> Element {
+pub fn Header() -> Element {
 	rsx! {
 		header {
 			class: "component-header",
@@ -32,9 +24,7 @@ pub fn Header(props: HeaderProps) -> Element {
 				class: "component-header-right",
 				menu {
 					class: "component-header-menu",
-					DebugLink {
-						is_debug_view: props.is_debug_view,
-					}
+					DebugLink {}
 					li {
 						LangSwitch {}
 					}
@@ -46,11 +36,7 @@ pub fn Header(props: HeaderProps) -> Element {
 							class: "component-header-menu-item",
 							Link {
 								class: "ri-settings-3-line",
-								to: if props.is_config_view {
-									Main {}
-								} else {
-									FilesConfig {}
-								},
+								to: FilesConfig {},
 								title: t!("cpn_header_config"),
 							}
 						}
@@ -63,24 +49,20 @@ pub fn Header(props: HeaderProps) -> Element {
 
 #[cfg(not(feature = "nightly"))]
 #[component]
-fn DebugLink(is_debug_view: bool) -> Element {
+fn DebugLink() -> Element {
 	rsx! {}
 }
 
 #[cfg(feature = "nightly")]
 #[component]
-fn DebugLink(is_debug_view: bool) -> Element {
+fn DebugLink() -> Element {
 	rsx! {
 		li {
 			span {
 				class: "component-header-menu-item",
 				Link {
 					class: "ri-bug-line",
-					to: if is_debug_view {
-						Main {}
-					} else {
-						crate::app::Route::Debug {}
-					},
+					to: crate::app::Route::Debug {},
 					title: t!("cpn_header_config"),
 				}
 			}

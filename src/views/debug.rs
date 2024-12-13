@@ -24,9 +24,7 @@ pub fn Debug() -> Element {
 
 	rsx! {
 		Root {
-			Header {
-				is_debug_view: true,
-			}
+			Header {}
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 { "Debug" }
