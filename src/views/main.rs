@@ -127,7 +127,6 @@ pub fn Main() -> Element {
 									onclick: move |_event| {
 										if let FileList::Hashed(lst) = file_list_sig() {
 											let mut clipboard = Clipboard::new();
-											println!("- debug: clipboard_start_sig: {}", clipboard_start_sig());
 											let _ = clipboard.set_clipboard_list(
 												&config_sig(),
 												&lst,

@@ -98,7 +98,6 @@ impl ExternalEvent {
 				signals.progress_bar.set(Some(ProgressBarStatus::new(nb)));
 			}
 			Self::ProgressBarDelete => {
-				println!("- debug: ProgressBarDelete");
 				signals.progress_bar.set(None);
 			}
 			Self::ReceiptReset => {
