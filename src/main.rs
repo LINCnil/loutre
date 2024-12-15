@@ -21,7 +21,6 @@ mod views;
 
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
 use dioxus::prelude::*;
-use dioxus_logger::tracing::{info, Level};
 
 const APP_NAME: &str = "LOUTRE — LOgiciel Unique de TRaitement des Empreintes";
 const BUFF_SIZE: usize = 524_288; // 512 KiB
@@ -40,9 +39,7 @@ const WIN_WIDTH: u32 = 820;
 const WIN_HEIGHT: u32 = 560;
 
 fn main() {
-	// Init logger
-	dioxus_logger::init(Level::INFO).expect("failed to init logger");
-	info!("starting app");
+	tracing::info!("starting app");
 
 	// Config: https://github.com/DioxusLabs/dioxus/blob/main/packages/desktop/src/config.rs
 	// WindowBuilder: https://docs.rs/tao/latest/tao/window/struct.WindowBuilder.html

@@ -15,7 +15,6 @@ use crate::receipt::Receipt;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::t;
-use dioxus_logger::tracing::{error, info};
 use std::path::Path;
 use std::sync::Arc;
 use std::thread;
@@ -39,7 +38,7 @@ pub fn Main() -> Element {
 	rsx! {
 		Root {
 			ondrop: move |event: DragEvent| {
-				info!("DragEvent received: {event:?}");
+				tracing::info!("DragEvent received: {event:?}");
 				spawn(async move {
 					if let Some(file_engine) = event.files() {
 						load_file(&config_sig(), tx_sig(), file_engine).await;
@@ -169,7 +168,7 @@ pub fn Main() -> Element {
 }
 
 async fn load_file(config: &Config, tx: ExternalEventSender, file_engine: Arc<dyn FileEngine>) {
-	info!("File loading: {:?}", file_engine.files());
+	tracing::info!("File loading: {:?}", file_engine.files());
 	if let Some(f) = file_engine.files().first() {
 		let path = Path::new(f);
 		if path.is_file() {
@@ -182,7 +181,7 @@ async fn load_file(config: &Config, tx: ExternalEventSender, file_engine: Arc<dy
 }
 
 async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
-	info!(
+	tracing::info!(
 		"Directory loading async function started: {}",
 		path.display()
 	);
@@ -194,7 +193,7 @@ async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
 
 	thread::spawn(move || {
 		handle.spawn(async move {
-			info!("Directory loading thread started");
+			tracing::info!("Directory loading thread started");
 			send_event(&tx, ExternalEvent::LoadingBarAdd);
 			match NonHashedFileList::from_dir(&path, include_hidden_files, include_system_files)
 				.await
@@ -202,17 +201,17 @@ async fn load_directory(config: &Config, tx: ExternalEventSender, path: &Path) {
 				Ok(new_lst) => {
 					send_event(&tx, ExternalEvent::NonHashedFileListSet(new_lst));
 				}
-				Err(e) => error!("Unable to load directory: {}: {e}", path.display()),
+				Err(e) => tracing::error!("Unable to load directory: {}: {e}", path.display()),
 			};
 			send_event(&tx, ExternalEvent::LoadingBarDelete);
-			info!("Directory loading thread done");
+			tracing::info!("Directory loading thread done");
 		});
 	});
-	info!("Directory loading async function done");
+	tracing::info!("Directory loading async function done");
 }
 
 async fn load_receipt(config: &Config, tx: ExternalEventSender, path: &Path) {
-	info!("Loading receipt: {}", path.display());
+	tracing::info!("Loading receipt: {}", path.display());
 	let default_hash = match crate::analyse_hash::from_path(path) {
 		Some(h) => h,
 		None => config.hash_function,
@@ -223,19 +222,19 @@ async fn load_receipt(config: &Config, tx: ExternalEventSender, path: &Path) {
 
 	thread::spawn(move || {
 		handle.spawn(async move {
-			info!("Receipt loading thread started");
+			tracing::info!("Receipt loading thread started");
 			send_event(&tx, ExternalEvent::LoadingBarAdd);
 			match Receipt::new(&path, default_hash) {
 				Ok(new_receipt) => {
 					send_event(&tx, ExternalEvent::ReceiptSet(new_receipt));
 				}
-				Err(_) => error!("Unable to load receipt: {}", path.display()),
+				Err(_) => tracing::error!("Unable to load receipt: {}", path.display()),
 			};
 			send_event(&tx, ExternalEvent::LoadingBarDelete);
-			info!("Receipt loading thread done");
+			tracing::info!("Receipt loading thread done");
 		});
 	});
-	info!("Receipt loading async function done");
+	tracing::info!("Receipt loading async function done");
 }
 
 async fn calc_fingerprints(
@@ -244,7 +243,7 @@ async fn calc_fingerprints(
 	receipt_opt: Option<Receipt>,
 	file_list: FileList,
 ) {
-	info!("File hashing async function started");
+	tracing::info!("File hashing async function started");
 	let hash_func = match &receipt_opt {
 		Some(rcpt) => rcpt.get_main_hashing_function(),
 		None => config.hash_function,
@@ -253,11 +252,11 @@ async fn calc_fingerprints(
 
 	if let FileList::NonHashed(file_list) = file_list {
 		thread::spawn(move || {
-			info!("File hashing thread started");
+			tracing::info!("File hashing thread started");
 
 			let total_size = file_list.total_size();
 			send_event(&tx, ExternalEvent::ProgressBarCreate(total_size));
-			info!("Total size to hash: {total_size} bytes");
+			tracing::info!("Total size to hash: {total_size} bytes");
 
 			// Calculating fingerprints
 			match file_list.hash(&config, hash_func, tx.clone()) {
@@ -266,7 +265,7 @@ async fn calc_fingerprints(
 					send_event(&tx, ExternalEvent::LoadingBarAdd);
 
 					// Checking fingerprints against the content file
-					info!("Checking fingerprints against the content file");
+					tracing::info!("Checking fingerprints against the content file");
 					if let Ok(ctn_file_path) =
 						hashed_file_list.get_content_file_absolute_path(&config)
 					{
@@ -299,7 +298,7 @@ async fn calc_fingerprints(
 
 					// Checking fingerprints against the receipt
 					if let Some(rcpt) = receipt_opt {
-						info!("Checking fingerprints against the receipt");
+						tracing::info!("Checking fingerprints against the receipt");
 						match check(&hashed_file_list, rcpt.get_file_list(), CheckType::Receipt) {
 							CheckResult::Ok => {
 								if !hashed_file_list.get_result().is_err() {
@@ -318,12 +317,12 @@ async fn calc_fingerprints(
 					send_event(&tx, ExternalEvent::HashedFileListSet(hashed_file_list));
 					send_event(&tx, ExternalEvent::LoadingBarDelete);
 				}
-				Err(e) => error!("Unable to hash files: {e}"),
+				Err(e) => tracing::error!("Unable to hash files: {e}"),
 			};
 
-			info!("File hashing thread done");
+			tracing::info!("File hashing thread done");
 		});
 	}
 
-	info!("File hashing async function done");
+	tracing::info!("File hashing async function done");
 }

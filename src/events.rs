@@ -4,14 +4,13 @@ use crate::files::{FileList, HashedFileList, NonHashedFileList};
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
-use dioxus_logger::tracing::error;
 
 pub type ExternalEventReceiver = UnboundedReceiver<ExternalEvent>;
 pub type ExternalEventSender = UnboundedSender<ExternalEvent>;
 
 pub fn send_event(tx: &ExternalEventSender, event: ExternalEvent) -> bool {
 	if let Err(e) = tx.unbounded_send(event) {
-		error!("Error sending event: {e}");
+		tracing::error!("Error sending event: {e}");
 		return false;
 	}
 	true
@@ -91,7 +90,7 @@ impl ExternalEvent {
 					signals.progress_bar.set(Some(status));
 				}
 				None => {
-					error!("No active progress bar for ProgressBarAdd({nb})");
+					tracing::error!("No active progress bar for ProgressBarAdd({nb})");
 				}
 			},
 			Self::ProgressBarCreate(nb) => {

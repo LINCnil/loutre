@@ -1,6 +1,5 @@
 use crate::files::HashedFile;
 use crate::nb_repr::usize_to_string;
-use dioxus_logger::tracing::warn;
 use minijinja::context;
 use minijinja::value::{Value, ValueKind};
 use serde_derive::Serialize;
@@ -15,7 +14,7 @@ macro_rules! get_attr_or_ret {
 		match $entry.get_attr($key) {
 			Ok(value) => value,
 			Err(_) => {
-				warn!("unable to get value: {:?}", $entry);
+				tracing::warn!("unable to get value: {:?}", $entry);
 				return $ret;
 			}
 		}
@@ -33,7 +32,7 @@ macro_rules! get_bytes_or_ret {
 				.map(|e| e.as_usize().unwrap() as u8)
 				.collect::<Vec<u8>>()
 		} else {
-			warn!("unable to get bytes: {:?}", value);
+			tracing::warn!("unable to get bytes: {:?}", value);
 			return $ret;
 		}
 	}};
@@ -46,7 +45,7 @@ macro_rules! get_string_or_ret {
 		if let Some(s) = value.as_str() {
 			std::ffi::OsStr::new(s).to_os_string()
 		} else {
-			warn!("unable to get string: {:?}", value);
+			tracing::warn!("unable to get string: {:?}", value);
 			return $ret;
 		}
 	}};

@@ -5,7 +5,6 @@ use crate::files::FileList;
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
-use dioxus_logger::tracing::info;
 
 #[component]
 pub fn FileListIndicator() -> Element {
@@ -74,9 +73,9 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 					spawn(async move {
 						if is_receipt {
 							send_event(&txc, ExternalEvent::ReceiptReset);
-							info!("Removing receipt");
+							tracing::info!("Removing receipt");
 						} else {
-							info!("Removing file list");
+							tracing::info!("Removing file list");
 							send_event(&txc, ExternalEvent::FileListReset);
 						}
 					});

@@ -2,7 +2,6 @@ use crate::config::Config;
 use crate::files::HashedFileList;
 use crate::templates::{filter_add_dir_level, filter_nb_letters, EntryTemplate};
 use dioxus_i18n::t;
-use dioxus_logger::tracing::error;
 use minijinja::{context, Environment};
 use std::fmt;
 use std::path::Path;
@@ -147,7 +146,7 @@ impl Clipboard {
 	) -> Result<(), ClipboardError> {
 		let ret = self.inner_set_clipboard_list(config, file_list, start);
 		if let Err(ref e) = ret {
-			error!("{e}");
+			tracing::error!("{e}");
 		}
 		ret
 	}
@@ -160,7 +159,7 @@ impl Clipboard {
 	) -> Result<(), ClipboardError> {
 		let ret = self.inner_set_clipboard_ctn_file(config, file_list, start);
 		if let Err(ref e) = ret {
-			error!("{e}");
+			tracing::error!("{e}");
 		}
 		ret
 	}

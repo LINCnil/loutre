@@ -1,7 +1,6 @@
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use blake2::{Blake2b512, Blake2s256};
 use blake3::Hasher as Blake3;
-use dioxus_logger::tracing::info;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use sha3::{Sha3_256, Sha3_384, Sha3_512};
@@ -160,7 +159,7 @@ impl HashFunc {
 		tx: Option<ExternalEventSender>,
 	) -> io::Result<String> {
 		let file = file.as_ref();
-		info!("Calculating the {self} hash of file: {}", file.display());
+		tracing::info!("Calculating the {self} hash of file: {}", file.display());
 		let mut f = File::open(file)?;
 		let mut buffer = [0; crate::BUFF_SIZE];
 		match self {

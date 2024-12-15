@@ -6,7 +6,6 @@ use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
 use dioxus::prelude::*;
-use dioxus_logger::tracing::info;
 
 const LOREM_LIPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
@@ -30,9 +29,9 @@ pub fn Debug() -> Element {
 				h1 { "Debug" }
 				form {
 					onsubmit: move |event| {
-						info!("Notification form event: {event:?}");
+						tracing::info!("Notification form event: {event:?}");
 						let data = event.data.values();
-						info!("Notification form event data: {data:?}");
+						tracing::info!("Notification form event data: {data:?}");
 						let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
 						let nb: usize = form_value_str!(data, "nb").parse().unwrap();
 						notifs.push((level, nb));
@@ -58,9 +57,9 @@ pub fn Debug() -> Element {
 
 				form {
 					onsubmit: move |event| {
-						info!("Progress bar form event: {event:?}");
+						tracing::info!("Progress bar form event: {event:?}");
 						let data = event.data.values();
-						info!("Progress bar form event data: {data:?}");
+						tracing::info!("Progress bar form event data: {data:?}");
 						let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
 						let tx = tx_sig();
 						spawn(async move {
@@ -81,7 +80,7 @@ pub fn Debug() -> Element {
 						button {
 							onclick: move |evt| {
 								evt.prevent_default();
-								info!("Debug: Progress bar button onclick");
+								tracing::info!("Debug: Progress bar button onclick");
 								let tx = tx_sig();
 								spawn(async move {
 									send_event(&tx, ExternalEvent::ProgressBarDelete);
@@ -97,7 +96,7 @@ pub fn Debug() -> Element {
 					button {
 						onclick: move |evt| {
 							evt.prevent_default();
-							info!("Debug: Loading bar button onclick");
+							tracing::info!("Debug: Loading bar button onclick");
 							let tx = tx_sig();
 							spawn(async move {
 								let new_status_evt = match loading_bar {

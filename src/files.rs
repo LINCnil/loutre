@@ -3,7 +3,6 @@ use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::events::ExternalEventSender;
 use crate::hash::HashFunc;
-use dioxus_logger::tracing::{error, info};
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::fs::{self, File};
@@ -166,18 +165,24 @@ impl NonHashedFileList {
 						match NonHashedFile::new(&dir_path, &entry.clone().into_path()) {
 							Ok(mut file) => {
 								if !include_system_files && file.is_system {
-									info!("System file excluded: {}", file.relative_path.display());
+									tracing::info!(
+										"System file excluded: {}",
+										file.relative_path.display()
+									);
 									excluded_files.insert(file);
 									return None;
 								}
 								if !include_hidden_files && file.is_hidden {
-									info!("Hidden file excluded: {}", file.relative_path.display());
+									tracing::info!(
+										"Hidden file excluded: {}",
+										file.relative_path.display()
+									);
 									excluded_files.insert(file);
 									return None;
 								}
 								for exl_p in &system_prefixes {
 									if path.starts_with(exl_p) {
-										info!(
+										tracing::info!(
 											"File in system directory excluded: {}",
 											file.relative_path.display()
 										);
@@ -188,7 +193,7 @@ impl NonHashedFileList {
 								}
 								for exl_p in &hidden_prefixes {
 									if path.starts_with(exl_p) {
-										info!(
+										tracing::info!(
 											"File in hidden directory excluded: {}",
 											file.relative_path.display()
 										);
@@ -198,31 +203,34 @@ impl NonHashedFileList {
 									}
 								}
 								let id = file.get_id();
-								info!("File loaded: {}", file.relative_path.display());
+								tracing::info!("File loaded: {}", file.relative_path.display());
 								if file.is_empty() {
 									empty_files.insert(id.clone());
 								}
 								return Some((id, file));
 							}
 							Err(e) => {
-								error!("{}: unable to read file: {e}", entry.into_path().display());
+								tracing::error!(
+									"{}: unable to read file: {e}",
+									entry.into_path().display()
+								);
 								return None;
 							}
 						}
 					}
 					if path.is_dir() {
 						if let Ok(true) = is_system_file(&path) {
-							info!("System directory excluded: {}", path.display());
+							tracing::info!("System directory excluded: {}", path.display());
 							system_prefixes.insert(path.clone());
 						} else if let Ok(true) = is_hidden_file(&path) {
-							info!("Hidden directory excluded: {}", path.display());
+							tracing::info!("Hidden directory excluded: {}", path.display());
 							hidden_prefixes.insert(path.clone());
 						}
 					}
 					None
 				}
 				Err(e) => {
-					error!("Error while loading file: {e}");
+					tracing::error!("Error while loading file: {e}");
 					None
 				}
 			})

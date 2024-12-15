@@ -1,5 +1,4 @@
 use crate::files::{HashedFile, HashedFileList};
-use dioxus_logger::tracing::{info, warn};
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::path::PathBuf;
@@ -81,7 +80,7 @@ pub fn check(
 	reference_fl: &HashedFileList,
 	t: CheckType,
 ) -> CheckResult {
-	info!("Starting fingerprint check");
+	tracing::info!("Starting fingerprint check");
 	let mut errors = HashSet::new();
 	let base_dir = calculated_fl.get_base_dir();
 
@@ -104,10 +103,10 @@ pub fn check(
 	}
 
 	if errors.is_empty() {
-		info!("Fingerprint check done: ok");
+		tracing::info!("Fingerprint check done: ok");
 		CheckResult::Ok
 	} else {
-		warn!("Fingerprint check done: {} errors", errors.len());
+		tracing::warn!("Fingerprint check done: {} errors", errors.len());
 		CheckResult::Error(errors.into_iter().collect())
 	}
 }
@@ -119,7 +118,7 @@ fn add_missing_file(errors: &mut HashSet<CheckResultError>, file: &HashedFile, t
 		CheckType::ContentFile => CheckResultError::ContentFileMissingFile(path),
 		CheckType::Receipt => CheckResultError::ReceiptMissingFile(path),
 	};
-	warn!("{e}");
+	tracing::warn!("{e}");
 	errors.insert(e);
 }
 
@@ -130,6 +129,6 @@ fn add_non_matching_file(errors: &mut HashSet<CheckResultError>, file: &HashedFi
 		CheckType::ContentFile => CheckResultError::ContentFileNonMatchingFile(path),
 		CheckType::Receipt => CheckResultError::ReceiptNonMatchingFile(path),
 	};
-	warn!("{e}");
+	tracing::warn!("{e}");
 	errors.insert(e);
 }
