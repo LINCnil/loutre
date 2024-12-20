@@ -13,7 +13,7 @@
 	display: inline-block;
 }
 
-.component-button:hover {
+.component-button:hover, .component-button-file-label:hover {
 	color: var(--button-hover-text-color);
 	background-color: var(--button-hover-bg-color);
 	border: 1px solid var(--button-hover-border-color);
@@ -45,4 +45,3 @@
 .component-button-file-input {
 	display: none;
 }
-

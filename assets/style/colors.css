@@ -1,28 +1,39 @@
 :root {
-	--main-bg-color: #F8F8F8;
-	--main-section-bg-color: #24243A;
-	--main-section-border-color: #E5EAFF;
-	--main-color: #414141;
+	--primary-blue: #001D96;
+	--light-blue: #E5EAFF;
+	--purple: #6045FF;
+	--light-grey: #EEEEEE;
+	--medium-grey: #9C9C9C;
+	--background-grey: #F8F8F8;
+	--dark-blue: #101828;
+	--dark-mode-background: #181830;
+	--grey-background-navbar: #414259;
+	--grey-background-main-section: #24243A;
 
-	--menu-bg-color: #414259;
-	--menu-item-bg-color: #181830;
-	--menu-item-color: #E5EAFF;
+	--main-bg-color: var(--light-grey);
+	--main-section-bg-color: var(--background-grey);
+	--main-section-border-color: var(--light-blue);
+	--main-color: var(--primary-blue);
 
-	--area-bg-color: #414259;
+	--menu-bg-color: var(--light-blue);
+	--menu-item-bg-color: var(--light-grey);
+	--menu-item-color: var(--primary-blue);
 
-	--config-menu-tab-color: #414141;
+	--area-bg-color: var(--grey-background-navbar);
 
-	--button-bg-color: #E5EAFF;
-	--button-border-color: #001D96;
-	--button-text-color: #001D96;
-	--button-hover-bg-color: #6045FF;
-	--button-hover-border-color: #001D96;
-	--button-hover-text-color: #FFFFFF;
+	--config-menu-tab-color: var(--primary-blue);
 
-	--file-list-bg-color: #F0F2FB;
-	--file-list-border-color: #001D96;
-	--file-list-icon-color: #001D96;
-	--file-list-text-color: #001D96;
+	--button-bg-color: var(--light-blue);
+	--button-border-color: var(--primary-blue);
+	--button-text-color: var(--primary-blue);
+	--button-hover-bg-color: var(--purple);
+	--button-hover-border-color: var(--primary-blue);
+	--button-hover-text-color: var(--light-grey);
+
+	--file-list-bg-color: var(--light-blue);
+	--file-list-border-color: var(--primary-blue);
+	--file-list-icon-color: var(--primary-blue);
+	--file-list-text-color: var(--primary-blue);
 
 	--label-info-bg-color: #BBE4FF;
 	--label-info-border-color: #348CFF;
@@ -44,35 +55,35 @@
 	--label-success-icon-color: #21AC59;
 	--label-success-text-color: #21AC59;
 
-	--progress-bar-bg-color: #E5EAFF;
-	--progress-bar-value-color: #001D96;
+	--progress-bar-bg-color: var(--light-blue);
+	--progress-bar-value-color: var(--primary-blue);
 }
 
 [data-theme="dark"] {
-	--main-bg-color: #181830;
-	--main-section-bg-color: #24243A;
-	--main-section-border-color: #E5EAFF;
-	--main-color: #E5EAFF;
+	--main-bg-color: var(--dark-mode-background);
+	--main-section-bg-color: var(--grey-background-main-section);
+	--main-section-border-color: var(--light-blue);
+	--main-color: var(--light-blue);
 
-	--menu-bg-color: #414259;
-	--menu-item-bg-color: #181830;
-	--menu-item-color: #E5EAFF;
+	--menu-bg-color: var(--grey-background-navbar);
+	--menu-item-bg-color: var(--dark-mode-background);
+	--menu-item-color: var(--light-blue);
 
-	--area-bg-color: #414259;
+	--area-bg-color: var(--grey-background-navbar);
 
-	--config-menu-tab-color: #E5EAFF;
+	--config-menu-tab-color: var(--light-blue);
 
-	--button-bg-color: #E5EAFF;
-	--button-border-color: #001D96;
-	--button-text-color: #001D96;
-	--button-hover-bg-color: #6045FF;
-	--button-hover-border-color: #001D96;
-	--button-hover-text-color: #FFFFFF;
+	--button-bg-color: var(--light-blue);
+	--button-border-color: var(--primary-blue);
+	--button-text-color: var(--primary-blue);
+	--button-hover-bg-color: var(--purple);
+	--button-hover-border-color: var(--primary-blue);
+	--button-hover-text-color: var(--light-grey);
 
-	--file-list-bg-color: #4F5D76;
-	--file-list-border-color: #FFF8E6;
-	--file-list-icon-color: #FFF8E6;
-	--file-list-text-color: #FFF8E6;
+	--file-list-bg-color: var(--light-blue);
+	--file-list-border-color: var(--primary-blue);
+	--file-list-icon-color: var(--primary-blue);
+	--file-list-text-color: var(--primary-blue);
 
 	--label-info-bg-color: #1D2F59;
 	--label-info-border-color: #348CFF;
