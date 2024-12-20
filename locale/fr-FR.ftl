@@ -1,5 +1,6 @@
 ## Main view
 
+view_main_greeting = Que voulez-vous ouvrir ?
 view_main_open_dir = Ouvrir un dossier
 view_main_open_receipt = Ouvrir un AR
 view_main_calc_fingerprints = Calculer les empreintes

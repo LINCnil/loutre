@@ -1,5 +1,6 @@
 ## Main view
 
+view_main_greeting = What do you wish to open?
 view_main_open_dir = Open a directory
 view_main_open_receipt = Open a notice of receipt
 view_main_calc_fingerprints = Checksum calculation

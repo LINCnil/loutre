@@ -47,6 +47,10 @@ pub fn Main() -> Element {
 			},
 			Header {}
 			MainSection {
+				p {
+					class: "view-main-greeting",
+					{ t!("view_main_greeting") }
+				}
 				div {
 					class: "view-main-top-buttons",
 					FileButton {
