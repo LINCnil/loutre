@@ -101,7 +101,17 @@ impl FileList {
 macro_rules! common_lst_impl {
 	($lst_type: ty, $file_type: ty) => {
 		impl $lst_type {
-			pub fn len(&self) -> usize {
+			pub fn len(&self, config_opt: Option<&Config>) -> usize {
+				if let Some(config) = config_opt {
+					if let Ok(ctn_file) = self.get_content_file_absolute_path(config) {
+						return self.files.values().filter(|e| {
+							match e.get_absolute_path() {
+								Ok(path) => path != ctn_file,
+								Err(_) => false,
+							}
+						}).count();
+					}
+				}
 				self.files.len()
 			}
 

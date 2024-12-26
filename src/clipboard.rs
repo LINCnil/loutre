@@ -131,7 +131,7 @@ impl Clipboard {
 		start: ClipboardStart,
 		threshold: usize,
 	) -> Result<(), ClipboardError> {
-		if file_list.len() < threshold {
+		if file_list.len(Some(config)) < threshold {
 			self.set_clipboard_list(config, file_list, start)
 		} else {
 			self.set_clipboard_ctn_file(config, file_list, start)
@@ -229,7 +229,7 @@ impl Clipboard {
 		let hash = hash_func
 			.hash_file(content_file_path, None)
 			.map_err(|e| ClipboardError::ContentFileHash(e.to_string()))?;
-		let nb_evidences = file_list.len();
+		let nb_evidences = file_list.len(Some(config));
 		let hash_func = hash_func.to_string();
 		let ctx = context!(
 			hash_func,

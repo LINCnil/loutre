@@ -115,7 +115,7 @@ impl std::fmt::Display for ExternalEvent {
 			Self::NonHashedFileListSet(lst) => write!(
 				f,
 				"NonHashedFileListSet(NonHashedFileList {{ {} elements }})",
-				lst.len()
+				lst.len(None)
 			),
 			_ => write!(f, "{:?}", self),
 		}

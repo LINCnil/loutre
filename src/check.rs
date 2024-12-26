@@ -84,9 +84,9 @@ pub fn check(
 	let mut errors = HashSet::new();
 	let base_dir = calculated_fl.get_base_dir();
 
-	let mut reference_map = HashMap::with_capacity(reference_fl.len());
+	let mut reference_map = HashMap::with_capacity(reference_fl.len(None));
 	populate_map!(reference_map, reference_fl, base_dir, errors, t, true);
-	let mut calculated_map = HashMap::with_capacity(calculated_fl.len());
+	let mut calculated_map = HashMap::with_capacity(calculated_fl.len(None));
 	populate_map!(calculated_map, calculated_fl, base_dir, errors, t, false);
 
 	for (path, ref_file) in reference_map.iter() {
