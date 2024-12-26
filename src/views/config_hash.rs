@@ -30,75 +30,77 @@ pub fn HashConfig() -> Element {
 					{ t!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Hash }
-				ConfigElement {
-					// Hashing function
-					p {
-						label {
-							r#for: "cfg_hash_algorithm",
-							{ t!("view_config_hash_msg_hash_func") }
+				form {
+					ConfigElement {
+						// Hashing function
+						p {
+							label {
+								r#for: "cfg_hash_algorithm",
+								{ t!("view_config_hash_msg_hash_func") }
+							}
+						}
+						div {
+							Select {
+								id: "cfg_hash_algorithm",
+								name: "cfg_hash_algorithm",
+								options: hash_func_opts,
+								selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
+								onchange: move |event: FormEvent| {
+									if let Ok(new_value) = HashFunc::from_str(&event.data.value()) {
+										spawn(async move {
+											let mut cfg = cfg_sig();
+											cfg.hash_function = new_value;
+											cfg.write_to_file();
+											cfg_sig.set(cfg);
+										});
+									}
+								},
+							}
 						}
 					}
-					div {
-						Select {
-							id: "cfg_hash_algorithm",
-							name: "cfg_hash_algorithm",
-							options: hash_func_opts,
-							selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
-							onchange: move |event: FormEvent| {
-								if let Ok(new_value) = HashFunc::from_str(&event.data.value()) {
-									spawn(async move {
-										let mut cfg = cfg_sig();
-										cfg.hash_function = new_value;
-										cfg.write_to_file();
-										cfg_sig.set(cfg);
-									});
-								}
-							},
+					ConfigElement {
+						// Content file format
+						p {
+							label {
+								r#for: "cfg_hash_content_file_format",
+								{ t!("view_config_hash_msg_content_file_format") }
+							}
+						}
+						div {
+							Select {
+								id: "cfg_hash_content_file_format",
+								name: "cfg_hash_content_file_format",
+								options: ctn_file_format_opts,
+								selected_option: cfg_sig().content_file_format.get_value(),
+								onchange: move |event: FormEvent| {
+									if let Ok(new_value) = ContentFileFormat::from_str(&event.data.value()) {
+										spawn(async move {
+											let mut cfg = cfg_sig();
+											cfg.content_file_format = new_value;
+											cfg.write_to_file();
+											cfg_sig.set(cfg);
+										});
+									}
+								},
+							}
 						}
 					}
-				}
-				ConfigElement {
-					// Content file format
-					p {
-						label {
-							r#for: "cfg_hash_content_file_format",
-							{ t!("view_config_hash_msg_content_file_format") }
+					ConfigElement {
+						// Content file name
+						// TODO
+						p {
+							label {
+								r#for: "cfg_hash_content_file_name",
+								{ t!("view_config_hash_msg_content_file_name") }
+							}
 						}
-					}
-					div {
-						Select {
-							id: "cfg_hash_content_file_format",
-							name: "cfg_hash_content_file_format",
-							options: ctn_file_format_opts,
-							selected_option: cfg_sig().content_file_format.get_value(),
-							onchange: move |event: FormEvent| {
-								if let Ok(new_value) = ContentFileFormat::from_str(&event.data.value()) {
-									spawn(async move {
-										let mut cfg = cfg_sig();
-										cfg.content_file_format = new_value;
-										cfg.write_to_file();
-										cfg_sig.set(cfg);
-									});
-								}
-							},
-						}
-					}
-				}
-				ConfigElement {
-					// Content file name
-					// TODO
-					p {
-						label {
-							r#for: "cfg_hash_content_file_name",
-							{ t!("view_config_hash_msg_content_file_name") }
-						}
-					}
-					div {
-						input {
-							id: "cfg_hash_content_file_name",
-							name: "cfg_hash_content_file_name",
-							value: cfg_sig().get_content_file_name(),
-							disabled: true,
+						div {
+							input {
+								id: "cfg_hash_content_file_name",
+								name: "cfg_hash_content_file_name",
+								value: cfg_sig().get_content_file_name(),
+								disabled: true,
+							}
 						}
 					}
 				}
