@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::clipboard::{Clipboard, ClipboardStart};
+use crate::components::HeaderLangSwitchDisplay;
 use crate::config::Config;
 use crate::events::{ExternalEventReceiver, ExternalEventSender, ExternalEventSignals};
 use crate::files::FileList;
@@ -98,6 +99,9 @@ fn initialize_global_context(config: Config, progress_tx: ExternalEventSender) {
 	use_context_provider(|| Signal::new(FileList::default()));
 	let receipt_status: Option<Receipt> = None;
 	use_context_provider(|| Signal::new(receipt_status));
+
+	// Header
+	use_context_provider(|| Signal::new(HeaderLangSwitchDisplay::new()));
 
 	// Notification blacklist
 	use_context_provider(|| Signal::new(NotificationBlackList::new()));

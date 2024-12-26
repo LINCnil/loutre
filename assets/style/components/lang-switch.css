@@ -1,23 +1,28 @@
 .component-lang-switch {
 	display: inline-block;
-}
-
-.component-lang-switch:hover > .component-lang-switch-list, .component-lang-switch-list:hover {
-	display: block;
-	position: fixed;
-	right: 0;
-	margin-right: 10px;
-	text-align: left;
-	background-color: var(--main-bg-color);
-	border: 1px solid var(--main-color);
-	border-radius: 10px;
-	padding: 10px 0 10px 0;
-	list-style-type: none;
+	position: relative;
 }
 
 .component-lang-switch-list {
-	display: none;
+	position: absolute;
+	right: 0;
+	min-width: 200px;
+	text-align: left;
+	background-color: var(--menu-lang-bg-color);
+	border: 1px solid var(--menu-lang-border-color);
+	border-radius: 10px;
+	padding: 10px 0 10px 0;
+	list-style-type: none;
 	font-size: 1rem;
+	color: var(--menu-lang-text-color);
+}
+
+.component-lang-switch-list-hidden {
+	display: none;
+}
+
+.component-lang-switch-list-display {
+	display: block;
 }
 
 .component-lang-switch-list > li {
@@ -25,5 +30,6 @@
 }
 
 .component-lang-switch-list > li:hover {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: var(--menu-lang-hover-color);
+	cursor: pointer;
 }

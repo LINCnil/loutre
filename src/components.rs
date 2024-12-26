@@ -11,7 +11,7 @@ mod root;
 pub use button::{Button, FileButton};
 pub use file_list::{FileListIndicator, FileListReceipt};
 pub use form::{Checkbox, Select, SelectOption};
-pub use header::Header;
+pub use header::{Header, HeaderLangSwitchDisplay};
 pub use main_section::MainSection;
 pub use notification::{Notification, NotificationList};
 pub use progress_bar::{LoadingBar, ProgressBar};

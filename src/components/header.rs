@@ -4,6 +4,8 @@ mod lang_switch;
 mod logo;
 mod theme_switch;
 
+pub use self::lang_switch::HeaderLangSwitchDisplay;
+
 use self::lang_switch::LangSwitch;
 use self::logo::Logo;
 use self::theme_switch::ThemeSwitch;

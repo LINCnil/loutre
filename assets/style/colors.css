@@ -18,6 +18,10 @@
 	--menu-bg-color: var(--light-blue);
 	--menu-item-bg-color: var(--light-grey);
 	--menu-item-color: var(--primary-blue);
+	--menu-lang-bg-color: var(--background-grey);
+	--menu-lang-border-color: var(--grey-background-main-section);
+	--menu-lang-hover-color: var(--light-blue);
+	--menu-lang-text-color: var(--grey-background-main-section);
 
 	--area-bg-color: var(--grey-background-navbar);
 
@@ -68,6 +72,10 @@
 	--menu-bg-color: var(--grey-background-navbar);
 	--menu-item-bg-color: var(--dark-mode-background);
 	--menu-item-color: var(--light-blue);
+	--menu-lang-bg-color: var(--grey-background-navbar);
+	--menu-lang-border-color: var(--light-blue);
+	--menu-lang-hover-color: var(--dark-mode-background);
+	--menu-lang-text-color: var(--light-blue);
 
 	--area-bg-color: var(--grey-background-navbar);
 
