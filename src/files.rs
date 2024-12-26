@@ -104,12 +104,14 @@ macro_rules! common_lst_impl {
 			pub fn len(&self, config_opt: Option<&Config>) -> usize {
 				if let Some(config) = config_opt {
 					if let Ok(ctn_file) = self.get_content_file_absolute_path(config) {
-						return self.files.values().filter(|e| {
-							match e.get_absolute_path() {
+						return self
+							.files
+							.values()
+							.filter(|e| match e.get_absolute_path() {
 								Ok(path) => path != ctn_file,
 								Err(_) => false,
-							}
-						}).count();
+							})
+							.count();
 					}
 				}
 				self.files.len()
