@@ -14,14 +14,20 @@ pub struct CheckboxProps {
 #[component]
 pub fn Checkbox(props: CheckboxProps) -> Element {
 	rsx! {
-		input {
-			id: props.id,
-			name: props.name,
-			class: "component-form-checkbox",
-			r#type: "checkbox",
-			checked: props.checked,
-			onclick: move |evt| evt.prevent_default(),
-			onchange: move |evt| props.onchange.call(evt),
+		div {
+			label {
+				class: "component-form-checkbox",
+				input {
+					id: props.id,
+					name: props.name,
+					r#type: "checkbox",
+					checked: props.checked,
+					onchange: move |evt| props.onchange.call(evt),
+				}
+				span {
+					class: "component-form-checkbox-slider",
+				}
+			}
 		}
 	}
 }
