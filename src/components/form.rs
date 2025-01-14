@@ -1,6 +1,9 @@
 #![allow(non_snake_case)]
 
+use crate::components::Button;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
+use tokio::time::{sleep, Duration};
 
 #[derive(Clone, PartialEq, Props)]
 pub struct CheckboxProps {
@@ -72,6 +75,40 @@ pub fn Select(props: SelectProps) -> Element {
 					value: "{opt.value}",
 					selected: opt.value == props.selected_option,
 					"{opt.name}"
+				}
+			}
+		}
+	}
+}
+
+#[derive(PartialEq, Clone, Props)]
+pub struct ApplyConfigProps {
+	onclick: EventHandler<MouseEvent>,
+}
+
+#[component]
+pub fn ApplyConfig(props: ApplyConfigProps) -> Element {
+	let mut display_msg = use_signal(|| false);
+
+	rsx! {
+		div {
+			class: "component-form-apply-config",
+			Button {
+				onclick: move |evt| async move {
+					props.onclick.call(evt);
+					display_msg.set(false);
+					sleep(Duration::from_millis(100)).await;
+					display_msg.set(true);
+				},
+				{ t!("cpn_form_apply_config") }
+			}
+			if display_msg() {
+				p {
+					class: "component-form-apply-config-msg component-form-apply-config-fade-out",
+					span {
+						class: "ri-check-line",
+					}
+					{ t!("cpn_form_apply_config_ok") }
 				}
 			}
 		}

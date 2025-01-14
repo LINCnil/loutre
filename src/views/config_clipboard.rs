@@ -3,7 +3,7 @@
 use crate::app::Route;
 use crate::clipboard::{ClipboardPersistence, ClipboardStart};
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{Header, MainSection, Root, Select, SelectOption};
+use crate::components::{ApplyConfig, Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -27,6 +27,12 @@ pub fn ClipboardConfig() -> Element {
 			ClipboardPersistence::Deactivated.to_string(),
 		),
 	];
+	let mut clipboard_start = use_signal(&*clipboard_start_sig);
+	let mut clipboard_threshold = use_signal(|| cfg_sig().get_clipboard_threshold());
+	let mut clipboard_persistence = use_signal(|| {
+		let cp: ClipboardPersistence = cfg_sig().clipboard_persistence.into();
+		cp
+	});
 
 	rsx! {
 		Root {
@@ -50,14 +56,12 @@ pub fn ClipboardConfig() -> Element {
 							input {
 								id: "cfg_clipboard_clipboard_start",
 								name: "cfg_clipboard_clipboard_start",
-								value: clipboard_start_sig().to_string(),
+								value: clipboard_start().to_string(),
 								r#type: "number",
 								min: 1,
 								onchange: move |event: FormEvent| {
 									if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
-										spawn(async move {
-											clipboard_start_sig.set(nb.into());
-										});
+										clipboard_start.set(nb.into());
 									}
 								}
 							}
@@ -75,17 +79,12 @@ pub fn ClipboardConfig() -> Element {
 							input {
 								id: "cfg_clipboard_threshold",
 								name: "cfg_clipboard_threshold",
-								value: cfg_sig().get_clipboard_threshold().to_string(),
+								value: clipboard_threshold().to_string(),
 								r#type: "number",
 								min: 1,
 								onchange: move |event: FormEvent| {
 									if let Ok(nb) = event.data.value().as_str().parse() {
-										spawn(async move {
-											let mut cfg = cfg_sig();
-											cfg.clipboard_threshold = Some(nb);
-											cfg.write_to_file();
-											cfg_sig.set(cfg);
-										});
+										clipboard_threshold.set(nb);
 									}
 								}
 							}
@@ -104,20 +103,30 @@ pub fn ClipboardConfig() -> Element {
 								id: "cfg_clipboard_persistence",
 								name: "cfg_clipboard_persistence",
 								options: cl_pers_opts,
-								selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
+								selected_option: clipboard_persistence().to_string(),
 								onchange: move |event: FormEvent| {
 									if let Ok(new_value) = ClipboardPersistence::from_str(&event.data.value()) {
-										spawn(async move {
-											let mut cfg = cfg_sig();
-											cfg.clipboard_persistence = new_value.into();
-											cfg.write_to_file();
-											cfg_sig.set(cfg);
-										});
+										clipboard_persistence.set(new_value);
 									}
 								},
 							}
 						}
 					}
+				}
+				ApplyConfig {
+					onclick: move |_event| {
+						let new_clipboard_start = clipboard_start();
+						let new_clipboard_threshold = clipboard_threshold();
+						let new_clipboard_persistence = clipboard_persistence();
+						spawn(async move {
+							clipboard_start_sig.set(new_clipboard_start);
+							let mut cfg = cfg_sig();
+							cfg.clipboard_threshold = Some(new_clipboard_threshold);
+							cfg.clipboard_persistence = new_clipboard_persistence.into();
+							cfg.write_to_file();
+							cfg_sig.set(cfg);
+						});
+					},
 				}
 			}
 		}

@@ -64,6 +64,8 @@ view_duplicated_files_title = Duplicated files
 ## Configuration
 
 view_config_title = Configuration
+cpn_form_apply_config = Save
+cpn_form_apply_config_ok = Settings saved
 
 cpn_config_menu_files_title = Files
 cpn_config_menu_hash_title = Fingerprints

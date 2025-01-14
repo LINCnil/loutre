@@ -2,7 +2,7 @@
 
 use crate::app::Route;
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{Header, MainSection, Root, Select, SelectOption};
+use crate::components::{ApplyConfig, Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
@@ -20,6 +20,8 @@ pub fn HashConfig() -> Element {
 	let ctn_file_format_opts = ContentFileFormat::iter()
 		.map(|h| SelectOption::new(h.to_string(), h.get_value()))
 		.collect();
+	let mut hash_function = use_signal(|| cfg_sig().hash_function);
+	let mut content_file_format = use_signal(|| cfg_sig().content_file_format);
 
 	rsx! {
 		Root {
@@ -44,15 +46,10 @@ pub fn HashConfig() -> Element {
 								id: "cfg_hash_algorithm",
 								name: "cfg_hash_algorithm",
 								options: hash_func_opts,
-								selected_option: cfg_sig().hash_function.to_string().to_lowercase(),
+								selected_option: hash_function().to_string().to_lowercase(),
 								onchange: move |event: FormEvent| {
 									if let Ok(new_value) = HashFunc::from_str(&event.data.value()) {
-										spawn(async move {
-											let mut cfg = cfg_sig();
-											cfg.hash_function = new_value;
-											cfg.write_to_file();
-											cfg_sig.set(cfg);
-										});
+										hash_function.set(new_value);
 									}
 								},
 							}
@@ -71,15 +68,10 @@ pub fn HashConfig() -> Element {
 								id: "cfg_hash_content_file_format",
 								name: "cfg_hash_content_file_format",
 								options: ctn_file_format_opts,
-								selected_option: cfg_sig().content_file_format.get_value(),
+								selected_option: content_file_format().get_value(),
 								onchange: move |event: FormEvent| {
 									if let Ok(new_value) = ContentFileFormat::from_str(&event.data.value()) {
-										spawn(async move {
-											let mut cfg = cfg_sig();
-											cfg.content_file_format = new_value;
-											cfg.write_to_file();
-											cfg_sig.set(cfg);
-										});
+										content_file_format.set(new_value);
 									}
 								},
 							}
@@ -98,11 +90,28 @@ pub fn HashConfig() -> Element {
 							input {
 								id: "cfg_hash_content_file_name",
 								name: "cfg_hash_content_file_name",
-								value: cfg_sig().get_content_file_name(),
+								value: {
+									let mut cfg = cfg_sig();
+									cfg.content_file_format = content_file_format();
+									cfg.get_content_file_name()
+								},
 								disabled: true,
 							}
 						}
 					}
+				}
+				ApplyConfig {
+					onclick: move |_event| {
+						let new_hash_function = hash_function();
+						let new_content_file_format = content_file_format();
+						spawn(async move {
+							let mut cfg = cfg_sig();
+							cfg.hash_function = new_hash_function;
+							cfg.content_file_format = new_content_file_format;
+							cfg.write_to_file();
+							cfg_sig.set(cfg);
+						});
+					},
 				}
 			}
 		}

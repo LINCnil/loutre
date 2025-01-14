@@ -64,6 +64,8 @@ view_duplicated_files_title = Fichiers dupliqués
 ## Configuration
 
 view_config_title = Configuration
+cpn_form_apply_config = Enregistrer
+cpn_form_apply_config_ok = Paramètres enregistrés
 
 cpn_config_menu_files_title = Fichiers
 cpn_config_menu_hash_title = Empreintes

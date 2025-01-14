@@ -52,3 +52,54 @@ input:checked + .component-form-checkbox-slider:before {
 	-ms-transform: translateX(26px);
 	transform: translateX(26px);
 }
+
+.component-form-apply-config {
+	display: grid;
+	grid-template-columns: 1fr min-content 1fr;
+	gap: 0;
+}
+
+.component-form-apply-config > .component-button-wrapper {
+	grid-column: 2;
+}
+
+.component-form-apply-config-msg {
+	grid-column: 3;
+	margin-top: 16px;
+	opacity: 0;
+}
+
+.component-form-apply-config-msg > span {
+	margin-right: 4px;
+	color: var(--label-success-icon-color);
+	font-size: 1.4rem;
+}
+
+.component-form-apply-config-fade-out {
+	animation: fade-out 2s ease-in;
+	-webkit-animation: fade-out 2s ease-in;
+}
+
+@-webkit-keyframes fade-out {
+	0% {
+		opacity: 1;
+		display: block;
+	}
+
+	100% {
+		opacity: 0;
+		display: none;
+	}
+}
+
+@keyframes fade-out {
+	0% {
+		opacity: 1;
+		display: block;
+	}
+
+	100% {
+		opacity: 0;
+		display: none;
+	}
+}
