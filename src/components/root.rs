@@ -1,9 +1,6 @@
 #![allow(non_snake_case)]
 
-use dioxus::document::Style;
 use dioxus::prelude::*;
-
-pub const STYLE: &str = include_str!(concat!(env!("OUT_DIR"), "/loutre.css"));
 
 #[derive(PartialEq, Clone, Props)]
 pub struct RootProps {
@@ -17,7 +14,6 @@ pub struct RootProps {
 #[component]
 pub fn Root(props: RootProps) -> Element {
 	rsx! {
-		Style {{ STYLE }}
 		div {
 			class: "component-root",
 			ondrop: move |event| {

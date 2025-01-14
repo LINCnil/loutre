@@ -10,8 +10,11 @@ use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use crate::theme::{get_default_theme, set_theme, Theme};
 use crate::views::*;
+use dioxus::document::Style;
 use dioxus::prelude::*;
 use futures_util::StreamExt;
+
+pub const STYLE: &str = include_str!(concat!(env!("OUT_DIR"), "/loutre.css"));
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
@@ -54,6 +57,7 @@ pub fn App() -> Element {
 	initialize_theme();
 
 	rsx! {
+		Style {{ STYLE }}
 		Router::<Route> {}
 	}
 }
