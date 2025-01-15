@@ -19,7 +19,7 @@ input, select {
 	border-radius: 8px;
 }
 
-select> option {
+select > option {
 	color: var(--form-input-text-color);
 	background-color: var(--form-input-bg-color);
 }
@@ -27,6 +27,10 @@ select> option {
 select > option:hover {
 	color: var(--form-input-text-color);
 	background-color: red;
+}
+
+input[type=submit], select {
+	cursor: pointer;
 }
 
 /*
