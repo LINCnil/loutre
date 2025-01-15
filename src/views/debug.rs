@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::components::{Header, LoadingBar, MainSection, Notification, ProgressBar, Root};
+use crate::components::{Button, Header, LoadingBar, MainSection, Notification, ProgressBar, Root};
 use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
@@ -51,7 +51,10 @@ pub fn Debug() -> Element {
 							value: 1,
 							min: 1,
 						}
-						input { r#type: "submit" }
+						input {
+							class: "component-form-fieldset-right",
+							r#type: "submit",
+						}
 					}
 				}
 
@@ -76,9 +79,12 @@ pub fn Debug() -> Element {
 							value: 42,
 							min: 0,
 						}
-						input { r#type: "submit" }
-						button {
-							onclick: move |evt| {
+						input {
+							class: "component-form-fieldset-right",
+							r#type: "submit",
+						}
+						Button {
+							onclick: move |evt: MouseEvent| {
 								evt.prevent_default();
 								tracing::info!("Debug: Progress bar button onclick");
 								let tx = tx_sig();
@@ -93,8 +99,8 @@ pub fn Debug() -> Element {
 
 				fieldset {
 					legend { "Loading bar" }
-					button {
-						onclick: move |evt| {
+					Button {
+						onclick: move |evt: MouseEvent| {
 							evt.prevent_default();
 							tracing::info!("Debug: Loading bar button onclick");
 							let tx = tx_sig();

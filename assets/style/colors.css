@@ -34,6 +34,10 @@
 	--button-hover-border-color: var(--primary-blue);
 	--button-hover-text-color: var(--light-grey);
 
+	--form-input-bg-color: var(--background-grey);
+	--form-input-border-color: var(--primary-blue);
+	--form-input-text-color: var(--dark-blue);
+
 	--file-list-bg-color: var(--light-blue);
 	--file-list-border-color: var(--primary-blue);
 	--file-list-icon-color: var(--primary-blue);
@@ -87,6 +91,10 @@
 	--button-hover-bg-color: var(--purple);
 	--button-hover-border-color: var(--primary-blue);
 	--button-hover-text-color: var(--light-grey);
+
+	--form-input-bg-color: var(--light-blue);
+	--form-input-border-color: var(--dark-mode-background);
+	--form-input-text-color: var(--dark-mode-background);
 
 	--file-list-bg-color: var(--light-blue);
 	--file-list-border-color: var(--primary-blue);
