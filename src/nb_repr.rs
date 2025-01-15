@@ -175,7 +175,7 @@ fn div_nb(nb: usize, d: usize, ds: &str) -> (Option<String>, usize) {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use unic_langid::langid;
+	//use unic_langid::langid;
 
 	#[ignore] // FIXME
 	#[test]
