@@ -137,7 +137,7 @@ cpn_clipboard_list_full_txt = {"{"}% set nb = nb_start %{"}"}{"{"}% set evidence
     {"{"}%- if entry.is_dir %{"}"}{"{"}% for sub_entry in entry.evidences %{"}"}
     « {"{{"} sub_entry.name {"}}"} » {"{"}% with evidence = sub_entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}
     {"{"}%- endfor %{"}"}{"{"}% endif -%{"}"}
-    {"{"}% if entry.is_file %{"}"}{"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
+    {"{"}% if entry.is_file %{"}"} {"{"}% with evidence = entry %{"}"}{ -cpn_clipboard_file_data_txt }{"{"}% endwith %{"}"}{"{"}% endif %{"}"}
     {"{"}% set nb = nb + 1 %{"}"}
     {"{"}% endfor %{"}"}
 
