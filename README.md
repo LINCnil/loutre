@@ -5,7 +5,7 @@
 
 ## Build
 
-Dependencies are liste in the [Dioxus documentation][dioxus_doc].
+Dependencies are listed in the [Dioxus documentation][dioxus_doc].
 
 You can compile a production version using the following command:
 
@@ -59,7 +59,7 @@ location varies depending on the operating system.
 
 ### Choosing a hashing function
 
-As for 2024, all supported hashing functions uses a robust public algorithm
+As for 2025, all supported hashing functions uses a robust public algorithm
 without known vulnerability. All of them can therefore be safely used.
 
 Those functions mostly varies in terms of fingerprint size, execution speed and
