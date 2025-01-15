@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Loutre</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/fonts/remixicon.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/colors.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/main.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/button.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/config-element.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/config-menu.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/file-list.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/form.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/header.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/lang-switch.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/main-section.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/notification.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/progress-bar.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/components/root.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/views/duplicated-files.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="assets/style/views/main.css">
+	</head>
+	<body>
+		<div id="main">
+			<div class="component-root">
+				<header class="component-header">
+					<div class="component-header-logo">
+						<div>
+							<img src="assets/logo.svg">
+						</div>
+					</div>
+					<div class="component-header-right">
+						<menu class="component-header-menu">
+							<li>
+								<span class="component-header-menu-item">
+									<a href="#" class="ri-translate-2"></a>
+								</span>
+							</li>
+							<li>
+								<span class="component-header-menu-item" id="theme-switch">
+									<i class="" id="theme-switch-icon"></i>
+								</span>
+							</li>
+							<li>
+								<span class="component-header-menu-item">
+									<a href="#" class="ri-settings-3-line"></a>
+								</span>
+							</li>
+						</menu>
+					</div>
+				</header>
+				<div class="component-main-section">
+					<div class="component-main-section-top">
+						<a href="#">
+							<i class="ri-close-circle-fill"></i>
+						</a>
+					</div>
+					<div class="component-main-section-content">
+						<form>
+							<h1>Config elements</h1>
+
+							<!-- Checkbox -->
+							<div class="component-config-element">
+								<p><label for="debug_01">Checkbox</label></p>
+								<div>
+									<div>
+										<label class="component-form-checkbox">
+											<input id="debug_01" name="debug_01" type="checkbox">
+											<span class="component-form-checkbox-slider"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<!-- Select -->
+							<div class="component-config-element">
+								<p><label for="debug_02">Select</label></p>
+								<div>
+									<select id="debug_02" name="debug_02" class="component-form-select">
+										<option>An option</option>
+										<option>Something else</option>
+										<option selected>Default</option>
+									</select>
+								</div>
+							</div>
+							<!-- Input (number) -->
+							<div class="component-config-element">
+								<p><label for="debug_03">Input (number)</label></p>
+								<div>
+									<input id="debug_03" name="debug_03" value="Some value" deactivated>
+								</div>
+							</div>
+							<!-- Input (text, deactivated) -->
+							<div class="component-config-element">
+								<p><label for="debug_04">Input (text, deactivated)</label></p>
+								<div>
+									<input id="debug_04" name="debug_04" type="number" value="42" min="1">
+								</div>
+							</div>
+
+							<h1>Fieldsets</h1>
+
+							<fieldset>
+								<legend>Some fieldset</legend>
+								<select id="debug_05" name="debug_05" class="component-form-select">
+									<option>An option</option>
+									<option>Something else</option>
+									<option>Default</option>
+								</select>
+								<input id="debug_06" name="debug_06" type="number" value="21" min="1">
+								<input type="submit">
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			window.onload = () => {
+				const is_dark = () => {
+					let theme = document.documentElement.getAttribute("data-theme");
+					if (theme !== null) {
+						return theme == "dark";
+					}
+					return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+				};
+				const set_icon = () => {
+					document.getElementById("theme-switch-icon").className = is_dark() ? "ri-moon-line" : "ri-sun-line";
+				};
+				set_icon();
+				document.getElementById("theme-switch").addEventListener("click", () => {
+					let new_theme = is_dark() ? "light" : "dark";
+					document.documentElement.setAttribute("data-theme", new_theme);
+					set_icon();
+				});
+			}
+		</script>
+	</body>
+</html>
