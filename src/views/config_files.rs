@@ -25,61 +25,43 @@ pub fn FilesConfig() -> Element {
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Files }
 				form {
+					// Include hidden files
 					ConfigElement {
-						// Include hidden files
-						p {
-							label {
-								r#for: "cfg_main_include_hidden_files",
-								{ t!("view_config_main_msg_include_hidden_files") }
-							}
-						}
-						div {
-							Checkbox {
-								id: "cfg_main_include_hidden_files",
-								name: "cfg_main_include_hidden_files",
-								checked: include_hidden_files(),
-								onchange: move |event: FormEvent| {
-									include_hidden_files.set(parse_bool(&event.data.value()));
-								},
-							}
+						id: "cfg_main_include_hidden_files",
+						label: t!("view_config_main_msg_include_hidden_files"),
+						Checkbox {
+							id: "cfg_main_include_hidden_files",
+							name: "cfg_main_include_hidden_files",
+							checked: include_hidden_files(),
+							onchange: move |event: FormEvent| {
+								include_hidden_files.set(parse_bool(&event.data.value()));
+							},
 						}
 					}
+					// Include system files
 					ConfigElement {
-						// Include system files
-						p {
-							label {
-								r#for: "cfg_main_include_system_files",
-								{ t!("view_config_main_msg_include_system_files") }
-							}
-						}
-						div {
-							Checkbox {
-								id: "cfg_main_include_system_files",
-								name: "cfg_main_include_system_files",
-								checked: include_system_files(),
-								onchange: move |event: FormEvent| {
-									include_system_files.set(parse_bool(&event.data.value()));
-								},
-							}
+						id: "cfg_main_include_system_files",
+						label: t!("view_config_main_msg_include_system_files"),
+						Checkbox {
+							id: "cfg_main_include_system_files",
+							name: "cfg_main_include_system_files",
+							checked: include_system_files(),
+							onchange: move |event: FormEvent| {
+								include_system_files.set(parse_bool(&event.data.value()));
+							},
 						}
 					}
+					// Set files as read-only
 					ConfigElement {
-						// Set files as read-only
-						p {
-							label {
-								r#for: "cfg_main_set_files_readonly",
-								{ t!("view_config_main_msg_set_files_readonly") }
-							}
-						}
-						div {
-							Checkbox {
-								id: "cfg_main_set_files_readonly",
-								name: "cfg_main_set_files_readonly",
-								checked: set_files_readonly(),
-								onchange: move |event: FormEvent| {
-									set_files_readonly.set(parse_bool(&event.data.value()));
-								},
-							}
+						id: "cfg_main_set_files_readonly",
+						label: t!("view_config_main_msg_set_files_readonly"),
+						Checkbox {
+							id: "cfg_main_set_files_readonly",
+							name: "cfg_main_set_files_readonly",
+							checked: set_files_readonly(),
+							onchange: move |event: FormEvent| {
+								set_files_readonly.set(parse_bool(&event.data.value()));
+							},
 						}
 					}
 				}

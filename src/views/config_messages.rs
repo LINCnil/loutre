@@ -25,44 +25,32 @@ pub fn MessagesConfig() -> Element {
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Messages }
 				form {
+					// Empty files warning
 					ConfigElement {
-						// Empty files warning
-						p {
-							label {
-								r#for: "cfg_main_empty_files_warning",
-								{ t!("view_config_messages_msg_empty_files_warning") }
-							}
-						}
-						div {
-							Checkbox {
-								id: "cfg_main_empty_files_warning",
-								name: "cfg_main_empty_files_warning",
-								checked: enable_empty_file_warning(),
-								onchange: move |event: FormEvent| {
-									let new_value = parse_bool(&event.data.value());
-									enable_empty_file_warning.set(new_value);
-								},
-							}
+						id: "cfg_main_empty_files_warning",
+						label: t!("view_config_messages_msg_empty_files_warning"),
+						Checkbox {
+							id: "cfg_main_empty_files_warning",
+							name: "cfg_main_empty_files_warning",
+							checked: enable_empty_file_warning(),
+							onchange: move |event: FormEvent| {
+								let new_value = parse_bool(&event.data.value());
+								enable_empty_file_warning.set(new_value);
+							},
 						}
 					}
+					// Duplicated files warning
 					ConfigElement {
-						// Duplicated files warning
-						p {
-							label {
-								r#for: "cfg_main_duplicated_files_warning",
-								{ t!("view_config_messages_msg_duplicated_files_warning") }
-							}
-						}
-						div {
-							Checkbox {
-								id: "cfg_main_duplicated_files_warning",
-								name: "cfg_main_duplicated_files_warning",
-								checked: enable_duplicate_file_warning(),
-								onchange: move |event: FormEvent| {
-									let new_value = parse_bool(&event.data.value());
-									enable_duplicate_file_warning.set(new_value);
-								},
-							}
+						id: "cfg_main_duplicated_files_warning",
+						label: t!("view_config_messages_msg_duplicated_files_warning"),
+						Checkbox {
+							id: "cfg_main_duplicated_files_warning",
+							name: "cfg_main_duplicated_files_warning",
+							checked: enable_duplicate_file_warning(),
+							onchange: move |event: FormEvent| {
+								let new_value = parse_bool(&event.data.value());
+								enable_duplicate_file_warning.set(new_value);
+							},
 						}
 					}
 				}

@@ -44,72 +44,54 @@ pub fn ClipboardConfig() -> Element {
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
 				form {
+					// First evidence number
 					ConfigElement {
-						// First evidence number
-						p {
-							label {
-								r#for: "cfg_clipboard_clipboard_start",
-								{ t!("view_config_clipboard_start_msg") }
-							}
-						}
-						div {
-							input {
-								id: "cfg_clipboard_clipboard_start",
-								name: "cfg_clipboard_clipboard_start",
-								value: clipboard_start().to_string(),
-								r#type: "number",
-								min: 1,
-								onchange: move |event: FormEvent| {
-									if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
-										clipboard_start.set(nb.into());
-									}
+						id: "cfg_clipboard_clipboard_start",
+						label: t!("view_config_clipboard_start_msg"),
+						input {
+							id: "cfg_clipboard_clipboard_start",
+							name: "cfg_clipboard_clipboard_start",
+							value: clipboard_start().to_string(),
+							r#type: "number",
+							min: 1,
+							onchange: move |event: FormEvent| {
+								if let Ok(nb) = event.data.value().as_str().parse::<usize>() {
+									clipboard_start.set(nb.into());
 								}
 							}
 						}
 					}
+					// Cliboard threshold
 					ConfigElement {
-						// Cliboard threshold
-						p {
-							label {
-								r#for: "cfg_clipboard_threshold",
-								{ t!("view_config_clipboard_msg_threshold") }
-							}
-						}
-						div {
-							input {
-								id: "cfg_clipboard_threshold",
-								name: "cfg_clipboard_threshold",
-								value: clipboard_threshold().to_string(),
-								r#type: "number",
-								min: 1,
-								onchange: move |event: FormEvent| {
-									if let Ok(nb) = event.data.value().as_str().parse() {
-										clipboard_threshold.set(nb);
-									}
+						id: "cfg_clipboard_threshold",
+						label: t!("view_config_clipboard_msg_threshold"),
+						input {
+							id: "cfg_clipboard_threshold",
+							name: "cfg_clipboard_threshold",
+							value: clipboard_threshold().to_string(),
+							r#type: "number",
+							min: 1,
+							onchange: move |event: FormEvent| {
+								if let Ok(nb) = event.data.value().as_str().parse() {
+									clipboard_threshold.set(nb);
 								}
 							}
 						}
 					}
+					// Cliboard persistence
 					ConfigElement {
-						// Cliboard persistence
-						p {
-							label {
-								r#for: "cfg_clipboard_persistence",
-								{ t!("view_config_clipboard_msg_persistence") }
-							}
-						}
-						div {
-							Select {
-								id: "cfg_clipboard_persistence",
-								name: "cfg_clipboard_persistence",
-								options: cl_pers_opts,
-								selected_option: clipboard_persistence().to_string(),
-								onchange: move |event: FormEvent| {
-									if let Ok(new_value) = ClipboardPersistence::from_str(&event.data.value()) {
-										clipboard_persistence.set(new_value);
-									}
-								},
-							}
+						id: "cfg_clipboard_persistence",
+						label: t!("view_config_clipboard_msg_persistence"),
+						Select {
+							id: "cfg_clipboard_persistence",
+							name: "cfg_clipboard_persistence",
+							options: cl_pers_opts,
+							selected_option: clipboard_persistence().to_string(),
+							onchange: move |event: FormEvent| {
+								if let Ok(new_value) = ClipboardPersistence::from_str(&event.data.value()) {
+									clipboard_persistence.set(new_value);
+								}
+							},
 						}
 					}
 				}

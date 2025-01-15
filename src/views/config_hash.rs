@@ -33,70 +33,52 @@ pub fn HashConfig() -> Element {
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Hash }
 				form {
+					// Hashing function
 					ConfigElement {
-						// Hashing function
-						p {
-							label {
-								r#for: "cfg_hash_algorithm",
-								{ t!("view_config_hash_msg_hash_func") }
-							}
-						}
-						div {
-							Select {
-								id: "cfg_hash_algorithm",
-								name: "cfg_hash_algorithm",
-								options: hash_func_opts,
-								selected_option: hash_function().to_string().to_lowercase(),
-								onchange: move |event: FormEvent| {
-									if let Ok(new_value) = HashFunc::from_str(&event.data.value()) {
-										hash_function.set(new_value);
-									}
-								},
-							}
+						id: "cfg_hash_algorithm",
+						label: t!("view_config_hash_msg_hash_func"),
+						Select {
+							id: "cfg_hash_algorithm",
+							name: "cfg_hash_algorithm",
+							options: hash_func_opts,
+							selected_option: hash_function().to_string().to_lowercase(),
+							onchange: move |event: FormEvent| {
+								if let Ok(new_value) = HashFunc::from_str(&event.data.value()) {
+									hash_function.set(new_value);
+								}
+							},
 						}
 					}
+					// Content file format
 					ConfigElement {
-						// Content file format
-						p {
-							label {
-								r#for: "cfg_hash_content_file_format",
-								{ t!("view_config_hash_msg_content_file_format") }
-							}
-						}
-						div {
-							Select {
-								id: "cfg_hash_content_file_format",
-								name: "cfg_hash_content_file_format",
-								options: ctn_file_format_opts,
-								selected_option: content_file_format().get_value(),
-								onchange: move |event: FormEvent| {
-									if let Ok(new_value) = ContentFileFormat::from_str(&event.data.value()) {
-										content_file_format.set(new_value);
-									}
-								},
-							}
+						id: "cfg_hash_content_file_format",
+						label: t!("view_config_hash_msg_content_file_format"),
+						Select {
+							id: "cfg_hash_content_file_format",
+							name: "cfg_hash_content_file_format",
+							options: ctn_file_format_opts,
+							selected_option: content_file_format().get_value(),
+							onchange: move |event: FormEvent| {
+								if let Ok(new_value) = ContentFileFormat::from_str(&event.data.value()) {
+									content_file_format.set(new_value);
+								}
+							},
 						}
 					}
+					// Content file name
+					// TODO
 					ConfigElement {
-						// Content file name
-						// TODO
-						p {
-							label {
-								r#for: "cfg_hash_content_file_name",
-								{ t!("view_config_hash_msg_content_file_name") }
-							}
-						}
-						div {
-							input {
-								id: "cfg_hash_content_file_name",
-								name: "cfg_hash_content_file_name",
-								value: {
-									let mut cfg = cfg_sig();
-									cfg.content_file_format = content_file_format();
-									cfg.get_content_file_name()
-								},
-								disabled: true,
-							}
+						id: "cfg_hash_content_file_name",
+						label: t!("view_config_hash_msg_content_file_name"),
+						input {
+							id: "cfg_hash_content_file_name",
+							name: "cfg_hash_content_file_name",
+							value: {
+								let mut cfg = cfg_sig();
+								cfg.content_file_format = content_file_format();
+								cfg.get_content_file_name()
+							},
+							disabled: true,
 						}
 					}
 				}
