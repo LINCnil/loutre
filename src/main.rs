@@ -19,6 +19,7 @@ mod templates;
 mod theme;
 mod views;
 
+use dioxus::desktop::tao::window::Icon;
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
 use dioxus::prelude::*;
 
@@ -41,15 +42,21 @@ const WIN_HEIGHT: u32 = 560;
 fn main() {
 	tracing::info!("starting app");
 
+	let raw_ico = include_bytes!("../assets/icon_rgba8.bin").to_vec();
+	let ico = Icon::from_rgba(raw_ico, 460, 460).unwrap();
+
 	// Config: https://github.com/DioxusLabs/dioxus/blob/main/packages/desktop/src/config.rs
 	// WindowBuilder: https://docs.rs/tao/latest/tao/window/struct.WindowBuilder.html
 	LaunchBuilder::desktop()
 		.with_cfg(
-			Config::new().with_menu(None).with_window(
-				WindowBuilder::new()
-					.with_title(APP_NAME)
-					.with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT)),
-			),
+			Config::new()
+				.with_menu(None)
+				.with_window(
+					WindowBuilder::new()
+						.with_title(APP_NAME)
+						.with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT)),
+				)
+				.with_icon(ico),
 		)
 		.launch(app::App)
 }
