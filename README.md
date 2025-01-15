@@ -13,7 +13,7 @@ You can compile a production version using the following command:
 cargo build --release
 ```
 
-[dioxus_doc]: https://dioxuslabs.com/learn/0.5/getting_started
+[dioxus_doc]: https://dioxuslabs.com/learn/0.6/getting_started
 
 ### Development
 
