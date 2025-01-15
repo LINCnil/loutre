@@ -1,7 +1,7 @@
 use crate::files::HashedFile;
 use crate::nb_repr::usize_to_string;
 use minijinja::context;
-use minijinja::value::{Value, ValueKind};
+use minijinja::value::Value;
 use serde_derive::Serialize;
 #[cfg(unix)]
 use std::ffi::OsString;
@@ -25,7 +25,7 @@ macro_rules! get_attr_or_ret {
 macro_rules! get_bytes_or_ret {
 	($ret: ident, $entry: ident, $key: expr) => {{
 		let value = get_attr_or_ret!($ret, $entry, $key);
-		if let ValueKind::Seq = value.kind() {
+		if let minijinja::value::ValueKind::Seq = value.kind() {
 			value
 				.try_iter()
 				.unwrap()
