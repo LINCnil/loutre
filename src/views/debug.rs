@@ -6,6 +6,7 @@ use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 
 const LOREM_LIPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
@@ -26,7 +27,9 @@ pub fn Debug() -> Element {
 			Header {}
 			MainSection {
 				close_view: Some(Route::Main {}),
-				h1 { "Debug" }
+				h1 {
+					{ t!("view_debug_title") }
+				}
 				form {
 					onsubmit: move |event| {
 						tracing::info!("Notification form event: {event:?}");
@@ -37,13 +40,27 @@ pub fn Debug() -> Element {
 						notifs.push((level, nb));
 					},
 					fieldset {
-						legend { "Notifications" }
+						legend {
+							{ t!("view_debug_notif_title") }
+						}
 						select {
 							name: "notif_level",
-							option { "error" }
-							option { "warning" }
-							option { "success" }
-							option { "info" }
+							option {
+								value: "error",
+								{ t!("view_debug_notif_level_error") }
+							}
+							option {
+								value: "warning",
+								{ t!("view_debug_notif_level_warning") }
+							}
+							option {
+								value: "success",
+								{ t!("view_debug_notif_level_success") }
+							}
+							option {
+								value: "info",
+								{ t!("view_debug_notif_level_info") }
+							}
 						}
 						input {
 							name: "nb",
@@ -54,6 +71,7 @@ pub fn Debug() -> Element {
 						input {
 							class: "component-form-fieldset-right",
 							r#type: "submit",
+							value: t!("view_debug_submit"),
 						}
 					}
 				}
@@ -72,7 +90,9 @@ pub fn Debug() -> Element {
 						});
 					},
 					fieldset {
-						legend { "Progress bar" }
+						legend {
+							{ t!("view_debug_progress_bar_title") }
+						}
 						input {
 							name: "nb",
 							r#type: "number",
@@ -82,6 +102,7 @@ pub fn Debug() -> Element {
 						input {
 							class: "component-form-fieldset-right",
 							r#type: "submit",
+							value: t!("view_debug_submit"),
 						}
 						Button {
 							onclick: move |evt: MouseEvent| {
@@ -92,13 +113,15 @@ pub fn Debug() -> Element {
 									send_event(&tx, ExternalEvent::ProgressBarDelete);
 								});
 							},
-							"Reset"
+							{ t!("view_debug_reset") }
 						}
 					}
 				}
 
 				fieldset {
-					legend { "Loading bar" }
+					legend {
+						{ t!("view_debug_loading_bar_title") }
+					}
 					Button {
 						onclick: move |evt: MouseEvent| {
 							evt.prevent_default();
@@ -112,7 +135,7 @@ pub fn Debug() -> Element {
 								send_event(&tx, new_status_evt);
 							});
 						},
-						"Toogle"
+						{ t!("view_debug_toogle") }
 					}
 				}
 

@@ -61,6 +61,20 @@ view_excluded_files_title = { cpn_notif_excluded_files_title }
 
 view_duplicated_files_title = Fichiers dupliqués
 
+## Debug view
+
+view_debug_title = Interface de débogage
+view_debug_notif_title = Notifications
+view_debug_notif_level_error = Erreur
+view_debug_notif_level_warning = Avertissement
+view_debug_notif_level_success = Succès
+view_debug_notif_level_info = Information
+view_debug_progress_bar_title = Bare de progression
+view_debug_loading_bar_title = Bare de chargement
+view_debug_submit = Envoyer
+view_debug_reset = Réinitialiser
+view_debug_toogle = Basculer
+
 ## Configuration
 
 view_config_title = Configuration
