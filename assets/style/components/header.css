@@ -28,6 +28,7 @@
 
 .component-header-menu-item:hover {
 	background-color: var(--menu-item-bg-color);
+	cursor: pointer;
 }
 
 .component-header-menu-item a:link,
