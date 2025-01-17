@@ -1,0 +1,7 @@
+.view-check-errors-err > dt {
+	font-weight: bold;
+}
+
+.view-check-errors-err > dd {
+	margin-bottom: 16px;
+}

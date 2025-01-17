@@ -1,3 +1,4 @@
+mod check_errors;
 mod config_clipboard;
 mod config_files;
 mod config_hash;
@@ -9,6 +10,7 @@ mod empty_files;
 mod excluded_files;
 mod main;
 
+pub use check_errors::CheckErrors;
 pub use config_clipboard::ClipboardConfig;
 pub use config_files::FilesConfig;
 pub use config_hash::HashConfig;

@@ -8,6 +8,7 @@ view_main_check_fingerprints = Data integrity check
 view_main_check_result_title = Data integrity check result
 view_main_check_result_ok_text = Data integrity check passed.
 view_main_check_result_err_text = Data integrity check failed.
+view_main_check_result_err_link = See errors
 
 cpn_file_list_delete = Reset
 
@@ -44,6 +45,15 @@ cpn_notif_excluded_files_link = { cpn_notif_empty_files_link }
 cpn_notif_duplicated_files_title = Duplicated files detected
 cpn_notif_duplicated_files_text = Several files located in the selected directory are identical.
 cpn_notif_duplicated_files_link = See list
+
+## Check errors view
+
+view_check_errors_title = Verification errors
+view_check_errors_ctn_file_parse = Unable to parse the content file.
+view_check_errors_ctn_file_missing = File is listed in the content file but does not exists on disk.
+view_check_errors_ctn_file_match = File differs from the content file.
+view_check_errors_receipt_missing = File is listed in the receipt but does not exists on disk.
+view_check_errors_receipt_match = File differs from the receipt.
 
 ## Empty files view
 

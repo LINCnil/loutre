@@ -20,6 +20,8 @@ pub const STYLE: &str = include_str!(concat!(env!("OUT_DIR"), "/loutre.css"));
 pub enum Route {
 	#[route("/")]
 	Main {},
+	#[route("/check_errors")]
+	CheckErrors {},
 	#[route("/empty_files")]
 	EmptyFiles {},
 	#[route("/excluded_files")]

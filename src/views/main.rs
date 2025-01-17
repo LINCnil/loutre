@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::app::Route;
 use crate::check::{check, CheckResult, CheckResultError, CheckType};
 use crate::clipboard::{Clipboard, ClipboardStart};
 use crate::components::{
@@ -161,6 +162,14 @@ pub fn Main() -> Element {
 									level: NotificationLevel::Error,
 									title: t!("view_main_check_result_title"),
 									p { { t!("view_main_check_result_err_text") } }
+									p {
+										Button {
+											onclick: move |_event| {
+												navigator().replace(Route::CheckErrors {});
+											},
+											{ t!("view_main_check_result_err_link") }
+										}
+									}
 								}
 							}
 						}

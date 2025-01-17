@@ -8,6 +8,7 @@ view_main_check_fingerprints = Vérifier les empreintes
 view_main_check_result_title = Vérification des empreintes
 view_main_check_result_ok_text = Les empreintes correspondent.
 view_main_check_result_err_text = Échec de la vérification des empreintes.
+view_main_check_result_err_link = Voir les erreurs
 
 cpn_file_list_delete = Réinitialiser
 
@@ -44,6 +45,15 @@ cpn_notif_excluded_files_link = { cpn_notif_empty_files_link }
 cpn_notif_duplicated_files_title = Fichiers dupliqués détectés
 cpn_notif_duplicated_files_text = Plusieurs fichiers contenus dans le dossier sélectionné sont identiques.
 cpn_notif_duplicated_files_link = Voir la liste
+
+## Check errors view
+
+view_check_errors_title = Erreurs de vérification
+view_check_errors_ctn_file_parse = Le format du fichier de contenu n’est pas valide.
+view_check_errors_ctn_file_missing = Fichier listé dans le fichier de contenu mais n’existant pas sur le disque.
+view_check_errors_ctn_file_match = Fichier ayant une empreinte différente que celle mentionnée dans le fichier de contenu.
+view_check_errors_receipt_missing = Fichier listé dans l’accusé de réception mais n’existant pas sur le disque.
+view_check_errors_receipt_match = Fichier ayant une empreinte différente que celle mentionnée dans l’accusé de réception.
 
 ## Empty files view
 
