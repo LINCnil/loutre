@@ -25,17 +25,13 @@ pub fn Button(props: ButtonProps) -> Element {
 							class: "{props.icon}",
 						}
 					}
-				}
-				if !props.icon.is_empty() && props.children.is_ok() {
 					div {
 						class: "component-button-sep",
 					}
 				}
-				if props.children.is_ok() {
-					div {
-						class: "component-button-text",
-						{props.children}
-					}
+				div {
+					class: "component-button-text",
+					{props.children}
 				}
 			}
 		}

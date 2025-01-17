@@ -9,6 +9,8 @@ view_main_check_result_title = Data integrity check result
 view_main_check_result_ok_text = Data integrity check passed.
 view_main_check_result_err_text = Data integrity check failed.
 view_main_check_result_err_link = See errors
+view_main_clipboard_btn_list = Copy list
+view_main_clipboard_btn_file = Copy content file
 
 cpn_file_list_delete = Reset
 

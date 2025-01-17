@@ -9,6 +9,8 @@ view_main_check_result_title = Vérification des empreintes
 view_main_check_result_ok_text = Les empreintes correspondent.
 view_main_check_result_err_text = Échec de la vérification des empreintes.
 view_main_check_result_err_link = Voir les erreurs
+view_main_clipboard_btn_list = Copier la liste
+view_main_clipboard_btn_file = Copier le fichier de contenu
 
 cpn_file_list_delete = Réinitialiser
 

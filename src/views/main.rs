@@ -139,6 +139,7 @@ pub fn Main() -> Element {
 											clipboard_sig.set(clipboard);
 										}
 									},
+									{ t!("view_main_clipboard_btn_list") }
 								}
 								Button {
 									icon: "ri-file-copy-2-line",
@@ -154,6 +155,7 @@ pub fn Main() -> Element {
 											clipboard_sig.set(clipboard);
 										}
 									},
+									{ t!("view_main_clipboard_btn_file") }
 								}
 							}
 							if let CheckResult::Error(_) = lst.get_result() {
