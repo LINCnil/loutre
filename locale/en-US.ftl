@@ -119,6 +119,13 @@ view_config_clipboard_msg_persistence_help = Defines whether or not the internal
 view_config_clipboard_msg_persistence_default = Default
 view_config_clipboard_msg_persistence_activated = Activated
 view_config_clipboard_msg_persistence_deactivated = Deactivated
+view_config_clipboard_msg_tpl_list_html = Clipboard content (HTML list)
+view_config_clipboard_msg_tpl_list_txt = Clipboard content (plain text list)
+view_config_clipboard_msg_tpl_ctn_file_html = Clipboard content (HTML content file)
+view_config_clipboard_msg_tpl_ctn_file_txt = Clipboard content (plain text content file)
+view_config_clipboard_msg_has_default_value = Default value
+view_config_clipboard_msg_has_custom_value = Custom value
+view_config_clipboard_msg_edit_value = Edit
 
 ## Header
 

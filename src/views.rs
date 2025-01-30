@@ -1,5 +1,6 @@
 mod check_errors;
 mod config_clipboard;
+mod config_clipboard_template;
 mod config_files;
 mod config_hash;
 mod config_messages;
@@ -12,6 +13,7 @@ mod main;
 
 pub use check_errors::CheckErrors;
 pub use config_clipboard::ClipboardConfig;
+pub use config_clipboard_template::ClipboardTemplateConfig;
 pub use config_files::FilesConfig;
 pub use config_hash::HashConfig;
 pub use config_messages::MessagesConfig;

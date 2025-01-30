@@ -36,6 +36,8 @@ pub enum Route {
 	MessagesConfig {},
 	#[route("/config/clipboard")]
 	ClipboardConfig {},
+	#[route("/config/clipboard/template/:tpl_id")]
+	ClipboardTemplateConfig { tpl_id: usize },
 	#[cfg(feature = "nightly")]
 	#[route("/debug")]
 	Debug {},

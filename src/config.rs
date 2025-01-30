@@ -32,6 +32,10 @@ pub struct Config {
 	// Clipboard
 	pub clipboard_threshold: Option<usize>,
 	pub clipboard_persistence: Option<bool>,
+	pub clipboard_tpl_html_ctn_file: Option<String>,
+	pub clipboard_tpl_txt_ctn_file: Option<String>,
+	pub clipboard_tpl_html_list: Option<String>,
+	pub clipboard_tpl_txt_list: Option<String>,
 }
 
 impl Config {

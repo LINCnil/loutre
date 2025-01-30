@@ -119,6 +119,13 @@ view_config_clipboard_msg_persistence_help = Indique si l’objet interne géran
 view_config_clipboard_msg_persistence_default = Par défaut
 view_config_clipboard_msg_persistence_activated = Activée
 view_config_clipboard_msg_persistence_deactivated = Désactivée
+view_config_clipboard_msg_tpl_list_html = Contenu du presse-papier (liste HTML)
+view_config_clipboard_msg_tpl_list_txt = Contenu du presse-papier (liste texte brut)
+view_config_clipboard_msg_tpl_ctn_file_html = Contenu du presse-papier (fichier de contenu HTML)
+view_config_clipboard_msg_tpl_ctn_file_txt = Contenu du presse-papier (fichier de contenu texte brut)
+view_config_clipboard_msg_has_default_value = Valeur par défaut
+view_config_clipboard_msg_has_custom_value = Valeur personnalisée
+view_config_clipboard_msg_edit_value = Modifier
 
 ## Header
 

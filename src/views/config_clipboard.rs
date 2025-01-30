@@ -1,9 +1,9 @@
 #![allow(non_snake_case)]
 
 use crate::app::Route;
-use crate::clipboard::{ClipboardPersistence, ClipboardStart};
+use crate::clipboard::{ClipboardDefaultTemplate, ClipboardPersistence, ClipboardStart};
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{ApplyConfig, Header, MainSection, Root, Select, SelectOption};
+use crate::components::{ApplyConfig, Button, Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -94,6 +94,34 @@ pub fn ClipboardConfig() -> Element {
 							},
 						}
 					}
+					// Cliboard template: HTML list
+					ClipboardTemplateEdit {
+						id: "cfg_clipboard_tpl_list_html",
+						label: "view_config_clipboard_msg_tpl_list_html",
+						tpl_id: ClipboardDefaultTemplate::ListHtml as usize,
+						has_default: cfg_sig().clipboard_tpl_html_list.is_none(),
+					}
+					// Cliboard template: TXT list
+					ClipboardTemplateEdit {
+						id: "cfg_clipboard_tpl_list_txt",
+						label: "view_config_clipboard_msg_tpl_list_txt",
+						tpl_id: ClipboardDefaultTemplate::ListText as usize,
+						has_default: cfg_sig().clipboard_tpl_txt_list.is_none(),
+					}
+					// Cliboard template: HTML content file
+					ClipboardTemplateEdit {
+						id: "cfg_clipboard_tpl_ctn_file_html",
+						label: "view_config_clipboard_msg_tpl_ctn_file_html",
+						tpl_id: ClipboardDefaultTemplate::ContentFileHtml as usize,
+						has_default: cfg_sig().clipboard_tpl_html_ctn_file.is_none(),
+					}
+					// Cliboard template: TXT content file
+					ClipboardTemplateEdit {
+						id: "cfg_clipboard_tpl_ctn_file_txt",
+						label: "view_config_clipboard_msg_tpl_ctn_file_txt",
+						tpl_id: ClipboardDefaultTemplate::ContentFileText as usize,
+						has_default: cfg_sig().clipboard_tpl_txt_ctn_file.is_none(),
+					}
 				}
 				ApplyConfig {
 					onclick: move |_event| {
@@ -110,6 +138,42 @@ pub fn ClipboardConfig() -> Element {
 						});
 					},
 				}
+			}
+		}
+	}
+}
+
+#[derive(Clone, PartialEq, Props)]
+struct ClipboardTemplateEditProps {
+	id: String,
+	label: String,
+	tpl_id: usize,
+	has_default: bool,
+}
+
+#[component]
+fn ClipboardTemplateEdit(props: ClipboardTemplateEditProps) -> Element {
+	rsx! {
+		ConfigElement {
+			id: props.id,
+			label: t!(&props.label),
+			span {
+				class: "view-config-clipboard-msg-spacer",
+				if props.has_default {
+					{ t!("view_config_clipboard_msg_has_default_value") }
+				} else {
+					{ t!("view_config_clipboard_msg_has_custom_value") }
+				}
+			}
+			Link {
+				to: Route::ClipboardTemplateConfig { tpl_id: props.tpl_id },
+				"toto"
+			}
+			Button {
+				onclick: move |event: MouseEvent| {
+					navigator().push(Route::ClipboardTemplateConfig { tpl_id: props.tpl_id });
+				},
+				{ t!("view_config_clipboard_msg_edit_value") }
 			}
 		}
 	}

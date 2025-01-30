@@ -7,6 +7,47 @@ use std::fmt;
 use std::path::Path;
 
 #[derive(Clone, Copy, Debug)]
+pub enum ClipboardDefaultTemplate {
+	ContentFileHtml = 11,
+	ContentFileText = 12,
+	ListHtml = 21,
+	ListText = 22,
+}
+
+impl ClipboardDefaultTemplate {
+	pub fn get_template(&self, config: &Config, nb_evidences: usize) -> String {
+		match self {
+			Self::ContentFileHtml => match &config.clipboard_tpl_html_ctn_file {
+				Some(tpl) => tpl.to_owned(),
+				None => t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences),
+			},
+			Self::ContentFileText => match &config.clipboard_tpl_txt_ctn_file {
+				Some(tpl) => tpl.to_owned(),
+				None => t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences),
+			},
+			Self::ListHtml => match &config.clipboard_tpl_html_list {
+				Some(tpl) => tpl.to_owned(),
+				None => t!("cpn_clipboard_list_full_html"),
+			},
+			Self::ListText => match &config.clipboard_tpl_txt_list {
+				Some(tpl) => tpl.to_owned(),
+				None => t!("cpn_clipboard_list_full_txt"),
+			},
+		}
+	}
+
+	pub fn from_id(id: usize) -> Result<Self, ()> {
+		match id {
+			11 => Ok(Self::ContentFileHtml),
+			12 => Ok(Self::ContentFileText),
+			21 => Ok(Self::ListHtml),
+			22 => Ok(Self::ListText),
+			_ => Err(()),
+		}
+	}
+}
+
+#[derive(Clone, Copy, Debug)]
 pub struct ClipboardStart(usize);
 
 impl Default for ClipboardStart {
@@ -181,8 +222,8 @@ impl Clipboard {
 			nb_start => start.0,
 			evidences,
 		);
-		let model_txt = t!("cpn_clipboard_list_full_txt");
-		let model_html = t!("cpn_clipboard_list_full_html");
+		let model_txt = ClipboardDefaultTemplate::ListText.get_template(config, 0);
+		let model_html = ClipboardDefaultTemplate::ListHtml.get_template(config, 0);
 		env.add_template("txt", &model_txt)
 			.map_err(|e| ClipboardError::ListTemplateText(e.to_string()))?;
 		env.add_template("html", &model_html)
@@ -242,8 +283,10 @@ impl Clipboard {
 				hash_func,
 			),
 		);
-		let model_txt = t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences);
-		let model_html = t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences);
+		let model_txt =
+			ClipboardDefaultTemplate::ContentFileText.get_template(config, nb_evidences);
+		let model_html =
+			ClipboardDefaultTemplate::ContentFileHtml.get_template(config, nb_evidences);
 		env.add_template("txt", &model_txt)
 			.map_err(|e| ClipboardError::ContentFileTemplateText(e.to_string()))?;
 		env.add_template("html", &model_html)
