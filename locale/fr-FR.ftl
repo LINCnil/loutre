@@ -126,6 +126,7 @@ view_config_clipboard_msg_tpl_ctn_file_txt = Contenu du presse-papier (fichier d
 view_config_clipboard_msg_has_default_value = Valeur par défaut
 view_config_clipboard_msg_has_custom_value = Valeur personnalisée
 view_config_clipboard_msg_edit_value = Modifier
+view_config_clipboard_msg_reset_value = Réinitialiser
 
 ## Header
 

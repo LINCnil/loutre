@@ -126,6 +126,7 @@ view_config_clipboard_msg_tpl_ctn_file_txt = Clipboard content (plain text conte
 view_config_clipboard_msg_has_default_value = Default value
 view_config_clipboard_msg_has_custom_value = Custom value
 view_config_clipboard_msg_edit_value = Edit
+view_config_clipboard_msg_reset_value = Reset
 
 ## Header
 

@@ -165,12 +165,8 @@ fn ClipboardTemplateEdit(props: ClipboardTemplateEditProps) -> Element {
 					{ t!("view_config_clipboard_msg_has_custom_value") }
 				}
 			}
-			Link {
-				to: Route::ClipboardTemplateConfig { tpl_id: props.tpl_id },
-				"toto"
-			}
 			Button {
-				onclick: move |event: MouseEvent| {
+				onclick: move |_event| {
 					navigator().push(Route::ClipboardTemplateConfig { tpl_id: props.tpl_id });
 				},
 				{ t!("view_config_clipboard_msg_edit_value") }

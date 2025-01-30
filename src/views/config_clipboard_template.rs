@@ -2,7 +2,7 @@
 
 use crate::app::Route;
 use crate::clipboard::ClipboardDefaultTemplate;
-use crate::components::{ApplyConfig, Header, MainSection, Root};
+use crate::components::{ApplyConfig, Button, Header, MainSection, Root};
 use crate::config::Config;
 use dioxus::prelude::*;
 use dioxus_i18n::t;
@@ -62,6 +62,31 @@ pub fn ClipboardTemplateConfig(tpl_id: usize) -> Element {
 							cfg_sig.set(cfg);
 						});
 					},
+				}
+				Button {
+					onclick: move |_event| {
+						spawn(async move {
+							let mut cfg = cfg_sig();
+							match tpl {
+								ClipboardDefaultTemplate::ContentFileHtml => {
+									cfg.clipboard_tpl_html_ctn_file = None;
+								},
+								ClipboardDefaultTemplate::ContentFileText => {
+									cfg.clipboard_tpl_txt_ctn_file = None;
+								},
+								ClipboardDefaultTemplate::ListHtml => {
+									cfg.clipboard_tpl_html_list = None;
+								},
+								ClipboardDefaultTemplate::ListText => {
+									cfg.clipboard_tpl_txt_list = None;
+								},
+							};
+							cfg.write_to_file();
+							cfg_sig.set(cfg);
+							navigator().push(Route::ClipboardConfig {});
+						});
+					},
+					{ t!("view_config_clipboard_msg_reset_value") }
 				}
 			}
 		}
