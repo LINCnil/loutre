@@ -17,7 +17,10 @@ pub fn Button(props: ButtonProps) -> Element {
 			class: "component-button-wrapper",
 			button {
 				class: "component-button",
-				onclick: move |evt| props.onclick.call(evt),
+				onclick: move |evt| {
+					evt.prevent_default();
+					props.onclick.call(evt)
+				},
 				if !props.icon.is_empty() {
 					div {
 						class: "component-button-icon",
