@@ -156,6 +156,22 @@ unless you work at the CNIL.
 [freebsd_sha512]: https://man.freebsd.org/cgi/man.cgi?query=sha512
 [openbsd_cksum]: https://man.openbsd.org/cksum.1
 
+### Custom clipboard content
+
+Once the file's hashes are calculated, the clipboard is automatically filled
+with a textual representation of those hashes. The default value consists of a
+human-readable list of those files if the number of files does not exceed the
+configured threshold. If this threshold is reached, the valus is set to the
+hash of the content file. These values are both available both as plain-text
+and as HTML.
+
+The configuration allows you to set a different content. There is no automatic
+translation from the HTML form to the plain-text one, you should configure both
+and ensure those values matches. The syntax is available in the [MiniJinja
+documentation][minijinja_doc].
+
+[minijinja_doc]: https://docs.rs/minijinja/latest/minijinja/syntax/
+
 
 ## Favicon
 
