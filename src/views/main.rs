@@ -167,7 +167,7 @@ pub fn Main() -> Element {
 									p {
 										Button {
 											onclick: move |_event| {
-												navigator().replace(Route::CheckErrors {});
+												navigator().push(Route::CheckErrors {});
 											},
 											{ t!("view_main_check_result_err_link") }
 										}

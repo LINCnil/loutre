@@ -25,7 +25,7 @@ pub fn NotificationList() -> Element {
 				p {
 					Button {
 						onclick: move |_event| {
-							navigator().replace(Route::EmptyFiles {});
+							navigator().push(Route::EmptyFiles {});
 						},
 						{ t!("cpn_notif_empty_files_link", nb: nb_empty_files) }
 					}
@@ -42,7 +42,7 @@ pub fn NotificationList() -> Element {
 				p {
 					Button {
 						onclick: move |_event| {
-							navigator().replace(Route::ExcludedFiles {});
+							navigator().push(Route::ExcludedFiles {});
 						},
 						{ t!("cpn_notif_excluded_files_link", nb: nb_excluded_files) }
 					}
@@ -59,7 +59,7 @@ pub fn NotificationList() -> Element {
 				p {
 					Button {
 						onclick: move |_event| {
-							navigator().replace(Route::DuplicatedFiles {});
+							navigator().push(Route::DuplicatedFiles {});
 						},
 						{ t!("cpn_notif_duplicated_files_link", nb: nb_empty_files) }
 					}
