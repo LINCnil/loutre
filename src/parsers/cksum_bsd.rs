@@ -3,7 +3,7 @@ use crate::hash::HashFunc;
 use nom::character::complete::{alphanumeric1, char, hex_digit1, line_ending, none_of};
 use nom::combinator::{eof, fail, opt};
 use nom::multi::{fold_many0, many0};
-use nom::IResult;
+use nom::{IResult, Parser};
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -31,7 +31,7 @@ fn parse_line(input: &str) -> IResult<&str, HashedFile> {
 	let (input, _) = char('=')(input)?;
 	let (input, _) = char(' ')(input)?;
 	let (input, hash) = parse_fingerprint(input)?;
-	let (input, _) = opt(line_ending)(input)?;
+	let (input, _) = opt(line_ending).parse(input)?;
 	let (input, _) = eof(input)?;
 	let file = HashedFile::new(path, 0, hash, hash_func);
 	Ok((input, file))
@@ -41,7 +41,7 @@ fn parse_hash_func(input: &str) -> IResult<&str, HashFunc> {
 	let (input, hash_func_name) = alphanumeric1(input)?;
 	let res = HashFunc::from_str(hash_func_name);
 	if res.is_err() {
-		let _: (&str, HashFunc) = fail(input)?;
+		let _: (&str, HashFunc) = fail().parse(input)?;
 	}
 	let hash_func = res.unwrap();
 	Ok((input, hash_func))
@@ -49,10 +49,10 @@ fn parse_hash_func(input: &str) -> IResult<&str, HashFunc> {
 
 fn parse_file_name(input: &str) -> IResult<&str, PathBuf> {
 	let (input, _) = char('(')(input)?;
-	let (input, path_vec) = many0(parse_path_part)(input)?;
+	let (input, path_vec) = many0(parse_path_part).parse(input)?;
 	let path = path_vec.join(")");
 	if path.is_empty() {
-		let _: (&str, PathBuf) = fail(input)?;
+		let _: (&str, PathBuf) = fail().parse(input)?;
 	}
 	Ok((input, Path::new(&path).to_path_buf()))
 }
@@ -61,7 +61,8 @@ fn parse_path_part(input: &str) -> IResult<&str, String> {
 	let (input, path_part) = fold_many0(none_of(")"), String::new, |mut acc: String, item| {
 		acc.push(item);
 		acc
-	})(input)?;
+	})
+	.parse(input)?;
 	let (input, _) = char(')')(input)?;
 	Ok((input, path_part))
 }

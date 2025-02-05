@@ -3,7 +3,7 @@ use crate::hash::HashFunc;
 use nom::character::complete::{hex_digit1, line_ending, none_of, tab, u64 as parse_u64};
 use nom::combinator::{eof, fail, opt};
 use nom::multi::many1;
-use nom::IResult;
+use nom::{IResult, Parser};
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -35,14 +35,14 @@ fn parse_header(input: &str) -> IResult<&str, HashFunc> {
 	let (input, _file_name) = parse_junk(input)?;
 	let (input, _) = tab(input)?;
 	let (input, hash_func) = parse_hash_func(input)?;
-	let (input, _) = opt(tab)(input)?;
-	let (input, _) = opt(line_ending)(input)?;
+	let (input, _) = opt(tab).parse(input)?;
+	let (input, _) = opt(line_ending).parse(input)?;
 	let (input, _) = eof(input)?;
 	Ok((input, hash_func))
 }
 
 fn parse_junk(input: &str) -> IResult<&str, String> {
-	let (input, junk) = many1(none_of("\t"))(input)?;
+	let (input, junk) = many1(none_of("\t")).parse(input)?;
 	Ok((input, junk.iter().collect()))
 }
 
@@ -50,7 +50,7 @@ fn parse_hash_func(input: &str) -> IResult<&str, HashFunc> {
 	let (input, hash_func_name) = parse_junk(input)?;
 	let res = HashFunc::from_str(&hash_func_name);
 	if res.is_err() {
-		let _: (&str, HashFunc) = fail(input)?;
+		let _: (&str, HashFunc) = fail().parse(input)?;
 	}
 	let hash_func = res.unwrap();
 	Ok((input, hash_func))
@@ -67,8 +67,8 @@ fn parse_line(input: &str, hash_func: HashFunc) -> IResult<&str, HashedFile> {
 	let (input, size) = parse_u64(input)?;
 	let (input, _) = tab(input)?;
 	let (input, hash) = parse_fingerprint(input)?;
-	let (input, _) = opt(tab)(input)?;
-	let (input, _) = opt(line_ending)(input)?;
+	let (input, _) = opt(tab).parse(input)?;
+	let (input, _) = opt(line_ending).parse(input)?;
 	let (input, _) = eof(input)?;
 	let file = HashedFile::new(path, size, hash, hash_func);
 	Ok((input, file))
@@ -83,22 +83,22 @@ fn parse_file_name(input: &str) -> IResult<&str, PathBuf> {
 	// Remove the elements that are not from the file name.
 	let res = parts.pop();
 	if res.is_none() {
-		let _: (&str, PathBuf) = fail(input)?;
+		let _: (&str, PathBuf) = fail().parse(input)?;
 	}
 	if res.unwrap().is_empty() {
 		// We have an extra tab at the end.
 		if parts.pop().is_none() {
-			let _: (&str, PathBuf) = fail(input)?;
+			let _: (&str, PathBuf) = fail().parse(input)?;
 		}
 	}
 	if parts.pop().is_none() {
-		let _: (&str, PathBuf) = fail(input)?;
+		let _: (&str, PathBuf) = fail().parse(input)?;
 	}
 
 	// Get the file path and check it.
 	let path = parts.join("\t");
 	if path.is_empty() {
-		let _: (&str, HashedFile) = fail(input)?;
+		let _: (&str, HashedFile) = fail().parse(input)?;
 	}
 
 	// Remove the file path from the input.

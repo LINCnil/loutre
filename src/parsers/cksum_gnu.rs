@@ -3,7 +3,7 @@ use crate::files::{HashedFile, HashedFileList};
 use crate::hash::HashFunc;
 use nom::character::complete::{alphanumeric1, char, not_line_ending, one_of};
 use nom::combinator::fail;
-use nom::IResult;
+use nom::{IResult, Parser};
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
@@ -40,7 +40,7 @@ fn parse_line(
 	let (input, _) = one_of(" *")(input)?;
 	let (input, path) = not_line_ending(input)?;
 	if path.is_empty() {
-		let _: (&str, HashedFile) = fail(input)?;
+		let _: (&str, HashedFile) = fail().parse(input)?;
 	}
 	let path = PathBuf::from(path);
 	let hash_func = match hash_func {

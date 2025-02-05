@@ -3,7 +3,7 @@ use crate::hash::HashFunc;
 use msg_parser::Outlook;
 use nom::character::complete::{alpha1, alphanumeric1, char, digit1, space0, space1};
 use nom::combinator::opt;
-use nom::IResult;
+use nom::{IResult, Parser};
 use std::path::{Path, PathBuf};
 use unicode_normalization::UnicodeNormalization;
 
@@ -52,8 +52,8 @@ fn parse_inner_line(input: &str) -> IResult<&str, HashedFile> {
 	let (input, _) = alpha1(input)?;
 	let (input, _) = space1(input)?;
 	let (input, _) = digit1(input)?;
-	let (input, _) = opt(char('.'))(input)?;
-	let (input, _) = opt(digit1)(input)?;
+	let (input, _) = opt(char('.')).parse(input)?;
+	let (input, _) = opt(digit1).parse(input)?;
 	let (input, _) = char('(')(input)?;
 	let (input, _) = space1(input)?;
 	let hash = rev_str(hash);
