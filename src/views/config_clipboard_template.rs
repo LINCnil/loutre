@@ -15,7 +15,7 @@ pub fn ClipboardTemplateConfig(tpl_id: usize) -> Element {
 	let tpl = ClipboardDefaultTemplate::from_id(tpl_id).unwrap();
 	let mut cfg_sig = use_context::<Signal<Config>>();
 	let mut new_tpl = use_signal(|| tpl.get_template(&config, EXAMPLE_NB_EVIDENCES));
-	let mut preview = use_signal(|| new_tpl());
+	let mut preview = use_signal(&*new_tpl);
 
 	rsx! {
 		Root {
