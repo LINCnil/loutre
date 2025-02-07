@@ -1,0 +1,12 @@
+#view_config_clipboard_template_area {
+	width: 100%;
+}
+
+#view_config_clipboard_preview_area {
+	width: calc(100% - 64px);
+	height: 180px;
+	padding: 32px;
+	overflow: scroll;
+	border: 1px solid var(--main-section-border-color);
+	border-radius: 8px;
+}
