@@ -15,7 +15,7 @@ use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
 use dioxus::html::{FileEngine, HasFileData};
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use std::path::Path;
 use std::sync::Arc;
 use std::thread;
@@ -50,7 +50,7 @@ pub fn Main() -> Element {
 			MainSection {
 				p {
 					class: "view-main-greeting",
-					{ t!("view_main_greeting") }
+					{ tid!("view_main_greeting") }
 				}
 				div {
 					class: "view-main-top-buttons",
@@ -67,7 +67,7 @@ pub fn Main() -> Element {
 								}
 							});
 						},
-						{ t!("view_main_open_dir") }
+						{ tid!("view_main_open_dir") }
 					}
 					FileButton {
 						icon: "ri-file-check-line",
@@ -82,7 +82,7 @@ pub fn Main() -> Element {
 								}
 							});
 						},
-						{ t!("view_main_open_receipt") }
+						{ tid!("view_main_open_receipt") }
 					}
 				}
 				FileListIndicator {}
@@ -103,7 +103,7 @@ pub fn Main() -> Element {
 												calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
 											});
 										},
-										{ t!("view_main_check_fingerprints") }
+										{ tid!("view_main_check_fingerprints") }
 									}
 								} else {
 									Button {
@@ -113,7 +113,7 @@ pub fn Main() -> Element {
 												calc_fingerprints(&config_sig(), tx_sig(), receipt_opt_sig(), file_list_sig()).await;
 											});
 										},
-										{ t!("view_main_calc_fingerprints") }
+										{ tid!("view_main_calc_fingerprints") }
 									}
 								}
 							}
@@ -123,8 +123,8 @@ pub fn Main() -> Element {
 								Notification {
 									id: "view-main-file-check-ok",
 									level: NotificationLevel::Success,
-									title: t!("view_main_check_result_title"),
-									p { { t!("view_main_check_result_ok_text") } }
+									title: tid!("view_main_check_result_title"),
+									p { { tid!("view_main_check_result_ok_text") } }
 								}
 								Button {
 									icon: "ri-clipboard-line",
@@ -139,7 +139,7 @@ pub fn Main() -> Element {
 											clipboard_sig.set(clipboard);
 										}
 									},
-									{ t!("view_main_clipboard_btn_list") }
+									{ tid!("view_main_clipboard_btn_list") }
 								}
 								Button {
 									icon: "ri-file-copy-2-line",
@@ -155,21 +155,21 @@ pub fn Main() -> Element {
 											clipboard_sig.set(clipboard);
 										}
 									},
-									{ t!("view_main_clipboard_btn_file") }
+									{ tid!("view_main_clipboard_btn_file") }
 								}
 							}
 							if let CheckResult::Error(_) = lst.get_result() {
 								Notification {
 									id: "view-main-file-check-err",
 									level: NotificationLevel::Error,
-									title: t!("view_main_check_result_title"),
-									p { { t!("view_main_check_result_err_text") } }
+									title: tid!("view_main_check_result_title"),
+									p { { tid!("view_main_check_result_err_text") } }
 									p {
 										Button {
 											onclick: move |_event| {
 												navigator().push(Route::CheckErrors {});
 											},
-											{ t!("view_main_check_result_err_link") }
+											{ tid!("view_main_check_result_err_link") }
 										}
 									}
 								}

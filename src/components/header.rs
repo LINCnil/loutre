@@ -11,7 +11,7 @@ use self::logo::Logo;
 use self::theme_switch::ThemeSwitch;
 use crate::app::Route::FilesConfig;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn Header() -> Element {
@@ -39,7 +39,7 @@ pub fn Header() -> Element {
 							Link {
 								class: "ri-settings-3-line",
 								to: FilesConfig {},
-								title: t!("cpn_header_config"),
+								title: tid!("cpn_header_config"),
 							}
 						}
 					}
@@ -65,7 +65,7 @@ fn DebugLink() -> Element {
 				Link {
 					class: "ri-bug-line",
 					to: crate::app::Route::Debug {},
-					title: t!("cpn_header_config"),
+					title: tid!("cpn_header_config"),
 				}
 			}
 		}

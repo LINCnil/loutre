@@ -2,7 +2,7 @@
 
 use crate::app::Route;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum ConfigMenuHighlight {
@@ -65,7 +65,7 @@ fn ConfigMenuElement(
 			class: get_class(hl, current),
 			Link {
 				to: target,
-				{ t!(target_str) }
+				{ tid!(target_str) }
 			}
 		}
 	}

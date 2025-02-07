@@ -6,7 +6,7 @@ use crate::config::Config;
 use crate::files::FileList;
 use crate::notifications::{NotificationBlackList, NotificationLevel};
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn NotificationList() -> Element {
@@ -20,14 +20,14 @@ pub fn NotificationList() -> Element {
 			Notification {
 				id: "empty_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
-				title: t!("cpn_notif_empty_files_title", nb: nb_empty_files),
-				p { { t!("cpn_notif_empty_files_text", nb: nb_empty_files) } }
+				title: tid!("cpn_notif_empty_files_title", nb: nb_empty_files),
+				p { { tid!("cpn_notif_empty_files_text", nb: nb_empty_files) } }
 				p {
 					Button {
 						onclick: move |_event| {
 							navigator().push(Route::EmptyFiles {});
 						},
-						{ t!("cpn_notif_empty_files_link", nb: nb_empty_files) }
+						{ tid!("cpn_notif_empty_files_link", nb: nb_empty_files) }
 					}
 				}
 			}
@@ -37,14 +37,14 @@ pub fn NotificationList() -> Element {
 			Notification {
 				id: "excluded_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
-				title: t!("cpn_notif_excluded_files_title", nb: nb_excluded_files),
-				p { { t!("cpn_notif_excluded_files_text", nb: nb_excluded_files) } }
+				title: tid!("cpn_notif_excluded_files_title", nb: nb_excluded_files),
+				p { { tid!("cpn_notif_excluded_files_text", nb: nb_excluded_files) } }
 				p {
 					Button {
 						onclick: move |_event| {
 							navigator().push(Route::ExcludedFiles {});
 						},
-						{ t!("cpn_notif_excluded_files_link", nb: nb_excluded_files) }
+						{ tid!("cpn_notif_excluded_files_link", nb: nb_excluded_files) }
 					}
 				}
 			}
@@ -54,14 +54,14 @@ pub fn NotificationList() -> Element {
 			Notification {
 				id: "duplicated_files_{fl.get_id()}",
 				level: NotificationLevel::Warning,
-				title: t!("cpn_notif_duplicated_files_title"),
-				p { { t!("cpn_notif_duplicated_files_text") } }
+				title: tid!("cpn_notif_duplicated_files_title"),
+				p { { tid!("cpn_notif_duplicated_files_text") } }
 				p {
 					Button {
 						onclick: move |_event| {
 							navigator().push(Route::DuplicatedFiles {});
 						},
-						{ t!("cpn_notif_duplicated_files_link", nb: nb_empty_files) }
+						{ tid!("cpn_notif_duplicated_files_link", nb: nb_empty_files) }
 					}
 				}
 			}

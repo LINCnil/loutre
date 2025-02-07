@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::files::HashedFileList;
 use crate::templates::{filter_add_dir_level, filter_nb_letters, EntryTemplate};
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use minijinja::{context, Environment};
 use std::fmt;
 use std::path::Path;
@@ -19,19 +19,19 @@ impl ClipboardDefaultTemplate {
 		match self {
 			Self::ContentFileHtml => match &config.clipboard_tpl_html_ctn_file {
 				Some(tpl) => tpl.to_owned(),
-				None => t!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences),
+				None => tid!("cpn_clipboard_ctn_file_full_html", nb_evidences: nb_evidences),
 			},
 			Self::ContentFileText => match &config.clipboard_tpl_txt_ctn_file {
 				Some(tpl) => tpl.to_owned(),
-				None => t!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences),
+				None => tid!("cpn_clipboard_ctn_file_full_txt", nb_evidences: nb_evidences),
 			},
 			Self::ListHtml => match &config.clipboard_tpl_html_list {
 				Some(tpl) => tpl.to_owned(),
-				None => t!("cpn_clipboard_list_full_html"),
+				None => tid!("cpn_clipboard_list_full_html"),
 			},
 			Self::ListText => match &config.clipboard_tpl_txt_list {
 				Some(tpl) => tpl.to_owned(),
-				None => t!("cpn_clipboard_list_full_txt"),
+				None => tid!("cpn_clipboard_list_full_txt"),
 			},
 		}
 	}

@@ -6,7 +6,7 @@ use crate::components::{ApplyConfig, Checkbox, Header, MainSection, Root};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn FilesConfig() -> Element {
@@ -21,14 +21,14 @@ pub fn FilesConfig() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_config_title") }
+					{ tid!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Files }
 				form {
 					// Include hidden files
 					ConfigElement {
 						id: "cfg_main_include_hidden_files",
-						label: t!("view_config_main_msg_include_hidden_files"),
+						label: tid!("view_config_main_msg_include_hidden_files"),
 						Checkbox {
 							id: "cfg_main_include_hidden_files",
 							name: "cfg_main_include_hidden_files",
@@ -41,7 +41,7 @@ pub fn FilesConfig() -> Element {
 					// Include system files
 					ConfigElement {
 						id: "cfg_main_include_system_files",
-						label: t!("view_config_main_msg_include_system_files"),
+						label: tid!("view_config_main_msg_include_system_files"),
 						Checkbox {
 							id: "cfg_main_include_system_files",
 							name: "cfg_main_include_system_files",
@@ -54,7 +54,7 @@ pub fn FilesConfig() -> Element {
 					// Set files as read-only
 					ConfigElement {
 						id: "cfg_main_set_files_readonly",
-						label: t!("view_config_main_msg_set_files_readonly"),
+						label: tid!("view_config_main_msg_set_files_readonly"),
 						Checkbox {
 							id: "cfg_main_set_files_readonly",
 							name: "cfg_main_set_files_readonly",

@@ -6,7 +6,7 @@ use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
 use crate::components::{ApplyConfig, Button, Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use std::str::FromStr;
 
 #[component]
@@ -15,15 +15,15 @@ pub fn ClipboardConfig() -> Element {
 	let mut clipboard_start_sig = use_context::<Signal<ClipboardStart>>();
 	let cl_pers_opts = vec![
 		SelectOption::new(
-			t!("view_config_clipboard_msg_persistence_default"),
+			tid!("view_config_clipboard_msg_persistence_default"),
 			ClipboardPersistence::Default.to_string(),
 		),
 		SelectOption::new(
-			t!("view_config_clipboard_msg_persistence_activated"),
+			tid!("view_config_clipboard_msg_persistence_activated"),
 			ClipboardPersistence::Activated.to_string(),
 		),
 		SelectOption::new(
-			t!("view_config_clipboard_msg_persistence_deactivated"),
+			tid!("view_config_clipboard_msg_persistence_deactivated"),
 			ClipboardPersistence::Deactivated.to_string(),
 		),
 	];
@@ -40,14 +40,14 @@ pub fn ClipboardConfig() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_config_title") }
+					{ tid!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Clipboard }
 				form {
 					// First evidence number
 					ConfigElement {
 						id: "cfg_clipboard_clipboard_start",
-						label: t!("view_config_clipboard_start_msg"),
+						label: tid!("view_config_clipboard_start_msg"),
 						input {
 							id: "cfg_clipboard_clipboard_start",
 							name: "cfg_clipboard_clipboard_start",
@@ -64,7 +64,7 @@ pub fn ClipboardConfig() -> Element {
 					// Cliboard threshold
 					ConfigElement {
 						id: "cfg_clipboard_threshold",
-						label: t!("view_config_clipboard_msg_threshold"),
+						label: tid!("view_config_clipboard_msg_threshold"),
 						input {
 							id: "cfg_clipboard_threshold",
 							name: "cfg_clipboard_threshold",
@@ -81,7 +81,7 @@ pub fn ClipboardConfig() -> Element {
 					// Cliboard persistence
 					ConfigElement {
 						id: "cfg_clipboard_persistence",
-						label: t!("view_config_clipboard_msg_persistence"),
+						label: tid!("view_config_clipboard_msg_persistence"),
 						Select {
 							id: "cfg_clipboard_persistence",
 							name: "cfg_clipboard_persistence",
@@ -156,20 +156,20 @@ fn ClipboardTemplateEdit(props: ClipboardTemplateEditProps) -> Element {
 	rsx! {
 		ConfigElement {
 			id: props.id,
-			label: t!(&props.label),
+			label: tid!(&props.label),
 			span {
 				class: "view-config-clipboard-msg-spacer",
 				if props.has_default {
-					{ t!("view_config_clipboard_msg_has_default_value") }
+					{ tid!("view_config_clipboard_msg_has_default_value") }
 				} else {
-					{ t!("view_config_clipboard_msg_has_custom_value") }
+					{ tid!("view_config_clipboard_msg_has_custom_value") }
 				}
 			}
 			Button {
 				onclick: move |_event| {
 					navigator().push(Route::ClipboardTemplateConfig { tpl_id: props.tpl_id });
 				},
-				{ t!("view_config_clipboard_msg_edit_value") }
+				{ tid!("view_config_clipboard_msg_edit_value") }
 			}
 		}
 	}

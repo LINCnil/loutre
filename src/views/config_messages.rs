@@ -6,7 +6,7 @@ use crate::components::{ApplyConfig, Checkbox, Header, MainSection, Root};
 use crate::config::Config;
 use crate::parsers::parse_bool;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn MessagesConfig() -> Element {
@@ -21,14 +21,14 @@ pub fn MessagesConfig() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_config_title") }
+					{ tid!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Messages }
 				form {
 					// Empty files warning
 					ConfigElement {
 						id: "cfg_main_empty_files_warning",
-						label: t!("view_config_messages_msg_empty_files_warning"),
+						label: tid!("view_config_messages_msg_empty_files_warning"),
 						Checkbox {
 							id: "cfg_main_empty_files_warning",
 							name: "cfg_main_empty_files_warning",
@@ -42,7 +42,7 @@ pub fn MessagesConfig() -> Element {
 					// Duplicated files warning
 					ConfigElement {
 						id: "cfg_main_duplicated_files_warning",
-						label: t!("view_config_messages_msg_duplicated_files_warning"),
+						label: tid!("view_config_messages_msg_duplicated_files_warning"),
 						Checkbox {
 							id: "cfg_main_duplicated_files_warning",
 							name: "cfg_main_duplicated_files_warning",

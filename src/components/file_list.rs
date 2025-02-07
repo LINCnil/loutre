@@ -4,7 +4,7 @@ use crate::events::{send_event, ExternalEvent, ExternalEventSender};
 use crate::files::FileList;
 use crate::receipt::Receipt;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn FileListIndicator() -> Element {
@@ -67,7 +67,7 @@ fn FileListIndicatorElement(path: String, is_receipt: bool) -> Element {
 			}
 			span {
 				class: "component-file-list-delete ri-close-large-line",
-				title: t!("cpn_file_list_delete"),
+				title: tid!("cpn_file_list_delete"),
 				onclick: move |_| {
 					let txc = tx.clone();
 					spawn(async move {

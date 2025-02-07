@@ -5,7 +5,7 @@ use crate::clipboard::ClipboardDefaultTemplate;
 use crate::components::{ApplyConfig, Button, Header, MainSection, Root};
 use crate::config::Config;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 const EXAMPLE_NB_EVIDENCES: usize = 42;
 
@@ -23,7 +23,7 @@ pub fn ClipboardTemplateConfig(tpl_id: usize) -> Element {
 			MainSection {
 				close_view: Some(Route::ClipboardConfig {}),
 				h1 {
-					{ t!("view_config_title") }
+					{ tid!("view_config_title") }
 				}
 				form {
 					textarea {
@@ -86,7 +86,7 @@ pub fn ClipboardTemplateConfig(tpl_id: usize) -> Element {
 							navigator().push(Route::ClipboardConfig {});
 						});
 					},
-					{ t!("view_config_clipboard_msg_reset_value") }
+					{ tid!("view_config_clipboard_msg_reset_value") }
 				}
 			}
 		}

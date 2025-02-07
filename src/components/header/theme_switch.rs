@@ -3,7 +3,7 @@
 use crate::config::Config;
 use crate::theme::{set_theme, Theme};
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn ThemeSwitch() -> Element {
@@ -19,7 +19,7 @@ pub fn ThemeSwitch() -> Element {
 			class: "component-header-menu-item",
 			i {
 				class: "{class}",
-				title: t!("cpn_theme_change"),
+				title: tid!("cpn_theme_change"),
 				onclick: move |_| {
 					spawn(async move {
 						set_theme(config_sig, theme_sig, target).await;

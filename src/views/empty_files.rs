@@ -4,7 +4,7 @@ use crate::app::Route;
 use crate::components::{Header, MainSection, Root};
 use crate::files::FileList;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn EmptyFiles() -> Element {
@@ -17,7 +17,7 @@ pub fn EmptyFiles() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_empty_files_title", nb: nb_empty_files) }
+					{ tid!("view_empty_files_title", nb: nb_empty_files) }
 				}
 				ul {
 					for f in file_list.empty_files() {

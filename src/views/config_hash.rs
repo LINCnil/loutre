@@ -7,7 +7,7 @@ use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 
@@ -29,14 +29,14 @@ pub fn HashConfig() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_config_title") }
+					{ tid!("view_config_title") }
 				}
 				ConfigMenu { hl: ConfigMenuHighlight::Hash }
 				form {
 					// Hashing function
 					ConfigElement {
 						id: "cfg_hash_algorithm",
-						label: t!("view_config_hash_msg_hash_func"),
+						label: tid!("view_config_hash_msg_hash_func"),
 						Select {
 							id: "cfg_hash_algorithm",
 							name: "cfg_hash_algorithm",
@@ -52,7 +52,7 @@ pub fn HashConfig() -> Element {
 					// Content file format
 					ConfigElement {
 						id: "cfg_hash_content_file_format",
-						label: t!("view_config_hash_msg_content_file_format"),
+						label: tid!("view_config_hash_msg_content_file_format"),
 						Select {
 							id: "cfg_hash_content_file_format",
 							name: "cfg_hash_content_file_format",
@@ -69,7 +69,7 @@ pub fn HashConfig() -> Element {
 					// TODO
 					ConfigElement {
 						id: "cfg_hash_content_file_name",
-						label: t!("view_config_hash_msg_content_file_name"),
+						label: tid!("view_config_hash_msg_content_file_name"),
 						input {
 							id: "cfg_hash_content_file_name",
 							name: "cfg_hash_content_file_name",

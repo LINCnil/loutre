@@ -2,7 +2,7 @@
 
 use crate::components::Button;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use tokio::time::{sleep, Duration};
 
 #[derive(Clone, PartialEq, Props)]
@@ -100,7 +100,7 @@ pub fn ApplyConfig(props: ApplyConfigProps) -> Element {
 					sleep(Duration::from_millis(100)).await;
 					display_msg.set(true);
 				},
-				{ t!("cpn_form_apply_config") }
+				{ tid!("cpn_form_apply_config") }
 			}
 			if display_msg() {
 				p {
@@ -108,7 +108,7 @@ pub fn ApplyConfig(props: ApplyConfigProps) -> Element {
 					span {
 						class: "ri-check-line",
 					}
-					{ t!("cpn_form_apply_config_ok") }
+					{ tid!("cpn_form_apply_config_ok") }
 				}
 			}
 		}

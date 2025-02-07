@@ -4,7 +4,7 @@ use crate::app::Route;
 use crate::components::{Header, MainSection, Root};
 use crate::files::FileList;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 #[component]
 pub fn DuplicatedFiles() -> Element {
@@ -16,7 +16,7 @@ pub fn DuplicatedFiles() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_duplicated_files_title") }
+					{ tid!("view_duplicated_files_title") }
 				}
 				for lst in file_list.duplicated_files() {
 					div {

@@ -5,7 +5,7 @@ use crate::check::{CheckResult, CheckResultError};
 use crate::components::{Header, MainSection, Root};
 use crate::files::FileList;
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 
 macro_rules! filter_err_type {
 	($vec: ident, $err_type: ident) => {
@@ -26,13 +26,13 @@ pub fn CheckErrors() -> Element {
 			MainSection {
 				close_view: Some(Route::Main {}),
 				h1 {
-					{ t!("view_check_errors_title") }
+					{ tid!("view_check_errors_title") }
 				}
 				if let FileList::Hashed(lst) = file_list {
 					if let CheckResult::Error(errors) = lst.get_result() {
 						if errors.contains(&CheckResultError::ContentFileParseError) {
 							p {
-								{ t!("view_check_errors_ctn_file_parse") }
+								{ tid!("view_check_errors_ctn_file_parse") }
 							}
 						}
 						dl {
@@ -40,25 +40,25 @@ pub fn CheckErrors() -> Element {
 							for path in filter_err_type!(errors, ContentFileMissingFile) {
 								Error {
 									path: "{path}",
-									message: t!("view_check_errors_ctn_file_missing"),
+									message: tid!("view_check_errors_ctn_file_missing"),
 								}
 							}
 							for path in filter_err_type!(errors, ContentFileNonMatchingFile) {
 								Error {
 									path: "{path}",
-									message: t!("view_check_errors_ctn_file_match"),
+									message: tid!("view_check_errors_ctn_file_match"),
 								}
 							}
 							for path in filter_err_type!(errors, ReceiptMissingFile) {
 								Error {
 									path: "{path}",
-									message: t!("view_check_errors_receipt_missing"),
+									message: tid!("view_check_errors_receipt_missing"),
 								}
 							}
 							for path in filter_err_type!(errors, ReceiptNonMatchingFile) {
 								Error {
 									path: "{path}",
-									message: t!("view_check_errors_receipt_match"),
+									message: tid!("view_check_errors_receipt_match"),
 								}
 							}
 						}

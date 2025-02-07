@@ -2,7 +2,7 @@
 
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use dioxus::prelude::*;
-use dioxus_i18n::t;
+use dioxus_i18n::tid;
 use humansize::{make_format, DECIMAL};
 
 #[component]
@@ -18,7 +18,7 @@ pub fn ProgressBar() -> Element {
 					value: "{status.get_value()}",
 				}
 				p {{
-					t!(
+					tid!(
 						"cpn_progress_bar_status",
 						done: formatter(status.get_value()),
 						total: formatter(status.get_max()),
