@@ -45,7 +45,11 @@ fn main() {
 	let raw_ico = include_bytes!("../assets/icon_rgba8.bin").to_vec();
 	let ico = Icon::from_rgba(raw_ico, 460, 460).unwrap();
 
-	// Config: https://github.com/DioxusLabs/dioxus/blob/main/packages/desktop/src/config.rs
+	let has_decorations_env_str =
+		std::env::var("LOUTRE_WITH_DECORATION").unwrap_or("true".to_string());
+	let has_decorations = str_is_trueish(&has_decorations_env_str);
+
+	// Config: https://docs.rs/dioxus-desktop/latest/dioxus_desktop/struct.Config.html
 	// WindowBuilder: https://docs.rs/tao/latest/tao/window/struct.WindowBuilder.html
 	LaunchBuilder::desktop()
 		.with_cfg(
@@ -54,9 +58,15 @@ fn main() {
 				.with_window(
 					WindowBuilder::new()
 						.with_title(APP_NAME)
+						.with_decorations(has_decorations)
 						.with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT)),
 				)
 				.with_icon(ico),
 		)
 		.launch(app::App)
+}
+
+fn str_is_trueish(s: &str) -> bool {
+	let trueish_lst = ["1", "t", "true", "y", "yes"];
+	trueish_lst.contains(&s.to_lowercase().as_str())
 }
