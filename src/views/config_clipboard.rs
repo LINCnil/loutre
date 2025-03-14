@@ -65,6 +65,7 @@ pub fn ClipboardConfig() -> Element {
 					ConfigElement {
 						id: "cfg_clipboard_threshold",
 						label: tid!("view_config_clipboard_msg_threshold"),
+						tooltip: tid!("view_config_clipboard_msg_threshold_help"),
 						input {
 							id: "cfg_clipboard_threshold",
 							name: "cfg_clipboard_threshold",
@@ -82,6 +83,7 @@ pub fn ClipboardConfig() -> Element {
 					ConfigElement {
 						id: "cfg_clipboard_persistence",
 						label: tid!("view_config_clipboard_msg_persistence"),
+						tooltip: tid!("view_config_clipboard_msg_persistence_help"),
 						Select {
 							id: "cfg_clipboard_persistence",
 							name: "cfg_clipboard_persistence",

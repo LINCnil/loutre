@@ -6,6 +6,8 @@ use dioxus::prelude::*;
 pub struct ConfigElementProps {
 	id: String,
 	label: String,
+	#[props(default = None)]
+	tooltip: Option<String>,
 	children: Element,
 }
 
@@ -15,9 +17,20 @@ pub fn ConfigElement(props: ConfigElementProps) -> Element {
 		div {
 			class: "component-config-element",
 			p {
-				label {
-					r#for: props.id,
-					"{props.label}"
+				if let Some(msg) = props.tooltip {
+					label {
+						r#for: props.id,
+						title: "{msg}",
+						"{props.label}"
+						i {
+							class: "ri-information-2-line tooltip-icon"
+						}
+					}
+				} else {
+					label {
+						r#for: props.id,
+						"{props.label}"
+					}
 				}
 			}
 			div {

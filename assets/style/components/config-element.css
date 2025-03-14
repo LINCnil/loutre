@@ -14,3 +14,7 @@
 .component-config-element >*:first-child {
 	margin-left: 0;
 }
+
+.component-config-element .tooltip-icon {
+	margin-left: 4px;
+}
