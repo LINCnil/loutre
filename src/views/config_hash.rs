@@ -2,7 +2,7 @@
 
 use crate::app::Route;
 use crate::components::config::{ConfigElement, ConfigMenu, ConfigMenuHighlight};
-use crate::components::{ApplyConfig, Header, MainSection, Root, Select, SelectOption};
+use crate::components::{ApplyConfig, Button, Header, MainSection, Root, Select, SelectOption};
 use crate::config::Config;
 use crate::content_file_format::ContentFileFormat;
 use crate::hash::HashFunc;
@@ -66,7 +66,6 @@ pub fn HashConfig() -> Element {
 						}
 					}
 					// Content file name
-					// TODO
 					ConfigElement {
 						id: "cfg_hash_content_file_name",
 						label: tid!("view_config_hash_msg_content_file_name"),
@@ -79,6 +78,12 @@ pub fn HashConfig() -> Element {
 								cfg.get_content_file_name()
 							},
 							disabled: true,
+						}
+						Button {
+							onclick: move |_event| {
+								navigator().push(Route::ContentFileNameConfig {});
+							},
+							{ tid!("view_config_hash_msg_customize_ctn_file_name") }
 						}
 					}
 				}

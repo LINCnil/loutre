@@ -38,6 +38,8 @@ pub enum Route {
 	ClipboardConfig {},
 	#[route("/config/clipboard/template/:tpl_id")]
 	ClipboardTemplateConfig { tpl_id: usize },
+	#[route("/config/ctn_file_name")]
+	ContentFileNameConfig {},
 	#[cfg(feature = "nightly")]
 	#[route("/debug")]
 	Debug {},

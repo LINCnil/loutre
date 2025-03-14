@@ -105,6 +105,10 @@ view_config_main_msg_set_files_readonly = Set files as read-only
 view_config_hash_msg_hash_func = Hashing algorithm
 view_config_hash_msg_content_file_format = Content file format
 view_config_hash_msg_content_file_name = Content file name
+view_config_hash_msg_customize_ctn_file_name = Edit
+
+view_config_ctn_file_name_custom_value = Use a custom name
+view_config_ctn_file_name_default_value = Use the default name
 
 view_config_messages_msg_empty_files_warning = Display a warning when loading a directory that contains empty files
 view_config_messages_msg_duplicated_files_warning = Display a warning when files with the same fingerprint are detected

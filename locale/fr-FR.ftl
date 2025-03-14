@@ -105,6 +105,10 @@ view_config_main_msg_set_files_readonly = Passer les fichiers en lecture seule
 view_config_hash_msg_hash_func = Algorithme de hachage
 view_config_hash_msg_content_file_format = Format du fichier de contenu
 view_config_hash_msg_content_file_name = Nom du fichier de contenu
+view_config_hash_msg_customize_ctn_file_name = Modifier
+
+view_config_ctn_file_name_custom_value = Utiliser un nom personnalisé
+view_config_ctn_file_name_default_value = Utiliser le nom par défaut
 
 view_config_messages_msg_empty_files_warning = Afficher un avertissement en cas de chargement d’un dossier comprenant des fichiers vides
 view_config_messages_msg_duplicated_files_warning = Afficher un avertissement lorsque des fichiers avec la même empreinte sont détectés
