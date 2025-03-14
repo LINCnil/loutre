@@ -32,7 +32,10 @@ const CONFIG_FILE_DIR: &str = "cnil";
 #[cfg(not(unix))]
 const CONFIG_FILE_DIR: &str = "CNIL";
 const CONFIG_FILE_SUBDIR: &str = "loutre";
+#[cfg(not(feature = "nightly"))]
 const CONFIG_FILE_NAME: &str = "config.toml";
+#[cfg(feature = "nightly")]
+const CONFIG_FILE_NAME: &str = "config.nightly.toml";
 
 const DEFAULT_CLIPBOARD_THRESHOLD: usize = 42;
 
