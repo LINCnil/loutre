@@ -2,7 +2,7 @@ use crate::files::HashedFileList;
 use crate::hash::HashFunc;
 use crate::parsers::{
 	cksum_bsd_get_files, cksum_gnu_get_files, cnil_content_file_get_files,
-	cnil_platform_email_get_files,
+	cnil_platform_email_get_files_v1, cnil_platform_email_get_files_v2,
 };
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -13,7 +13,8 @@ const PARSERS: &[&ReceiptParser] = &[
 	&cksum_bsd_get_files,
 	&cksum_gnu_get_files,
 	&cnil_content_file_get_files,
-	&cnil_platform_email_get_files,
+	&cnil_platform_email_get_files_v1,
+	&cnil_platform_email_get_files_v2,
 ];
 
 #[derive(Clone, Debug)]
