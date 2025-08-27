@@ -335,7 +335,7 @@ impl HashedFileList {
 		}
 	}
 
-	pub fn get_files(&self) -> std::collections::hash_map::Values<FileId, HashedFile> {
+	pub fn get_files(&self) -> std::collections::hash_map::Values<'_, FileId, HashedFile> {
 		self.files.values()
 	}
 
