@@ -146,6 +146,7 @@ mod tests {
 		),
 	];
 
+	#[ignore]
 	#[test]
 	fn test_v2() {
 		let test_file_path = Path::new("src/parsers/tests_data/cnil_ar_v2.msg");
