@@ -7,13 +7,25 @@ use crate::notifications::NotificationLevel;
 use crate::progress::LoadingBarStatus;
 use dioxus::prelude::*;
 use dioxus_i18n::tid;
+use serde::{Deserialize, Serialize};
 
 const LOREM_LIPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
-macro_rules! form_value_str {
-	($data: ident, $name: literal) => {
-		$data.get($name).unwrap().as_value().as_str()
-	};
+#[derive(Deserialize, Serialize)]
+pub struct NotificationForm {
+	level: String,
+	nb: usize,
+}
+
+impl NotificationForm {
+	fn get_level(&self) -> NotificationLevel {
+		self.level.parse().unwrap()
+	}
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ProgressBarForm {
+	nb: u64,
 }
 
 #[component]
@@ -33,11 +45,12 @@ pub fn Debug() -> Element {
 				form {
 					onsubmit: move |event| {
 						tracing::info!("Notification form event: {event:?}");
-						let data = event.data.values();
-						tracing::info!("Notification form event data: {data:?}");
-						let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
-						let nb: usize = form_value_str!(data, "nb").parse().unwrap();
-						notifs.push((level, nb));
+						let data: NotificationForm = event.parsed_values().unwrap();
+						//let data = event.data.values();
+						//tracing::info!("Notification form event data: {data:?}");
+						//let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
+						//let nb: usize = form_value_str!(data, "nb").parse().unwrap();
+						notifs.push((data.get_level(), data.nb));
 					},
 					fieldset {
 						legend {
@@ -79,14 +92,15 @@ pub fn Debug() -> Element {
 				form {
 					onsubmit: move |event| {
 						tracing::info!("Progress bar form event: {event:?}");
-						let data = event.data.values();
-						tracing::info!("Progress bar form event data: {data:?}");
-						let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
+						let data: ProgressBarForm = event.parsed_values().unwrap();
+						//let data = event.data.values();
+						//tracing::info!("Progress bar form event data: {data:?}");
+						//let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
 						let tx = tx_sig();
 						spawn(async move {
 							send_event(&tx, ExternalEvent::ProgressBarDelete);
 							send_event(&tx, ExternalEvent::ProgressBarCreate(100));
-							send_event(&tx, ExternalEvent::ProgressBarAdd(nb));
+							send_event(&tx, ExternalEvent::ProgressBarAdd(data.nb));
 						});
 					},
 					fieldset {

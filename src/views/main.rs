@@ -13,11 +13,10 @@ use crate::files::{FileList, NonHashedFileList};
 use crate::notifications::NotificationLevel;
 use crate::progress::{LoadingBarStatus, ProgressBarStatus};
 use crate::receipt::Receipt;
-use dioxus::html::{FileEngine, HasFileData};
+use dioxus::html::{FileData, HasFileData};
 use dioxus::prelude::*;
 use dioxus_i18n::tid;
 use std::path::Path;
-use std::sync::Arc;
 use std::thread;
 use tokio::runtime::Handle;
 
@@ -41,9 +40,7 @@ pub fn Main() -> Element {
 			ondrop: move |event: DragEvent| {
 				tracing::info!("DragEvent received: {event:?}");
 				spawn(async move {
-					if let Some(file_engine) = event.files() {
-						load_file(&config_sig(), tx_sig(), file_engine).await;
-					}
+					load_files(&config_sig(), tx_sig(), event.files()).await;
 				});
 			},
 			Header {}
@@ -62,9 +59,7 @@ pub fn Main() -> Element {
 						name: "view-main-btn-select-directory",
 						onchange: move |event: FormEvent| {
 							spawn(async move {
-								if let Some(file_engine) = event.files() {
-									load_file(&config_sig(), tx_sig(), file_engine).await;
-								}
+								load_files(&config_sig(), tx_sig(), event.files()).await;
 							});
 						},
 						{ tid!("view_main_open_dir") }
@@ -77,9 +72,7 @@ pub fn Main() -> Element {
 						name: "view-main-btn-select-receipt",
 						onchange: move |event: FormEvent| {
 							spawn(async move {
-								if let Some(file_engine) = event.files() {
-									load_file(&config_sig(), tx_sig(), file_engine).await;
-								}
+								load_files(&config_sig(), tx_sig(), event.files()).await;
 							});
 						},
 						{ tid!("view_main_open_receipt") }
@@ -182,15 +175,15 @@ pub fn Main() -> Element {
 	}
 }
 
-async fn load_file(config: &Config, tx: ExternalEventSender, file_engine: Arc<dyn FileEngine>) {
-	tracing::info!("File loading: {:?}", file_engine.files());
-	if let Some(f) = file_engine.files().first() {
-		let path = Path::new(f);
+async fn load_files(config: &Config, tx: ExternalEventSender, files: Vec<FileData>) {
+	tracing::info!("File loading: {:?}", files);
+	if let Some(f) = files.first() {
+		let path = f.path();
 		if path.is_file() {
-			load_receipt(config, tx.clone(), path).await;
+			load_receipt(config, tx.clone(), &path).await;
 		}
 		if path.is_dir() {
-			load_directory(config, tx, path).await;
+			load_directory(config, tx, &path).await;
 		}
 	}
 }
