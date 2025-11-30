@@ -75,19 +75,16 @@ ignore = [
     #"a-crate-that-is-yanked@0.1.1", # you can also ignore yanked crate versions if you wish
     #{ crate = "a-crate-that-is-yanked@0.1.1", reason = "you can specify why you are ignoring the yanked crate" },
     "RUSTSEC-2024-0370", # proc-macro-error is unmaintained: https://rustsec.org/advisories/RUSTSEC-2024-0370
-    "RUSTSEC-2024-0384", # instant is unmaintained: https://github.com/tauri-apps/tao/pull/1008
     "RUSTSEC-2024-0411", # gtk-rs is unmaintained
     "RUSTSEC-2024-0412", # gtk-rs is unmaintained
     "RUSTSEC-2024-0413", # gtk-rs is unmaintained
-    "RUSTSEC-2024-0414", # gtk-rs is unmaintained
     "RUSTSEC-2024-0415", # gtk-rs is unmaintained
     "RUSTSEC-2024-0416", # gtk-rs is unmaintained
-    "RUSTSEC-2024-0417", # gtk-rs is unmaintained
     "RUSTSEC-2024-0418", # gtk-rs is unmaintained
     "RUSTSEC-2024-0419", # gtk-rs is unmaintained
     "RUSTSEC-2024-0420", # gtk-rs is unmaintained
     "RUSTSEC-2024-0429", # glib 0.18.5: unaffected
-    "RUSTSEC-2024-0388", # derivative is unmaintained
+    "RUSTSEC-2025-0057", # fxhash unmaintained
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
