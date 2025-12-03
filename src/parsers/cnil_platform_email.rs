@@ -10,11 +10,72 @@ use unicode_normalization::UnicodeNormalization;
 const DEFAULT_HASH: HashFunc = HashFunc::Sha256;
 const CNIL_V2_LST_BEGIN: &str = "Chaque empreinte";
 const CNIL_V2_LST_END: &str = "Pour toute question";
+const CNIL_V3_PREFIX: &str = "*\t";
+
+pub fn cnil_platform_email_get_files_v3(
+	path: &Path,
+	_default_hash: HashFunc,
+) -> Result<HashedFileList, ()> {
+	tracing::debug!("Testing receipt type: CNILv3");
+	if let Ok(outlook) = Outlook::from_path(path) {
+		let body: String = outlook.body.nfkc().collect();
+		let mut files = HashedFileList::new();
+		for line in body.lines() {
+			if line.starts_with(CNIL_V3_PREFIX) {
+				tracing::debug!("line: {line}");
+				if let Some(file) = parse_line_v3(line) {
+					files.insert_file(file);
+				}
+			}
+		}
+		if !files.is_empty() {
+			tracing::debug!("Found {} files.", files.len(None));
+			return Ok(files);
+		}
+	}
+	Err(())
+}
+
+fn parse_line_v3(line: &str) -> Option<HashedFile> {
+	if let Some(line) = line.strip_prefix(CNIL_V3_PREFIX) {
+		let line = line.trim_start();
+		let line = rev_str(line);
+		let (_, file) = parse_inner_line_v3(&line).ok()?;
+		return Some(file);
+	}
+	None
+}
+
+fn parse_inner_line_v3(input: &str) -> IResult<&str, HashedFile> {
+	let (input, _) = space0(input)?;
+	let (input, _) = char(',')(input)?;
+	let (input, _) = char(')')(input)?;
+	let (input, hash) = alphanumeric1(input)?;
+	let (input, _) = space1(input)?;
+	let (input, _) = char(':')(input)?;
+	let (input, _) = digit1(input)?;
+	let (input, _) = char('-')(input)?;
+	let (input, _) = alpha1(input)?;
+	let (input, _) = space1(input)?;
+	let (input, _) = char(',')(input)?;
+	let (input, _) = alpha1(input)?;
+	let (input, _) = space1(input)?;
+	let (input, _) = digit1(input)?;
+	let (input, _) = opt(char(',')).parse(input)?;
+	let (input, _) = opt(digit1).parse(input)?;
+	let (input, _) = char('(')(input)?;
+	let (input, _) = space1(input)?;
+	let hash = rev_str(hash);
+	let path = PathBuf::from(rev_str(input));
+	let file = HashedFile::new(path, 0, hash, DEFAULT_HASH);
+	Ok((input, file))
+}
 
 pub fn cnil_platform_email_get_files_v2(
 	path: &Path,
 	_default_hash: HashFunc,
 ) -> Result<HashedFileList, ()> {
+	tracing::debug!("Testing receipt type: CNILv2");
 	if let Ok(outlook) = Outlook::from_path(path) {
 		let body: String = outlook.body.nfkc().collect();
 		let mut files = HashedFileList::new();
@@ -35,9 +96,6 @@ pub fn cnil_platform_email_get_files_v2(
 				match last_file {
 					Some(name) => {
 						let hash = clean_v2_hash(line)?;
-						println!("Debug file:");
-						println!(" - name: {name}");
-						println!(" - hash: {hash}");
 						let file = HashedFile::new(name, 0, hash, DEFAULT_HASH);
 						files.insert_file(file);
 						last_file = None;
@@ -49,6 +107,7 @@ pub fn cnil_platform_email_get_files_v2(
 			}
 		}
 		if !files.is_empty() {
+			tracing::debug!("Found {} files.", files.len(None));
 			return Ok(files);
 		}
 	}
@@ -72,32 +131,34 @@ pub fn cnil_platform_email_get_files_v1(
 	path: &Path,
 	_default_hash: HashFunc,
 ) -> Result<HashedFileList, ()> {
+	tracing::debug!("Testing receipt type: CNILv1");
 	if let Ok(outlook) = Outlook::from_path(path) {
 		let body: String = outlook.body.nfkc().collect();
 		let mut files = HashedFileList::new();
 		for line in body.lines() {
-			if let Some(file) = parse_line(line) {
+			if let Some(file) = parse_line_v1(line) {
 				files.insert_file(file);
 			}
 		}
 		if !files.is_empty() {
+			tracing::debug!("Found {} files.", files.len(None));
 			return Ok(files);
 		}
 	}
 	Err(())
 }
 
-fn parse_line(line: &str) -> Option<HashedFile> {
+fn parse_line_v1(line: &str) -> Option<HashedFile> {
 	if let Some(line) = line.strip_prefix('*') {
 		let line = line.trim_start();
 		let line = rev_str(line);
-		let (_, file) = parse_inner_line(&line).ok()?;
+		let (_, file) = parse_inner_line_v1(&line).ok()?;
 		return Some(file);
 	}
 	None
 }
 
-fn parse_inner_line(input: &str) -> IResult<&str, HashedFile> {
+fn parse_inner_line_v1(input: &str) -> IResult<&str, HashedFile> {
 	let (input, _) = space0(input)?;
 	let (input, _) = char(')')(input)?;
 	let (input, hash) = alphanumeric1(input)?;
@@ -166,9 +227,6 @@ mod tests {
 	fn contains_file(lst: &HashedFileList, name: &str, hash: &str) -> bool {
 		let ref_path = Path::new(name);
 		for file in lst.get_files() {
-			println!("test:");
-			println!(" - {name}");
-			println!(" - {}", file.get_relative_path().display());
 			if file.get_hash() == hash && file.get_relative_path() == ref_path {
 				return true;
 			}
