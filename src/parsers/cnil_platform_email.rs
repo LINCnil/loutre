@@ -38,7 +38,6 @@ pub fn cnil_platform_email_get_files_v3(
 
 fn parse_line_v3(line: &str) -> Option<HashedFile> {
 	if let Some(line) = line.strip_prefix(CNIL_V3_PREFIX) {
-		let line = line.trim_start();
 		let line = rev_str(line);
 		let (_, file) = parse_inner_line_v3(&line).ok()?;
 		return Some(file);
