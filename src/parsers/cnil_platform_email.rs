@@ -187,49 +187,29 @@ fn rev_str(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-	use super::{cnil_platform_email_get_files_v2, DEFAULT_HASH};
-	use crate::files::HashedFileList;
+	use super::{parse_line_v3, DEFAULT_HASH};
 	use std::path::Path;
 
-	const TEST_FILES_V2: &[(&str, &str)] = &[
-		(
-			"anssi-guide-admin_securisee_si_v3-0 - Copie - Copie (2) - Copie.pdf",
-			"f7c943ec8788c797d4db829ddfca0919c543d3b046cec120e7433de2a3a25510",
-		),
-		(
-			"Capture d'écran 2025-07-11 143340 - Copie - Copie - Copie.jpg",
-			"90d0c07d696667bdca59365a3cf8ddc309f2f62dfa2a4e54b5117d82f0a0e3c3",
-		),
-		(
-			"cijpfdp_2108b.exe",
-			"8dd427942e8e31c574841b714286f9171dafe7b49dd781ec9b62ff0cc61cf1a4",
-		),
+	const TEST_LINES_V3: &[(&str, &str, &str)] = &[
+		("*	simple.txt (0,4 Ko, SHA-256: 0ea83f243ec71af1d50285617e8da3962a602a41266e8069d24de53b3c9d606c),", "simple.txt", "0ea83f243ec71af1d50285617e8da3962a602a41266e8069d24de53b3c9d606c"),
+		("*	une espace.txt (0,4 Ko, SHA-256: daf394a0f43982e02ac31c78750e0fed82c5f495457967a2770da7ec263dd624),", "une espace.txt", "daf394a0f43982e02ac31c78750e0fed82c5f495457967a2770da7ec263dd624"),
+		("*	 espaces en début de nom et accent.txt (0,6 Ko, SHA-256: 7bdc7dd8f1ade0b07d48a77940dab379ba685b63b0d5e11c4d6889ed7ae519cf),", " espaces en début de nom et accent.txt", "7bdc7dd8f1ade0b07d48a77940dab379ba685b63b0d5e11c4d6889ed7ae519cf"),
+		("*	Deux  espaces.txt (0,7 Ko, SHA-256: 11cc874da1cc4bbdea97bc00cf299850c7dbaff60c42da2ea81d8892b03feb94),", "Deux  espaces.txt", "11cc874da1cc4bbdea97bc00cf299850c7dbaff60c42da2ea81d8892b03feb94"),
+		("*	des accents è_é ÀøË—⇒Į.txt (0,6 Ko, SHA-256: fbff754afe96c6d70bbbb8d426d3fc325729d77020f88c0202d520f4114de23c),", "des accents è_é ÀøË—⇒Į.txt", "fbff754afe96c6d70bbbb8d426d3fc325729d77020f88c0202d520f4114de23c"),
+		("*	Beaucoup    d' espaces   .txt (0,4 Ko, SHA-256: cbe462d43c025285f50abec2a6c86f261be2225b6663436193f60b0ec6cb5f90),", "Beaucoup    d' espaces   .txt", "cbe462d43c025285f50abec2a6c86f261be2225b6663436193f60b0ec6cb5f90"),
+		("*	Ṱ̴͊e̴̛͚ṡ̴̘t̶͔͗ ̴̔ͅż̸̹a̵͙̽l̴̟̃g̷̡̾o̴͙͑.txt (0,5 Ko, SHA-256: b7d6a4679b21b01e66a07bc18f6d3b22cfbec0b795bf230c8e91ebd3a99d453f),", "Ṱ̴͊e̴̛͚ṡ̴̘t̶͔͗ ̴̔ͅż̸̹a̵͙̽l̴̟̃g̷̡̾o̴͙͑.txt", "b7d6a4679b21b01e66a07bc18f6d3b22cfbec0b795bf230c8e91ebd3a99d453f"),
 	];
 
-	#[ignore]
 	#[test]
-	fn test_v2() {
-		let test_file_path = Path::new("src/parsers/tests_data/cnil_ar_v2.msg");
-		let res = cnil_platform_email_get_files_v2(&test_file_path, DEFAULT_HASH);
-		assert!(res.is_ok());
-		let lst = res.unwrap();
-		assert_eq!(lst.get_main_hashing_function(), DEFAULT_HASH);
-		assert_eq!(lst.len(None), 3);
-		for (ref_name, ref_hash) in TEST_FILES_V2 {
-			assert!(
-				contains_file(&lst, ref_name, ref_hash),
-				"{ref_name}: file not found"
-			);
+	fn test_v3() {
+		for (line, file_name, hash) in TEST_LINES_V3 {
+			let res = parse_line_v3(line);
+			assert!(res.is_some());
+			let f = res.unwrap();
+			let path = Path::new(file_name);
+			assert_eq!(f.get_hash_func(), DEFAULT_HASH);
+			assert_eq!(f.get_hash(), *hash);
+			assert_eq!(f.get_relative_path(), path);
 		}
-	}
-
-	fn contains_file(lst: &HashedFileList, name: &str, hash: &str) -> bool {
-		let ref_path = Path::new(name);
-		for file in lst.get_files() {
-			if file.get_hash() == hash && file.get_relative_path() == ref_path {
-				return true;
-			}
-		}
-		false
 	}
 }
