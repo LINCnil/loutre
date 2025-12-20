@@ -11,20 +11,33 @@ use serde::{Deserialize, Serialize};
 
 const LOREM_LIPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
+fn parse_nb<'de, T, D>(de: D) -> Result<T, D::Error>
+where
+	D: serde::Deserializer<'de>,
+	T: std::str::FromStr,
+	<T as std::str::FromStr>::Err: std::fmt::Display,
+{
+	String::deserialize(de)?
+		.parse()
+		.map_err(serde::de::Error::custom)
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct NotificationForm {
-	level: String,
+	notif_level: String,
+	#[serde(deserialize_with = "parse_nb")]
 	nb: usize,
 }
 
 impl NotificationForm {
 	fn get_level(&self) -> NotificationLevel {
-		self.level.parse().unwrap()
+		self.notif_level.parse().unwrap()
 	}
 }
 
 #[derive(Deserialize, Serialize)]
 pub struct ProgressBarForm {
+	#[serde(deserialize_with = "parse_nb")]
 	nb: u64,
 }
 
@@ -43,13 +56,10 @@ pub fn Debug() -> Element {
 					{ tid!("view_debug_title") }
 				}
 				form {
-					onsubmit: move |event| {
+					onsubmit: move |event| async move {
+						event.prevent_default();
 						tracing::info!("Notification form event: {event:?}");
 						let data: NotificationForm = event.parsed_values().unwrap();
-						//let data = event.data.values();
-						//tracing::info!("Notification form event data: {data:?}");
-						//let level: NotificationLevel = form_value_str!(data, "notif_level").parse().unwrap();
-						//let nb: usize = form_value_str!(data, "nb").parse().unwrap();
 						notifs.push((data.get_level(), data.nb));
 					},
 					fieldset {
@@ -90,18 +100,14 @@ pub fn Debug() -> Element {
 				}
 
 				form {
-					onsubmit: move |event| {
+					onsubmit: move |event: FormEvent| async move {
+						event.prevent_default();
 						tracing::info!("Progress bar form event: {event:?}");
 						let data: ProgressBarForm = event.parsed_values().unwrap();
-						//let data = event.data.values();
-						//tracing::info!("Progress bar form event data: {data:?}");
-						//let nb: u64 = form_value_str!(data, "nb").parse().unwrap();
 						let tx = tx_sig();
-						spawn(async move {
-							send_event(&tx, ExternalEvent::ProgressBarDelete);
-							send_event(&tx, ExternalEvent::ProgressBarCreate(100));
-							send_event(&tx, ExternalEvent::ProgressBarAdd(data.nb));
-						});
+						send_event(&tx, ExternalEvent::ProgressBarDelete);
+						send_event(&tx, ExternalEvent::ProgressBarCreate(100));
+						send_event(&tx, ExternalEvent::ProgressBarAdd(data.nb));
 					},
 					fieldset {
 						legend {
