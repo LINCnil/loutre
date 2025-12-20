@@ -1,6 +1,6 @@
 [package]
 name = "loutre"
-version = "3.0.0-beta.2"
+version = "3.0.0"
 authors = ["Rodolphe Bréard <rbreard@cnil.fr>"]
 edition = "2021"
 description = "Outil de calcul des empreintes des pièces."
